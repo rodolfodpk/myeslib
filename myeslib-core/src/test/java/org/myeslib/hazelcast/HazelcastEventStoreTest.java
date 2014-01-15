@@ -1,4 +1,4 @@
-package org.espoc4j.hazelcast;
+package org.myeslib.hazelcast;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;

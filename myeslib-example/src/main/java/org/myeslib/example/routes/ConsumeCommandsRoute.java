@@ -80,7 +80,7 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 			
 			InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(snapshot.getAggregateInstance());
 
-			context.beginTransaction();
+			context.beginTransaction();  // TODO move this and eventstore (bellow) to txProcessor
 			
 			HazelcastEventStore<UUID> store = new HazelcastEventStore<UUID>(txMapFactory.get(context, HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()));
 			

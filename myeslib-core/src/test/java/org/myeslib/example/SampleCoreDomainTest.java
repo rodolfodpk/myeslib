@@ -1,4 +1,4 @@
-package org.espoc4j.example;
+package org.myeslib.example;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;

@@ -1,4 +1,4 @@
-package org.espoc4j.data;
+package org.myeslib.data;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

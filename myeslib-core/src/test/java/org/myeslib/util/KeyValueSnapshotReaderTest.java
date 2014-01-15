@@ -1,4 +1,4 @@
-package org.espoc4j.util;
+package org.myeslib.util;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
