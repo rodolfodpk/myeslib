@@ -1,0 +1,6 @@
+
+rootProject.name = 'myeslib'
+
+include 'myeslib-core'
+include 'myeslib-example'
+

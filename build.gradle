@@ -1,0 +1,71 @@
+
+sourceCompatibility =  JavaVersion.VERSION_1_7
+
+buildscript {
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+	
+}
+
+allprojects {
+
+	packageName = project.name
+	version = '0.0.1'
+
+    apply plugin: 'idea'
+    apply plugin: 'java'
+	apply plugin: 'eclipse'
+	apply plugin: 'application'
+	
+	eclipse.classpath.downloadJavadoc = true
+	
+	eclipse {
+		classpath {
+		   downloadSources=true
+		   downloadJavadoc=true
+		}
+	}
+	
+	repositories {
+		maven { url "https://repository.apache.org/content/repositories/snapshots" }
+		mavenLocal()
+		mavenCentral()
+	  }
+
+	dependencies {
+		compile 'ch.qos.logback:logback-classic:1.0.13'
+		//testCompile 'org.hamcrest:hamcrest-all:1.3'
+		testCompile 'org.mockito:mockito-all:1.9.5'
+		testCompile 'org.apache.camel:camel-test:2.13-SNAPSHOT'
+	}
+	
+}
+
+project(':myeslib-core') {
+	dependencies {
+		compile 'org.projectlombok:lombok:0.12.0'
+		compile 'com.google.guava:guava:15.0'
+		compile 'org.jdbi:jdbi:2.51'
+		compile 'org.apache.camel:camel-hazelcast:2.13-SNAPSHOT'
+		compile 'org.apache.camel:camel-gson:2.13-SNAPSHOT'
+
+	}
+}
+
+project(':myeslib-example') {
+	mainClassName = "com.myeslib.RouteForExample"
+	dependencies {
+		compile project(':myeslib-core')
+		compile 'org.apache.camel:camel-core:2.13-SNAPSHOT'
+		compile 'org.apache.camel:camel-gson:2.13-SNAPSHOT'
+		compile 'com.h2database:h2:1.3.170'
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '1.9'
+}
+
