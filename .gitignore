@@ -4,3 +4,15 @@
 *.jar
 *.war
 *.ear
+
+target/
+bin/
+build/
+
+.settings/
+.classpath
+.project
+.gradle
+
+# Mac
+.DS_Store
