@@ -56,7 +56,7 @@ project(':myeslib-core') {
 }
 
 project(':myeslib-example') {
-	mainClassName = "com.myeslib.RouteForExample"
+	mainClassName = "org.myeslib.example.Example"
 	dependencies {
 		compile project(':myeslib-core')
 		compile 'org.apache.camel:camel-core:2.13-SNAPSHOT'
