@@ -65,7 +65,7 @@ private void gson(Config config) {
 		SerializerConfig sc3 = new SerializerConfig().setImplementation(new GsonSerializer(gson, 3, CreateInventoryItem.class)).setTypeClass(CreateInventoryItem.class);
 		SerializerConfig sc4 = new SerializerConfig().setImplementation(new GsonSerializer(gson, 4, InventoryItemCreated.class)).setTypeClass(InventoryItemCreated.class);
 		
-		SerializerConfig sc5 = new SerializerConfig().setImplementation(new GsonSerializer(gson, 5, IncreaseInventory.class)).setTypeClass(CreateInventoryItem.class);
+		SerializerConfig sc5 = new SerializerConfig().setImplementation(new GsonSerializer(gson, 5, IncreaseInventory.class)).setTypeClass(IncreaseInventory.class);
 		SerializerConfig sc6 = new SerializerConfig().setImplementation(new GsonSerializer(gson, 6, InventoryIncreased.class)).setTypeClass(InventoryIncreased.class);
 
 		SerializerConfig sc7 = new SerializerConfig().setImplementation(new GsonSerializer(gson, 5, DecreaseInventory.class)).setTypeClass(DecreaseInventory.class);
