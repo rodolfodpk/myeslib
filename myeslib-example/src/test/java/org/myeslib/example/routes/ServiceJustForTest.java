@@ -1,11 +1,13 @@
 package org.myeslib.example.routes;
 
+import java.util.UUID;
+
 import org.myeslib.example.SampleCoreDomain.ItemDescriptionGeneratorService;
 
 public class ServiceJustForTest implements ItemDescriptionGeneratorService {
 	@Override
-	public String generate() {
-		return "a really nice description for this item so it can sell better ";
+	public String generate(UUID id) {
+		return "a really nice description for this item ";
 	}
 
 }

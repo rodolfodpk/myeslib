@@ -90,13 +90,13 @@ public class SampleCoreDomainTest {
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
-		when(uuidGeneratorService.generate()).thenReturn(desc);
+		when(uuidGeneratorService.generate(id)).thenReturn(desc);
 		
 		command.setService(uuidGeneratorService);
 		
 		List<? extends Event> events = commandHandler.handle(command);
 	
-		verify(uuidGeneratorService).generate();
+		verify(uuidGeneratorService).generate(id);
 		
 		Event expectedEvent = new InventoryItemCreated(id, desc);
 		

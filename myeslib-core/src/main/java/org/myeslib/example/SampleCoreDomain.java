@@ -31,7 +31,7 @@ public class SampleCoreDomain {
 		public List<? extends Event> handle(CreateInventoryItem command) {
 	    	checkArgument(getId() == null, "item already exists");
 			checkNotNull(command.getService());
-			String description = command.getService().generate();
+			String description = command.getService().generate(command.getId());
 			InventoryItemCreated event = new InventoryItemCreated(command.getId(), description);
 			return Arrays.asList(event);		
 		}
@@ -128,7 +128,7 @@ public class SampleCoreDomain {
 	// a service just for sake of example
 	
 	public static interface ItemDescriptionGeneratorService {
-		String generate();
+		String generate(UUID id);
 	}
 	
 }
