@@ -1,21 +1,36 @@
 
 sourceCompatibility =  JavaVersion.VERSION_1_7
-
+ 
 buildscript {
-
 	repositories {
 		mavenLocal()
 		mavenCentral()
 	}
-	
 }
 
-allprojects {
+subprojects {
 
-	packageName = project.name
+	apply plugin: 'maven-publish'
+	group = 'org.myeslib'
 	version = '0.0.1'
+	
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				from components.java
+			}
+		}
+		repositories {
+			maven {
+				//url "$buildDir/repo" // change to point to your repo, e.g. http://my.org/repo
+			    url "/Users/rpaula/.m2/repository"
+			}
+		}
+	}
+	
+	packageName = project.name
 
-    apply plugin: 'idea'
+	apply plugin: 'idea'
     apply plugin: 'java'
 	apply plugin: 'eclipse'
 	apply plugin: 'application'

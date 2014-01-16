@@ -11,11 +11,10 @@ and off course:
 
 https://github.com/gregoryyoung/m-r
 
-TODO
-====
-assertions when testing example route
+Notes
+=====
 
-explain some trade offs I did
+Your IDE must support http://projectlombok.org/
 
 Disclaimer
 ==========

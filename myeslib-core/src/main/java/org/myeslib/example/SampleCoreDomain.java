@@ -47,7 +47,7 @@ public class SampleCoreDomain {
 	    	checkArgument(getId() != null, "before decreasing you must create an item");
 	     	checkArgument(getId().equals(command.getId()), "item id does not match");
 	    	if (getAvaliable() - command.getHowMany() < 0){
-	    		throw new IllegalArgumentException("there is not enough items avaliable");
+	    		throw new IllegalArgumentException("there are not enough items avaliable");
 	    	}
 			InventoryDecreased event = new InventoryDecreased(command.getId(), command.getHowMany());
 			return Arrays.asList(event);		
