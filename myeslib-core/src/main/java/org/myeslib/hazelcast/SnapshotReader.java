@@ -1,4 +1,4 @@
-package org.myeslib.util;
+package org.myeslib.hazelcast;
 
 import static org.myeslib.util.EventSourcingMagicHelper.applyEventsOn;
 
@@ -10,12 +10,12 @@ import org.myeslib.core.Event;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.Snapshot;
 
-public class KeyValueSnapshotReader<K, A extends AggregateRoot> {
+public class SnapshotReader<K, A extends AggregateRoot> {
     
 	private final Map<K, AggregateRootHistory> eventsMap ;
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
 	
-	public KeyValueSnapshotReader(final Map<K, AggregateRootHistory> eventsMap, 
+	public SnapshotReader(final Map<K, AggregateRootHistory> eventsMap, 
 								   final Map<K, Snapshot<A>> lastSnapshotMap) {
 		this.eventsMap = eventsMap;
 		this.lastSnapshotMap = lastSnapshotMap;

@@ -12,13 +12,13 @@ import org.myeslib.data.Snapshot;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleCoreDomain.InventoryItemCommandHandler;
+import org.myeslib.hazelcast.SnapshotReader;
 import org.myeslib.hazelcast.TransactionalCommandProcessor;
-import org.myeslib.util.KeyValueSnapshotReader;
 
 @AllArgsConstructor
 public class ConsumeCommandsRoute extends RouteBuilder {
 	
-	final KeyValueSnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
+	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
 	final TransactionalCommandProcessor<UUID, InventoryItemAggregateRoot> txProcessor;
 	
 	@Override
@@ -64,7 +64,13 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 			
 			InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(snapshot.getAggregateInstance());
 
-			UnitOfWork uow = txProcessor.handle(id, snapshot.getVersion(), command, commandHandler);
+			UnitOfWork uow = null;
+			try {
+				uow = txProcessor.handle(id, snapshot.getVersion(), command, commandHandler);
+			} catch (Throwable t) {
+				t.printStackTrace();
+				throw new Exception(t);
+			}
 			
 			e.getOut().setBody(uow);
 

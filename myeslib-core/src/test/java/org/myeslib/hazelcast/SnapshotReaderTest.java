@@ -1,4 +1,4 @@
-package org.myeslib.util;
+package org.myeslib.hazelcast;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -22,10 +22,10 @@ import org.myeslib.data.Snapshot;
 import org.myeslib.example.SampleCoreDomain.InventoryDecreased;
 import org.myeslib.example.SampleCoreDomain.InventoryIncreased;
 import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
-import org.myeslib.util.KeyValueSnapshotReader;
+import org.myeslib.hazelcast.SnapshotReader;
 
 @RunWith(MockitoJUnitRunner.class) 
-public class KeyValueSnapshotReaderTest {
+public class SnapshotReaderTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test 
@@ -37,7 +37,7 @@ public class KeyValueSnapshotReaderTest {
 		
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 		
-		KeyValueSnapshotReader<Long, InventoryItemAggregateRoot> st = new KeyValueSnapshotReader<Long, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap);
+		SnapshotReader<Long, InventoryItemAggregateRoot> st = new SnapshotReader<Long, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap);
 		
 		when(eventsMap.get(id)).thenReturn(null);
 		when(lastSnapshotMap.get(id)).thenReturn(null);
@@ -71,7 +71,7 @@ public class KeyValueSnapshotReaderTest {
 		
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 
-		KeyValueSnapshotReader<UUID, InventoryItemAggregateRoot> st = new KeyValueSnapshotReader<>(eventsMap, lastSnapshotMap);
+		SnapshotReader<UUID, InventoryItemAggregateRoot> st = new SnapshotReader<>(eventsMap, lastSnapshotMap);
 
 		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id, freshInstance);
 		
@@ -115,7 +115,7 @@ public class KeyValueSnapshotReaderTest {
 	
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 
-		KeyValueSnapshotReader<UUID, InventoryItemAggregateRoot> st = new KeyValueSnapshotReader<>(eventsMap, lastSnapshotMap);
+		SnapshotReader<UUID, InventoryItemAggregateRoot> st = new SnapshotReader<>(eventsMap, lastSnapshotMap);
 
 		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id, freshInstance);
 		

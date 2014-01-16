@@ -28,8 +28,8 @@ import org.myeslib.hazelcast.AggregateRootHistoryMapFactory;
 import org.myeslib.hazelcast.AggregateRootHistoryTxMapFactory;
 import org.myeslib.hazelcast.AggregateRootSnapshotMapFactory;
 import org.myeslib.hazelcast.JustAnotherHazelcastComponent;
+import org.myeslib.hazelcast.SnapshotReader;
 import org.myeslib.hazelcast.TransactionalCommandProcessor;
-import org.myeslib.util.KeyValueSnapshotReader;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
@@ -85,8 +85,8 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 		
 		AggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory = new AggregateRootHistoryTxMapFactory<>();
 		
-		KeyValueSnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader = 
-				new KeyValueSnapshotReader<>(aggregateMapFactory.get(INVENTORY_ITEM_AGGREGATE_HISTORY.name()), 
+		SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader = 
+				new SnapshotReader<>(aggregateMapFactory.get(INVENTORY_ITEM_AGGREGATE_HISTORY.name()), 
 											 snapshotMapFactory.get(INVENTORY_ITEM_LAST_SNAPSHOT.name()));
 	
 		TransactionalCommandProcessor<UUID, InventoryItemAggregateRoot> txProcessor = 

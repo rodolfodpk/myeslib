@@ -14,7 +14,7 @@ import org.myeslib.example.infra.HazelcastMaps;
 import org.myeslib.hazelcast.AggregateRootHistoryMapFactory;
 import org.myeslib.hazelcast.AggregateRootHistoryTxMapFactory;
 import org.myeslib.hazelcast.AggregateRootSnapshotMapFactory;
-import org.myeslib.util.KeyValueSnapshotReader;
+import org.myeslib.hazelcast.SnapshotReader;
 
 import com.hazelcast.core.HazelcastInstance;
 
@@ -36,8 +36,8 @@ public class ConsumeEventsRoute extends RouteBuilder {
 				
 				UUID id = e.getIn().getBody(UUID.class);
 
-				KeyValueSnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader = 
-						new KeyValueSnapshotReader<>(mapFactory.get(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()), 
+				SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader = 
+						new SnapshotReader<>(mapFactory.get(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()), 
 													 snapshotMapFactory.get(HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT.name()));
 				
 				Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id, new InventoryItemAggregateRoot());
