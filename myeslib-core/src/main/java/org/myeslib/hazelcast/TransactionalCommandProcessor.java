@@ -12,23 +12,27 @@ import org.myeslib.core.Command;
 import org.myeslib.core.CommandHandler;
 import org.myeslib.core.Event;
 import org.myeslib.data.UnitOfWork;
+import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
 
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
 
 @Slf4j
 @AllArgsConstructor
 public class TransactionalCommandProcessor<K, A extends AggregateRoot> {
+
+	private final HazelcastInstance hazelcastInstance;
+	private final AggregateRootHistoryTxMapFactory<K, InventoryItemAggregateRoot> txMapFactory;
+	private final String mapId;
 	
-	private final K id;
-	private final Long version;
-	private final CommandHandler<A> commandHandler ;
-	private final HazelcastEventStore<K> store ;
-	private final Command command;
-	private final TransactionContext transactionContext;
-	
-	public UnitOfWork handle() {
+	public UnitOfWork handle(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) {
 		
-		//transactionContext.beginTransaction();
+		TransactionContext transactionContext = hazelcastInstance.newTransactionContext();
+		
+		transactionContext.beginTransaction(); 
+		
+		HazelcastEventStore<K> store = new HazelcastEventStore<>(txMapFactory.get(transactionContext, mapId));
+
 		UnitOfWork uow = null;
 		try {
 			//List<? extends Event> newEvents = commandHandler.handle(command); 
