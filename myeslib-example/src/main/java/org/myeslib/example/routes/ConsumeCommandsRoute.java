@@ -13,13 +13,13 @@ import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleCoreDomain.InventoryItemCommandHandler;
 import org.myeslib.hazelcast.SnapshotReader;
-import org.myeslib.hazelcast.TransactionalCommandProcessor;
+import org.myeslib.hazelcast.TransactionalCommandHandler;
 
 @AllArgsConstructor
 public class ConsumeCommandsRoute extends RouteBuilder {
 	
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
-	final TransactionalCommandProcessor<UUID, InventoryItemAggregateRoot> txProcessor;
+	final TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txProcessor;
 	
 	@Override
 	public void configure() throws Exception {

@@ -29,7 +29,7 @@ import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.transaction.TransactionContext;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TransactionalCommandProcessorTest {
+public class TransactionalCommandHandlerTest {
 
 	@Mock
 	HazelcastInstance hazelcastInstance;
@@ -75,8 +75,8 @@ public class TransactionalCommandProcessorTest {
 		TransactionalMap<UUID, AggregateRootHistory> txMapMock = Mockito.mock(TransactionalMap.class);
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
-		TransactionalCommandProcessor<UUID, InventoryItemAggregateRoot> tcp = 
-				new TransactionalCommandProcessor<>(hazelcastInstance, txMapFactory, mapId);
+		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = 
+				new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId);
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
@@ -109,8 +109,8 @@ public class TransactionalCommandProcessorTest {
 		TransactionalMap<UUID, AggregateRootHistory> txMapMock = Mockito.mock(TransactionalMap.class);
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
-		TransactionalCommandProcessor<UUID, InventoryItemAggregateRoot> tcp = 
-				new TransactionalCommandProcessor<>(hazelcastInstance, txMapFactory, mapId);
+		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = 
+				new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId);
 		
 		try {
 			tcp.handle(id, version, command, commandHandler);
@@ -140,8 +140,8 @@ public class TransactionalCommandProcessorTest {
 		TransactionalMap<UUID, AggregateRootHistory> txMapMock = Mockito.mock(TransactionalMap.class);
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
-		TransactionalCommandProcessor<UUID, InventoryItemAggregateRoot> tcp = 
-				new TransactionalCommandProcessor<>(hazelcastInstance, txMapFactory, mapId);
+		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = 
+				new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId);
 		
 		try {
 			tcp.handle(id, version, command, commandHandler);

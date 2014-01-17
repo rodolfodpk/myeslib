@@ -16,7 +16,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
 
 @AllArgsConstructor
-public class TransactionalCommandProcessor<K, A extends AggregateRoot> {
+public class TransactionalCommandHandler<K, A extends AggregateRoot> {
 
 	private final HazelcastInstance hazelcastInstance;
 	private final AggregateRootHistoryTxMapFactory<K, A> txMapFactory;

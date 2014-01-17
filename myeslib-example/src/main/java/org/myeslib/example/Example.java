@@ -3,6 +3,7 @@ package org.myeslib.example;
 import static org.myeslib.example.infra.HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY;
 import static org.myeslib.example.infra.HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT;
 
+import java.util.Map;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -23,7 +24,7 @@ import org.myeslib.hazelcast.AggregateRootHistoryTxMapFactory;
 import org.myeslib.hazelcast.AggregateRootSnapshotMapFactory;
 import org.myeslib.hazelcast.JustAnotherHazelcastComponent;
 import org.myeslib.hazelcast.SnapshotReader;
-import org.myeslib.hazelcast.TransactionalCommandProcessor;
+import org.myeslib.hazelcast.TransactionalCommandHandler;
 
 import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
@@ -80,6 +81,7 @@ public class Example {
 	ConsumeCommandsRoute createRoute(HazelcastInstance hazelcastInstance ) {
 		
 		AggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory = new AggregateRootHistoryTxMapFactory<>();
+		
 		AggregateRootHistoryMapFactory<UUID, InventoryItemAggregateRoot> mapFactory = new AggregateRootHistoryMapFactory<>(hazelcastInstance);
 		AggregateRootSnapshotMapFactory<UUID, InventoryItemAggregateRoot> snapshotMapFactory = new AggregateRootSnapshotMapFactory<>(hazelcastInstance);
 		
@@ -87,8 +89,8 @@ public class Example {
 				new SnapshotReader<>(mapFactory.get(INVENTORY_ITEM_AGGREGATE_HISTORY.name()), 
 											 snapshotMapFactory.get(INVENTORY_ITEM_LAST_SNAPSHOT.name()));
 	
-		TransactionalCommandProcessor<UUID, InventoryItemAggregateRoot> txProcessor = 
-				new TransactionalCommandProcessor<>(hazelcastInstance, txMapFactory, INVENTORY_ITEM_AGGREGATE_HISTORY.name());	
+		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txProcessor = 
+				new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, INVENTORY_ITEM_AGGREGATE_HISTORY.name());	
 
 		return new ConsumeCommandsRoute(snapshotReader, txProcessor);
 
