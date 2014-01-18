@@ -2,20 +2,17 @@ package org.myeslib.hazelcast;
 
 import java.io.IOException;
 
+import lombok.AllArgsConstructor;
+
 import com.google.gson.Gson;
 import com.hazelcast.nio.serialization.ByteArraySerializer;
 
+@AllArgsConstructor
 public class GsonSerializer implements ByteArraySerializer<Object> {
 
     final Gson gson ;
     final int type ;
     final Class<?> clazz;
-
-    public GsonSerializer(Gson gson, int type, Class<?> clazz) {
-        this.gson = gson;	
-        this.type = type;
-        this.clazz = clazz;
-    }
 
 	@Override
 	public void destroy() {

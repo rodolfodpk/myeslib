@@ -3,7 +3,6 @@ package org.myeslib.example;
 import static org.myeslib.example.infra.HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY;
 import static org.myeslib.example.infra.HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT;
 
-import java.util.Map;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -47,31 +46,21 @@ public class Example {
 	Example() throws Exception {
 		
 		this.main = new Main() ;
-		
 		this.main.enableHangupSupport();
-		
 		this.registry = new SimpleRegistry();
-		
 		this.context = new DefaultCamelContext(registry);
 		
 		CamelContext context = new DefaultCamelContext(registry);
-		
 		DataSource ds = JdbcConnectionPool.create("jdbc:h2:mem:test;MODE=Oracle", "scott", "tiger");
-
 		Gson gson = new GsonFactory().create();
-		
 		HazelcastInstance hazelcastInstance = new HazelcastFactory(ds, gson).get();
-
 		JustAnotherHazelcastComponent hz = new JustAnotherHazelcastComponent(hazelcastInstance);
 		
 		context.addComponent("hz", hz);
-		
 		context.addRoutes(createRoute(hazelcastInstance));
 				
 		main.getCamelContexts().clear();
-		
 		main.getCamelContexts().add(context);
-		
 		main.setDuration(-1);
 		
 		log.info("starting...");
@@ -80,15 +69,15 @@ public class Example {
 
 	ConsumeCommandsRoute createRoute(HazelcastInstance hazelcastInstance ) {
 		
-		AggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory = new AggregateRootHistoryTxMapFactory<>();
-		
-		AggregateRootHistoryMapFactory<UUID, InventoryItemAggregateRoot> mapFactory = new AggregateRootHistoryMapFactory<>(hazelcastInstance);
-		AggregateRootSnapshotMapFactory<UUID, InventoryItemAggregateRoot> snapshotMapFactory = new AggregateRootSnapshotMapFactory<>(hazelcastInstance);
-		
+		AggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory = 
+				new AggregateRootHistoryTxMapFactory<>();
+		AggregateRootHistoryMapFactory<UUID, InventoryItemAggregateRoot> mapFactory = 
+				new AggregateRootHistoryMapFactory<>(hazelcastInstance);
+		AggregateRootSnapshotMapFactory<UUID, InventoryItemAggregateRoot> snapshotMapFactory = 
+				new AggregateRootSnapshotMapFactory<>(hazelcastInstance);
 		SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader = 
 				new SnapshotReader<>(mapFactory.get(INVENTORY_ITEM_AGGREGATE_HISTORY.name()), 
 											 snapshotMapFactory.get(INVENTORY_ITEM_LAST_SNAPSHOT.name()));
-	
 		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txProcessor = 
 				new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, INVENTORY_ITEM_AGGREGATE_HISTORY.name());	
 

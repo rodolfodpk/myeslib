@@ -5,22 +5,19 @@ import static org.myeslib.util.EventSourcingMagicHelper.applyEventsOn;
 import java.util.List;
 import java.util.Map;
 
+import lombok.AllArgsConstructor;
+
 import org.myeslib.core.AggregateRoot;
 import org.myeslib.core.Event;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.Snapshot;
 
+@AllArgsConstructor
 public class SnapshotReader<K, A extends AggregateRoot> {
     
 	private final Map<K, AggregateRootHistory> eventsMap ;
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
 	
-	public SnapshotReader(final Map<K, AggregateRootHistory> eventsMap, 
-								   final Map<K, Snapshot<A>> lastSnapshotMap) {
-		this.eventsMap = eventsMap;
-		this.lastSnapshotMap = lastSnapshotMap;
-	}
-
 	public Snapshot<A> get(final K id, final A aggregateRootFreshInstance) {
 		final AggregateRootHistory transactionHistory = getEventsOrEmptyIfNull(id);
 		final Long lastVersion = transactionHistory.getLastVersion();

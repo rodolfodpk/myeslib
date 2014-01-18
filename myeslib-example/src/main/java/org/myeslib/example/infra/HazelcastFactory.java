@@ -23,8 +23,6 @@ import com.hazelcast.core.HazelcastInstance;
 
 public class HazelcastFactory {
 	
-	// TODO entryProcessor with ServiceLocator or http://square.github.io/dagger/ ?
-
 	private final HazelcastInstance hazelcastInstance;
 	private final DataSource ds;
 	private final Gson gson;

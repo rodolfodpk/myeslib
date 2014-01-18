@@ -57,21 +57,16 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 	public void test() {
 		
 		CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID());
-		
 		command1.setService(new ServiceJustForTest());
-		
 		template.sendBody(command1);
 		
 		IncreaseInventory command2 = new IncreaseInventory(command1.getId(), 2);
-		
 		template.sendBody(command2);
 		
 		// TODO assertions
 		
 		log.info("value on aggregateRootMap: {}", aggregateMapFactory.get(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()).get(command1.getId()));
-
 		log.info("value on table: \n{}", getAggregateRootHistoryAsJson(command1.getId().toString()));
-
 		log.info("value on snapshotMap: {}", snapshotMapFactory.get(HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT.name()).get(command1.getId()));
 		
 	}

@@ -2,19 +2,18 @@ package org.myeslib.hazelcast;
 
 import java.util.ConcurrentModificationException;
 
+import lombok.AllArgsConstructor;
+
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
 
 import com.hazelcast.core.TransactionalMap;
 
+@AllArgsConstructor
 public class HazelcastEventStore<K>{
 
 	private final TransactionalMap<K, AggregateRootHistory> pastTransactionsMap ;
 	
-	public HazelcastEventStore(final TransactionalMap<K, AggregateRootHistory> pastTransactions) {
-		this.pastTransactionsMap = pastTransactions;
-	}
-
 	public void store(final K id, final UnitOfWork uow) {
 		final AggregateRootHistory history = getHistoryFor(id);
 		if (history.getLastVersion() != uow.getBaseVersion()){

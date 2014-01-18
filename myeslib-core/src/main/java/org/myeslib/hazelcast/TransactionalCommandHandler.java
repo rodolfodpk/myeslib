@@ -25,9 +25,7 @@ public class TransactionalCommandHandler<K, A extends AggregateRoot> {
 	public UnitOfWork handle(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {
 		
 		TransactionContext transactionContext = hazelcastInstance.newTransactionContext();
-		
 		transactionContext.beginTransaction(); 
-		
 		HazelcastEventStore<K> store = new HazelcastEventStore<>(txMapFactory.get(transactionContext, mapId));
 
 		UnitOfWork uow = null;
