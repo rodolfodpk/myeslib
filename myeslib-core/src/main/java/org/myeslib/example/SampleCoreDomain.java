@@ -7,19 +7,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Delegate;
 import lombok.NonNull;
 import lombok.Value;
-import lombok.experimental.FieldDefaults;
 
 import org.myeslib.core.AggregateRoot;
 import org.myeslib.core.Command;
 import org.myeslib.core.CommandHandler;
 import org.myeslib.core.Event;
 
+@SuppressWarnings("serial")
 public class SampleCoreDomain {
 
 	@AllArgsConstructor
@@ -54,8 +53,6 @@ public class SampleCoreDomain {
 		}		
 	}
 	
-	@SuppressWarnings("serial")
-	@FieldDefaults(level=AccessLevel.PUBLIC)
 	@Data
 	public static class InventoryItemAggregateRoot implements AggregateRoot {
 		
@@ -81,21 +78,18 @@ public class SampleCoreDomain {
 	
 	// commands
 	
-	@SuppressWarnings("serial")
 	@Data
 	public static class CreateInventoryItem implements Command {
 		transient ItemDescriptionGeneratorService service; 
 		@NonNull UUID id;
 	}
 	
-	@SuppressWarnings("serial")
 	@Value
 	public static class IncreaseInventory implements Command {
 		@NonNull UUID id;
 		@NonNull Integer howMany;
 	}
 	
-	@SuppressWarnings("serial")
 	@Value
 	public static class DecreaseInventory implements Command {
 		@NonNull UUID id;
@@ -104,21 +98,18 @@ public class SampleCoreDomain {
 	
 	// events 
 	
-	@SuppressWarnings("serial")
 	@Value
 	public static class InventoryItemCreated implements Event {
 		@NonNull UUID id;
 		@NonNull String description;
 	}
 	
-	@SuppressWarnings("serial")
 	@Value
 	public static class InventoryIncreased implements Event {
 		@NonNull UUID id;
 		@NonNull Integer howMany;
 	}
 
-	@SuppressWarnings("serial")
 	@Value
 	public static class InventoryDecreased implements Event {
 		@NonNull UUID id;

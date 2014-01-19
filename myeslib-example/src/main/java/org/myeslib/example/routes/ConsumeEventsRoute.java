@@ -24,13 +24,9 @@ public class ConsumeEventsRoute extends RouteBuilder {
         .process(new Processor() {
 			@Override
 			public void process(Exchange e) throws Exception {
-				
 				UUID id = e.getIn().getBody(UUID.class);
-
 				Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id, new InventoryItemAggregateRoot());
-				
 				InventoryItemAggregateRoot aggregateInstance = snapshot.getAggregateInstance();
-
 				e.getOut().setBody(aggregateInstance);
 			}
 		})

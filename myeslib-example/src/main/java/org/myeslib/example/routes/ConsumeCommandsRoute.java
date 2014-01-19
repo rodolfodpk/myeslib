@@ -27,22 +27,10 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 //		  errorHandler(deadLetterChannel("direct:dead-letter-channel")
 //				    .maximumRedeliveries(3).redeliveryDelay(5000));
 			
-	      from("direct:handle-create")
-	         .routeId("handle-create")
+	      from("direct:handle-inventory-item-command")
+	         .routeId("handle-inventory-item-command")
 	      	 .log("received = ${body}")
 	         .setHeader("id", simple("${body.getId()}"))
-	      	 .process(new ProcessInventoryItemCommand())
-	      	 .log("resulting body = ${body}");
-	      
-	      from("direct:handle-increase")
-	      	 .routeId("handle-increase")
-	      	 .setHeader("id", simple("${body.getId()}"))
-	      	 .process(new ProcessInventoryItemCommand())
-	      	 .log("resulting body = ${body}");
-	      
-	      from("direct:handle-decrease")
-	     	 .routeId("handle-decrease") 
-	      	 .setHeader("id", simple("${body.getId()}"))
 	      	 .process(new ProcessInventoryItemCommand())
 	      	 .log("resulting body = ${body}");
 	      
@@ -52,18 +40,12 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 	}
 	
 	class ProcessInventoryItemCommand implements Processor {
-
 		@Override
 		public void process(Exchange e) throws Exception {
-			
 			Command command = e.getIn().getBody(Command.class);
-			
 			UUID id = e.getIn().getHeader("id", UUID.class);
-			
 			Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id, new InventoryItemAggregateRoot());
-			
 			InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(snapshot.getAggregateInstance());
-
 			UnitOfWork uow = null;
 			try {
 				uow = txProcessor.handle(id, snapshot.getVersion(), command, commandHandler);
@@ -71,11 +53,8 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 				t.printStackTrace();
 				throw new Exception(t);
 			}
-			
 			e.getOut().setBody(uow);
-
 		}
-		
 	}
 
 }

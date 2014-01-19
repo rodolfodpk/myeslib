@@ -17,13 +17,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.Test;
+import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.SampleCoreDomain.CreateInventoryItem;
 import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
 import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.infra.GsonFactory;
 import org.myeslib.example.infra.HazelcastFactory;
 import org.myeslib.example.infra.HazelcastMaps;
-import org.myeslib.example.routes.ConsumeCommandsRoute;
 import org.myeslib.hazelcast.AggregateRootHistoryMapFactory;
 import org.myeslib.hazelcast.AggregateRootHistoryTxMapFactory;
 import org.myeslib.hazelcast.AggregateRootSnapshotMapFactory;
@@ -41,7 +41,7 @@ import com.hazelcast.core.HazelcastInstance;
 @Slf4j
 public class ConsumeCommandsRouteTest extends CamelTestSupport {
 
-	@Produce(uri = "direct:handle-create")
+	@Produce(uri = "direct:handle-inventory-item-command")
 	protected ProducerTemplate template;
 	
 	@EndpointInject(uri = "mock:result")
@@ -61,10 +61,12 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 		template.sendBody(command1);
 		
 		IncreaseInventory command2 = new IncreaseInventory(command1.getId(), 2);
-		template.sendBody(command2);
+		UnitOfWork uow = template.requestBody(command2, UnitOfWork.class);
+		
 		
 		// TODO assertions
-		
+
+		log.info("result value after sending the command: {}", uow);
 		log.info("value on aggregateRootMap: {}", aggregateMapFactory.get(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()).get(command1.getId()));
 		log.info("value on table: \n{}", getAggregateRootHistoryAsJson(command1.getId().toString()));
 		log.info("value on snapshotMap: {}", snapshotMapFactory.get(HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT.name()).get(command1.getId()));
