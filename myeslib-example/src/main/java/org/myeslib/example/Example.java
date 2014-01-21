@@ -30,7 +30,7 @@ public class Example {
 	}
 	
 	@Inject
-	Example(JustAnotherHazelcastComponent justAnotherHazelcastComponent, ConsumeCommandsRoute consumeCommandsRoute)  {
+	Example(JustAnotherHazelcastComponent justAnotherHazelcastComponent, ConsumeCommandsRoute consumeCommandsRoute) throws Exception  {
 		
 		this.main = new Main() ;
 		this.main.enableHangupSupport();
@@ -39,15 +39,13 @@ public class Example {
 		
 		CamelContext context = new DefaultCamelContext(registry);
 		context.addComponent("hz", justAnotherHazelcastComponent);
-		try {
-			context.addRoutes(consumeCommandsRoute);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	
+		context.addRoutes(consumeCommandsRoute);
 				
 		main.getCamelContexts().clear();
 		main.getCamelContexts().add(context);
 		main.setDuration(-1);
+		main.start();
 		
 		log.info("starting...");
 	
