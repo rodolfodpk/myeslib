@@ -2,6 +2,8 @@ package org.myeslib.example.infra;
 
 import javax.sql.DataSource;
 
+import lombok.Getter;
+
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.SampleCoreDomain.CreateInventoryItem;
@@ -18,24 +20,22 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MapStoreConfig;
 import com.hazelcast.config.SerializerConfig;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 
-public class HazelcastFactory {
+public class HazelcastConfigFactory {
 	
-	private final HazelcastInstance hazelcastInstance;
+	@Getter private final Config config;
 	private final DataSource ds;
 	private final Gson gson;
 
-	public HazelcastFactory(DataSource ds, Gson gson) {
+	public HazelcastConfigFactory(DataSource ds, Gson gson) {
+		config = new Config();
 		this.ds = ds;
 		this.gson = gson;
-		this.hazelcastInstance = Hazelcast.newHazelcastInstance(config());
+		configPersistence();
+		configSerialization();
 	}
 
-	private Config config() {
-		
-		Config config = new Config();
+	private void configPersistence() {
 		
 		MapConfig mapConfig = new MapConfig();
 		mapConfig.setName(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name());
@@ -48,14 +48,12 @@ public class HazelcastFactory {
 		mapStoreConfig.setWriteDelaySeconds(0);
 		
 		mapConfig.setMapStoreConfig(mapStoreConfig);
-		config.addMapConfig(mapConfig);
-
-		gson(config);
 		
-		return config;
+		config.addMapConfig(mapConfig);
+		
 	}
 
-private void gson(Config config) {
+private void configSerialization() {
 		
 		SerializerConfig sc1 = new SerializerConfig().setImplementation(new GsonSerializer(gson, 1, AggregateRootHistory.class)).setTypeClass(AggregateRootHistory.class);
 		SerializerConfig sc2 = new SerializerConfig().setImplementation(new GsonSerializer(gson, 2, UnitOfWork.class)).setTypeClass(UnitOfWork.class);
@@ -78,10 +76,6 @@ private void gson(Config config) {
 		config.getSerializationConfig().addSerializerConfig(sc7);
 		config.getSerializationConfig().addSerializerConfig(sc8);
 		
-	}
-
-	public HazelcastInstance get() {
-		return hazelcastInstance;
 	}
 
 }

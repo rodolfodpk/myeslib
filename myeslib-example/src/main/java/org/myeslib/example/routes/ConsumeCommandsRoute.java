@@ -2,7 +2,7 @@ package org.myeslib.example.routes;
 
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
+import javax.inject.Inject;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -15,11 +15,17 @@ import org.myeslib.example.SampleCoreDomain.InventoryItemCommandHandler;
 import org.myeslib.hazelcast.SnapshotReader;
 import org.myeslib.hazelcast.TransactionalCommandHandler;
 
-@AllArgsConstructor
 public class ConsumeCommandsRoute extends RouteBuilder {
-	
+
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
 	final TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txProcessor;
+	
+	@Inject
+	public ConsumeCommandsRoute(SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
+								TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txProcessor) {
+		this.snapshotReader = snapshotReader;
+		this.txProcessor = txProcessor;
+	}
 	
 	@Override
 	public void configure() throws Exception {
@@ -31,15 +37,16 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 	         .routeId("handle-inventory-item-command")
 	      	 .log("received = ${body}")
 	         .setHeader("id", simple("${body.getId()}"))
-	      	 .process(new ProcessInventoryItemCommand())
+	         .process(new ItemInventoryProcessor())
 	      	 .log("resulting body = ${body}");
 	      
 	      from("direct:dead-letter-channel")
 	         .log("error !!");
 
 	}
+
 	
-	class ProcessInventoryItemCommand implements Processor {
+	private class ItemInventoryProcessor implements Processor {
 		@Override
 		public void process(Exchange e) throws Exception {
 			Command command = e.getIn().getBody(Command.class);

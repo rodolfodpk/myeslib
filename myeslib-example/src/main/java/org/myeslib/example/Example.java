@@ -1,11 +1,6 @@
 package org.myeslib.example;
 
-import static org.myeslib.example.infra.HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY;
-import static org.myeslib.example.infra.HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT;
-
-import java.util.UUID;
-
-import javax.sql.DataSource;
+import javax.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,37 +8,29 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.main.Main;
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
-import org.myeslib.example.infra.GsonFactory;
-import org.myeslib.example.infra.HazelcastFactory;
 import org.myeslib.example.routes.ConsumeCommandsRoute;
-import org.myeslib.hazelcast.AggregateRootHistoryMapFactory;
-import org.myeslib.hazelcast.AggregateRootHistoryTxMapFactory;
-import org.myeslib.hazelcast.AggregateRootSnapshotMapFactory;
 import org.myeslib.hazelcast.JustAnotherHazelcastComponent;
-import org.myeslib.hazelcast.SnapshotReader;
-import org.myeslib.hazelcast.TransactionalCommandHandler;
 
-import com.google.gson.Gson;
-import com.hazelcast.core.HazelcastInstance;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 @Slf4j
 public class Example {
 	
-	protected final Main main;
-	protected final SimpleRegistry registry;
-	protected final CamelContext context;
+    final Main main;
+	final SimpleRegistry registry;
+	final CamelContext context;
 	
 	public static void main(String[] args) throws Exception {
-		
-		Example example = new Example() ;
-		
+
+		Injector injector = Guice.createInjector(new ExampleModule());
+	    Example example = injector.getInstance(Example.class);
 		example.main.run();
 		
 	}
 	
-	Example() throws Exception {
+	@Inject
+	Example(JustAnotherHazelcastComponent justAnotherHazelcastComponent, ConsumeCommandsRoute consumeCommandsRoute)  {
 		
 		this.main = new Main() ;
 		this.main.enableHangupSupport();
@@ -51,13 +38,12 @@ public class Example {
 		this.context = new DefaultCamelContext(registry);
 		
 		CamelContext context = new DefaultCamelContext(registry);
-		DataSource ds = JdbcConnectionPool.create("jdbc:h2:mem:test;MODE=Oracle", "scott", "tiger");
-		Gson gson = new GsonFactory().create();
-		HazelcastInstance hazelcastInstance = new HazelcastFactory(ds, gson).get();
-		JustAnotherHazelcastComponent hz = new JustAnotherHazelcastComponent(hazelcastInstance);
-		
-		context.addComponent("hz", hz);
-		context.addRoutes(createRoute(hazelcastInstance));
+		context.addComponent("hz", justAnotherHazelcastComponent);
+		try {
+			context.addRoutes(consumeCommandsRoute);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 				
 		main.getCamelContexts().clear();
 		main.getCamelContexts().add(context);
@@ -67,23 +53,4 @@ public class Example {
 	
 	}
 
-	ConsumeCommandsRoute createRoute(HazelcastInstance hazelcastInstance ) {
-		
-		AggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory = 
-				new AggregateRootHistoryTxMapFactory<>();
-		AggregateRootHistoryMapFactory<UUID, InventoryItemAggregateRoot> mapFactory = 
-				new AggregateRootHistoryMapFactory<>(hazelcastInstance);
-		AggregateRootSnapshotMapFactory<UUID, InventoryItemAggregateRoot> snapshotMapFactory = 
-				new AggregateRootSnapshotMapFactory<>(hazelcastInstance);
-		SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader = 
-				new SnapshotReader<>(mapFactory.get(INVENTORY_ITEM_AGGREGATE_HISTORY.name()), 
-											 snapshotMapFactory.get(INVENTORY_ITEM_LAST_SNAPSHOT.name()));
-		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txProcessor = 
-				new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, INVENTORY_ITEM_AGGREGATE_HISTORY.name());	
-
-		return new ConsumeCommandsRoute(snapshotReader, txProcessor);
-
-	}
-	
-	
 }
