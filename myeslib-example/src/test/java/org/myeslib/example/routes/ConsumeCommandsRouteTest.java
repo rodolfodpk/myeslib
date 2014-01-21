@@ -1,5 +1,8 @@
 package org.myeslib.example.routes;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -15,11 +18,13 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.ExampleModule;
 import org.myeslib.example.SampleCoreDomain.CreateInventoryItem;
 import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
+import org.myeslib.example.SampleCoreDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.HazelcastMaps;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -27,9 +32,12 @@ import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.util.ByteArrayMapper;
 
 import com.google.gson.Gson;
+import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.util.Modules;
 
 @Slf4j
 public class ConsumeCommandsRouteTest extends CamelTestSupport {
@@ -45,10 +53,21 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 	DataSource ds;
 	
 	@Inject
-	ConsumeCommandsRoute consumeCommandsRoute;
+	ConsumeCommandsRoute consumeCommandsRoute; 
+	
+	@Inject
+	ItemDescriptionGeneratorService service;
 	
 	@BeforeClass public static void staticSetUp() throws Exception {
-		injector = Guice.createInjector(new ExampleModule());
+		injector = Guice.createInjector(Modules.override(new ExampleModule()).with(new TestModule()));
+	}
+
+	public static class TestModule implements Module {
+		@Override
+		public void configure(Binder binder) {
+			binder.bind(ItemDescriptionGeneratorService.class)
+				.toInstance(Mockito.mock(ItemDescriptionGeneratorService.class));
+		}
 	}
 
 	@Before public void setUp() throws Exception {
@@ -59,8 +78,10 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 	@Test
 	public void test() {
 		
+		when(service.generate(any(UUID.class))).thenReturn("an inventory item description from mock");
+		
 		CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID());
-		command1.setService(new ServiceJustForTest());
+		command1.setService(service);;
 		template.sendBody(command1);
 		
 		IncreaseInventory command2 = new IncreaseInventory(command1.getId(), 2);

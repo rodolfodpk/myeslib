@@ -12,6 +12,7 @@ import org.h2.jdbcx.JdbcConnectionPool;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.Snapshot;
 import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
+import org.myeslib.example.SampleCoreDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.GsonFactory;
 import org.myeslib.example.infra.HazelcastConfigFactory;
 import org.myeslib.example.infra.HazelcastMaps;
@@ -29,7 +30,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
 public class ExampleModule extends AbstractModule {
-
+	
 	@Provides
 	@Singleton
 	public DataSource datasource() {
@@ -84,7 +85,15 @@ public class ExampleModule extends AbstractModule {
 	
 	@Override
 	protected void configure() {
-		
+		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class);
 	}
+	
 
+}
+
+class ServiceJustForTest implements ItemDescriptionGeneratorService {
+	@Override
+	public String generate(UUID id) {
+		return "a really nice description for this item from concrete service impl";
+	}
 }
