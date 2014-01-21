@@ -15,6 +15,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.ExampleModule;
 import org.myeslib.example.SampleCoreDomain.CreateInventoryItem;
@@ -25,6 +26,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.util.ByteArrayMapper;
 
+import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -64,8 +66,12 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 		IncreaseInventory command2 = new IncreaseInventory(command1.getId(), 2);
 		UnitOfWork uow = template.requestBody(command2, UnitOfWork.class);
 		
-		// TODO assertions
-
+		String fromDatabaseAsJson = getAggregateRootHistoryAsJson(command1.getId().toString());
+		AggregateRootHistory historyFromDatabase = injector.getInstance(Gson.class).fromJson(fromDatabaseAsJson, AggregateRootHistory.class);
+		UnitOfWork lastUow = historyFromDatabase.getUnitsOfWork().get(historyFromDatabase.getUnitsOfWork().size()-1);
+		
+		assertEquals(uow, lastUow);
+		
 		log.info("result value after sending the command: {}", uow);
 //		log.info("value on aggregateRootMap: {}", aggregateMapFactory.get(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()).get(command1.getId()));
 //		log.info("value on table: \n{}", getAggregateRootHistoryAsJson(command1.getId().toString()));
