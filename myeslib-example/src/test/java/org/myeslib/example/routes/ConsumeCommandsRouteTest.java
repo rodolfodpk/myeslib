@@ -20,12 +20,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.myeslib.data.AggregateRootHistory;
+import org.myeslib.data.Snapshot;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.ExampleModule;
 import org.myeslib.example.SampleCoreDomain.CreateInventoryItem;
 import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
+import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleCoreDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.HazelcastMaps;
+import org.myeslib.hazelcast.SnapshotReader;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
@@ -57,6 +60,9 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 	
 	@Inject
 	ItemDescriptionGeneratorService service;
+	
+	@Inject
+	SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader; 
 	
 	@BeforeClass public static void staticSetUp() throws Exception {
 		injector = Guice.createInjector(Modules.override(new ExampleModule()).with(new TestModule()));
@@ -93,7 +99,11 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 		
 		assertEquals(uow, lastUow);
 		
-		log.info("result value after sending the command: {}", uow);
+		Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(command1.getId(), new InventoryItemAggregateRoot());
+		
+		assertTrue(snapshot.getAggregateInstance().getAvaliable() == 2);
+		
+//		log.info("result value after sending the command: {}", uow);
 //		log.info("value on aggregateRootMap: {}", aggregateMapFactory.get(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()).get(command1.getId()));
 //		log.info("value on table: \n{}", getAggregateRootHistoryAsJson(command1.getId().toString()));
 //		log.info("value on snapshotMap: {}", snapshotMapFactory.get(HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT.name()).get(command1.getId()));
