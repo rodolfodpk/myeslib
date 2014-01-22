@@ -60,6 +60,7 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 				t.printStackTrace();
 				throw new Exception(t);
 			}
+			e.getOut().setHeader("id", id);
 			e.getOut().setBody(uow);
 		}
 	}

@@ -33,7 +33,6 @@ subprojects {
 	apply plugin: 'idea'
     apply plugin: 'java'
 	apply plugin: 'eclipse'
-	apply plugin: 'application'
 	
 	eclipse.classpath.downloadJavadoc = true
 	
@@ -71,6 +70,7 @@ project(':myeslib-core') {
 }
 
 project(':myeslib-example') {
+	apply plugin: 'application'
 	mainClassName = "org.myeslib.example.Example"
 	dependencies {
 		compile project(':myeslib-core')

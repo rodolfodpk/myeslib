@@ -103,7 +103,7 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 		
 		assertTrue(snapshot.getAggregateInstance().getAvaliable() == 2);
 		
-//		log.info("result value after sending the command: {}", uow);
+		log.info("result value after sending the command: {}", uow);
 //		log.info("value on aggregateRootMap: {}", aggregateMapFactory.get(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()).get(command1.getId()));
 //		log.info("value on table: \n{}", getAggregateRootHistoryAsJson(command1.getId().toString()));
 //		log.info("value on snapshotMap: {}", snapshotMapFactory.get(HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT.name()).get(command1.getId()));

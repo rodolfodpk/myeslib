@@ -34,16 +34,13 @@ public class AggregateRootHistoryMapStore implements MapStore<UUID, AggregateRoo
 	private final String tableName;
 	private final Gson gson;
 	
-	public AggregateRootHistoryMapStore(DataSource ds, String tableName, Gson gson, boolean createTableIfNecessary){
+	public AggregateRootHistoryMapStore(DataSource ds, String tableName, Gson gson){
 		this.dbi = new DBI(ds);
 		this.tableName = tableName;
 		this.gson = gson;
-		if (createTableIfNecessary){
-			createTableForQueue();
-		}
 	}
-
-	private void createTableForQueue() {
+	
+	public void createTableForQueue() {
 		log.warn(String.format("checking if table %s exists for queue storage", tableName));
 		dbi.inTransaction(new TransactionCallback<Integer>() {
 			@Override
@@ -56,10 +53,6 @@ public class AggregateRootHistoryMapStore implements MapStore<UUID, AggregateRoo
 				return 0;
 			}
 		}) ;
-	}
-	
-	private String tableName() {
-		return tableName;
 	}
 	
 	@Override
@@ -117,7 +110,7 @@ public class AggregateRootHistoryMapStore implements MapStore<UUID, AggregateRoo
 
 	@Override
 	public void deleteAll(final Collection<UUID> ids) {
-		log.info(String.format("deleting all within table %s", tableName()));
+		log.info(String.format("deleting all within table %s", tableName));
 		dbi.inTransaction(new TransactionCallback<Integer>() {
 			@Override
 			public Integer inTransaction(Handle h, TransactionStatus ts)
@@ -140,7 +133,7 @@ public class AggregateRootHistoryMapStore implements MapStore<UUID, AggregateRoo
 
 	@Override
 	public void storeAll(final Map<UUID, AggregateRootHistory> id_value_pairs) {
-		log.info(String.format("storing all within table %s", tableName()));		
+		log.info(String.format("storing all within table %s", tableName));		
 		
 		final Set<UUID> currentKeysOnTable = loadAllKeys();
 		
@@ -155,7 +148,7 @@ public class AggregateRootHistoryMapStore implements MapStore<UUID, AggregateRoo
 						final String id = entry.getKey().toString();
 						final String asJson = gson.toJson(entry.getValue());
 						pb.add().bind("id", id).bind("aggregate_root_data", asJson.getBytes());		
-						log.debug(String.format("inserting with id %s into table %s", id, tableName()));	
+						log.debug(String.format("inserting with id %s into table %s", id, tableName));	
 					}
 				}
 				return pb.execute().length;
@@ -173,7 +166,7 @@ public class AggregateRootHistoryMapStore implements MapStore<UUID, AggregateRoo
 						final String id = entry.getKey().toString();
 						final String asJson = gson.toJson(entry.getValue());
 						pb.add().bind("id", id).bind("aggregate_root_data", asJson.getBytes());	
-						log.debug(String.format("updating with id %s into table %s", id, tableName()));	
+						log.debug(String.format("updating with id %s into table %s", id, tableName));	
 					}
 				}
 				return pb.execute().length;

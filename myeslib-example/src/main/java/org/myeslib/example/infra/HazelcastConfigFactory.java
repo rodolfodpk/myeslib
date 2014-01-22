@@ -42,7 +42,9 @@ public class HazelcastConfigFactory {
 		mapConfig.setInMemoryFormat(MapConfig.InMemoryFormat.OBJECT);
 
 		MapStoreConfig mapStoreConfig = new MapStoreConfig();
-		AggregateRootHistoryMapStore store = new AggregateRootHistoryMapStore(ds, HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name(), gson, true);
+		AggregateRootHistoryMapStore store = new AggregateRootHistoryMapStore(ds, HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name(), gson);
+		store.createTableForQueue();
+		
 		mapStoreConfig.setImplementation(store);
 		mapStoreConfig.setEnabled(true);
 		mapStoreConfig.setWriteDelaySeconds(0);
