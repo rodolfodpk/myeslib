@@ -19,7 +19,7 @@ Your IDE must support http://projectlombok.org/
 Disclaimer
 ==========
 
-There are 2 packages with (intact) code from :
+There are 2 packages within module 3rd-party with (intact) code from :
 
 http://gsd.di.uminho.pt/members/jop/mm4j -> multimethods magic (thanks José Orlando)
 

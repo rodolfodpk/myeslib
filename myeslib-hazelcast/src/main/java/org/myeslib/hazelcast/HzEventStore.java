@@ -6,11 +6,12 @@ import lombok.AllArgsConstructor;
 
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
+import org.myeslib.storage.EventStore;
 
 import com.hazelcast.core.TransactionalMap;
 
 @AllArgsConstructor
-public class HazelcastEventStore<K>{
+public class HzEventStore<K> implements EventStore<K>{
 
 	private final TransactionalMap<K, AggregateRootHistory> pastTransactionsMap ;
 	

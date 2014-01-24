@@ -9,7 +9,7 @@ import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.transaction.TransactionContext;
 
 @AllArgsConstructor
-public class AggregateRootHistoryTxMapFactory<K, A extends AggregateRoot> {
+public class HzAggregateRootHistoryTxMapFactory<K, A extends AggregateRoot> {
 	
 	public TransactionalMap<K, AggregateRootHistory> get(final TransactionContext context, final String mapId) {
 		TransactionalMap<K, AggregateRootHistory> aggregateRootHistoryMap = context.getMap(mapId);

@@ -22,10 +22,10 @@ import org.myeslib.data.Snapshot;
 import org.myeslib.example.SampleCoreDomain.InventoryDecreased;
 import org.myeslib.example.SampleCoreDomain.InventoryIncreased;
 import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
-import org.myeslib.hazelcast.SnapshotReader;
+import org.myeslib.hazelcast.HzSnapshotReader;
 
 @RunWith(MockitoJUnitRunner.class) 
-public class SnapshotReaderTest {
+public class HzSnapshotReaderTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test 
@@ -37,7 +37,7 @@ public class SnapshotReaderTest {
 		
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 		
-		SnapshotReader<Long, InventoryItemAggregateRoot> st = new SnapshotReader<Long, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap);
+		HzSnapshotReader<Long, InventoryItemAggregateRoot> st = new HzSnapshotReader<Long, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap);
 		
 		when(eventsMap.get(id)).thenReturn(null);
 		when(lastSnapshotMap.get(id)).thenReturn(null);
@@ -71,7 +71,7 @@ public class SnapshotReaderTest {
 		
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 
-		SnapshotReader<UUID, InventoryItemAggregateRoot> st = new SnapshotReader<>(eventsMap, lastSnapshotMap);
+		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<>(eventsMap, lastSnapshotMap);
 
 		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id, freshInstance);
 		
@@ -115,7 +115,7 @@ public class SnapshotReaderTest {
 	
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 
-		SnapshotReader<UUID, InventoryItemAggregateRoot> st = new SnapshotReader<>(eventsMap, lastSnapshotMap);
+		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<>(eventsMap, lastSnapshotMap);
 
 		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id, freshInstance);
 		

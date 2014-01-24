@@ -9,7 +9,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.main.Main;
 import org.myeslib.example.routes.ConsumeCommandsRoute;
-import org.myeslib.hazelcast.JustAnotherHazelcastComponent;
+import org.myeslib.hazelcast.HzCamelComponent;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -30,7 +30,7 @@ public class Example {
 	}
 	
 	@Inject
-	Example(JustAnotherHazelcastComponent justAnotherHazelcastComponent, ConsumeCommandsRoute consumeCommandsRoute) throws Exception  {
+	Example(HzCamelComponent justAnotherHazelcastComponent, ConsumeCommandsRoute consumeCommandsRoute) throws Exception  {
 		
 		this.main = new Main() ;
 		this.main.enableHangupSupport();

@@ -13,8 +13,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.myeslib.core.Command;
 import org.myeslib.core.Event;
-import org.myeslib.data.AggregateRootHistory;
-import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
 import org.myeslib.example.SampleCoreDomain.InventoryIncreased;
 

@@ -10,12 +10,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.myeslib.data.Snapshot;
 import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
-import org.myeslib.hazelcast.SnapshotReader;
+import org.myeslib.hazelcast.HzSnapshotReader;
 
 @AllArgsConstructor
 public class ConsumeEventsRoute extends RouteBuilder {
 	
-	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
+	final HzSnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
 	
 	@Override
 	public void configure() throws Exception {

@@ -22,6 +22,7 @@ import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleCoreDomain.InventoryItemCommandHandler;
 import org.myeslib.example.SampleCoreDomain.InventoryItemCreated;
 import org.myeslib.example.SampleCoreDomain.ItemDescriptionGeneratorService;
+import org.myeslib.storage.TransactionalCommandHandler;
 
 import com.google.common.base.Function;
 import com.hazelcast.core.HazelcastInstance;
@@ -29,13 +30,13 @@ import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.transaction.TransactionContext;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TransactionalCommandHandlerTest {
+public class HzTransactionalCommandHandlerTest {
 
 	@Mock
 	HazelcastInstance hazelcastInstance;
 	
 	@Mock
-	AggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory ;
+	HzAggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory ;
 	
 	String mapId = "map4test";
 	
@@ -76,7 +77,7 @@ public class TransactionalCommandHandlerTest {
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
 		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = 
-				new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId);
+				new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId);
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
@@ -110,7 +111,7 @@ public class TransactionalCommandHandlerTest {
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
 		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = 
-				new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId);
+				new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId);
 		
 		try {
 			tcp.handle(id, version, command, commandHandler);
@@ -141,7 +142,7 @@ public class TransactionalCommandHandlerTest {
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
 		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = 
-				new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId);
+				new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId);
 		
 		try {
 			tcp.handle(id, version, command, commandHandler);

@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.hazelcast.nio.serialization.ByteArraySerializer;
 
 @AllArgsConstructor
-public class GsonSerializer implements ByteArraySerializer<Object> {
+public class HzGsonSerializer implements ByteArraySerializer<Object> {
 
     final Gson gson ;
     final int type ;

@@ -28,7 +28,7 @@ import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
 import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleCoreDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.HazelcastMaps;
-import org.myeslib.hazelcast.SnapshotReader;
+import org.myeslib.storage.SnapshotReader;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;

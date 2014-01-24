@@ -11,9 +11,10 @@ import org.myeslib.core.AggregateRoot;
 import org.myeslib.core.Event;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.Snapshot;
+import org.myeslib.storage.SnapshotReader;
 
 @AllArgsConstructor
-public class SnapshotReader<K, A extends AggregateRoot> {
+public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
     
 	private final Map<K, AggregateRootHistory> eventsMap ;
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 

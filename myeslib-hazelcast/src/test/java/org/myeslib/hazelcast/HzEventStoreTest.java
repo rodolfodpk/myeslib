@@ -24,12 +24,11 @@ import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
 import org.myeslib.example.SampleCoreDomain.InventoryIncreased;
-import org.myeslib.hazelcast.HazelcastEventStore;
 
 import com.hazelcast.core.TransactionalMap;
 
 @RunWith(MockitoJUnitRunner.class) 
-public class HazelcastEventStoreTest {
+public class HzEventStoreTest {
 	
 	@Mock
 	TransactionalMap<UUID, AggregateRootHistory> mapWithUuidKey;
@@ -51,7 +50,7 @@ public class HazelcastEventStoreTest {
 		// first get on map will returns null, second will returns toStore 
 		when(mapWithUuidKey.get(id)).thenReturn(null, toStore);
 		
-		HazelcastEventStore<UUID> store = new HazelcastEventStore<>(mapWithUuidKey);
+		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey);
 		store.store(id, t);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
@@ -83,7 +82,7 @@ public class HazelcastEventStoreTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(toStore);
 		
-		HazelcastEventStore<UUID> store = new HazelcastEventStore<>(mapWithUuidKey);
+		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey);
 		UnitOfWork t2 = UnitOfWork.create(command, 1l, events);
 		store.store(id, t2);
 
@@ -125,7 +124,7 @@ public class HazelcastEventStoreTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(toStore);
 
-		HazelcastEventStore<UUID> store = new HazelcastEventStore<>(mapWithUuidKey);
+		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey);
 		UnitOfWork t2 = UnitOfWork.create(command, 0l, events);
 		store.store(id, t2);
 
@@ -146,7 +145,7 @@ public class HazelcastEventStoreTest {
 		// first get on map will returns null, second will returns toStore 
 		when(mapWithLongKey.get(id)).thenReturn(null, toStore);
 		
-		HazelcastEventStore<Long> store = new HazelcastEventStore<>(mapWithLongKey);
+		HzEventStore<Long> store = new HzEventStore<>(mapWithLongKey);
 		store.store(id, t);
 
 		ArgumentCaptor<Long> argumentKey = ArgumentCaptor.forClass(Long.class);

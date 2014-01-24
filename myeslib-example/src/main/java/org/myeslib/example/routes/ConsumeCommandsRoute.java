@@ -12,8 +12,8 @@ import org.myeslib.data.Snapshot;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleCoreDomain.InventoryItemCommandHandler;
-import org.myeslib.hazelcast.SnapshotReader;
-import org.myeslib.hazelcast.TransactionalCommandHandler;
+import org.myeslib.storage.SnapshotReader;
+import org.myeslib.storage.TransactionalCommandHandler;
 
 public class ConsumeCommandsRoute extends RouteBuilder {
 

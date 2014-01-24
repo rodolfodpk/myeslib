@@ -28,20 +28,20 @@ import com.google.gson.Gson;
 import com.hazelcast.core.MapStore;
 
 @Slf4j
-public class AggregateRootHistoryMapStore implements MapStore<UUID, AggregateRootHistory>{
+public class HzAggregateRootHistoryMapStore implements MapStore<UUID, AggregateRootHistory>{
 
 	private final DBI dbi;
 	private final String tableName;
 	private final Gson gson;
 	
-	public AggregateRootHistoryMapStore(DataSource ds, String tableName, Gson gson){
+	public HzAggregateRootHistoryMapStore(DataSource ds, String tableName, Gson gson){
 		this.dbi = new DBI(ds);
 		this.tableName = tableName;
 		this.gson = gson;
 	}
 	
-	public void createTableForQueue() {
-		log.warn(String.format("checking if table %s exists for queue storage", tableName));
+	public void createTableForMap() {
+		log.warn(String.format("checking if table %s exists for map storage", tableName));
 		dbi.inTransaction(new TransactionCallback<Integer>() {
 			@Override
 			public Integer inTransaction(Handle h, TransactionStatus ts)

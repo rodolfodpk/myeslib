@@ -17,10 +17,12 @@ import org.myeslib.example.infra.GsonFactory;
 import org.myeslib.example.infra.HazelcastConfigFactory;
 import org.myeslib.example.infra.HazelcastMaps;
 import org.myeslib.example.routes.ConsumeCommandsRoute;
-import org.myeslib.hazelcast.AggregateRootHistoryTxMapFactory;
-import org.myeslib.hazelcast.JustAnotherHazelcastComponent;
-import org.myeslib.hazelcast.SnapshotReader;
-import org.myeslib.hazelcast.TransactionalCommandHandler;
+import org.myeslib.hazelcast.HzAggregateRootHistoryTxMapFactory;
+import org.myeslib.hazelcast.HzCamelComponent;
+import org.myeslib.hazelcast.HzSnapshotReader;
+import org.myeslib.hazelcast.HzTransactionalCommandHandler;
+import org.myeslib.storage.SnapshotReader;
+import org.myeslib.storage.TransactionalCommandHandler;
 
 import com.google.gson.Gson;
 import com.google.inject.AbstractModule;
@@ -57,8 +59,8 @@ public class ExampleModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public JustAnotherHazelcastComponent create(HazelcastInstance hazelcastInstance){
-		return new JustAnotherHazelcastComponent(hazelcastInstance);
+	public HzCamelComponent create(HazelcastInstance hazelcastInstance){
+		return new HzCamelComponent(hazelcastInstance);
 	}
 	
 	@Provides
@@ -66,14 +68,14 @@ public class ExampleModule extends AbstractModule {
 	public SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader(HazelcastInstance hazelcastInstance) {
 		Map<UUID, AggregateRootHistory> historyMap = hazelcastInstance.getMap(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name());
 		Map<UUID, Snapshot<InventoryItemAggregateRoot>> snapshotMap = hazelcastInstance.getMap(HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT.name());
-		return new SnapshotReader<UUID, InventoryItemAggregateRoot>(historyMap, snapshotMap);
+		return new HzSnapshotReader<UUID, InventoryItemAggregateRoot>(historyMap, snapshotMap);
 	}
 
 	@Provides
 	@Singleton
 	public TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txCommandHandler(HazelcastInstance hazelcastInstance) {
-		AggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory = new AggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot>(); 
-		return new TransactionalCommandHandler<>(hazelcastInstance, txMapFactory, INVENTORY_ITEM_AGGREGATE_HISTORY.name());
+		HzAggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory = new HzAggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot>(); 
+		return new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, INVENTORY_ITEM_AGGREGATE_HISTORY.name());
 	}
 
 	@Provides
