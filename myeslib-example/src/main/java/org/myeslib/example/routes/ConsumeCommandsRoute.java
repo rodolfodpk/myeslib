@@ -10,8 +10,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.myeslib.core.Command;
 import org.myeslib.data.Snapshot;
 import org.myeslib.data.UnitOfWork;
-import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
-import org.myeslib.example.SampleCoreDomain.InventoryItemCommandHandler;
+import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
+import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.storage.SnapshotReader;
 import org.myeslib.storage.TransactionalCommandHandler;
 

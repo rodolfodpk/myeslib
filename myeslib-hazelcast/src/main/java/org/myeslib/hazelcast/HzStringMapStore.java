@@ -14,7 +14,6 @@ import javax.sql.DataSource;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.myeslib.data.AggregateRootHistory;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.PreparedBatch;
@@ -24,20 +23,17 @@ import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.util.ByteArrayMapper;
 import org.skife.jdbi.v2.util.StringMapper;
 
-import com.google.gson.Gson;
 import com.hazelcast.core.MapStore;
 
 @Slf4j
-public class HzAggregateRootHistoryMapStore implements MapStore<UUID, AggregateRootHistory>{
+public class HzStringMapStore implements MapStore<UUID, String>{
 
 	private final DBI dbi;
 	private final String tableName;
-	private final Gson gson;
 	
-	public HzAggregateRootHistoryMapStore(DataSource ds, String tableName, Gson gson){
+	public HzStringMapStore(DataSource ds, String tableName){
 		this.dbi = new DBI(ds);
 		this.tableName = tableName;
-		this.gson = gson;
 	}
 	
 	public void createTableForMap() {
@@ -75,10 +71,10 @@ public class HzAggregateRootHistoryMapStore implements MapStore<UUID, AggregateR
 	}
 	
 	@Override
-	public AggregateRootHistory load(final UUID id) {
-		AggregateRootHistory result = dbi.withHandle(new HandleCallback<AggregateRootHistory>() {
+	public String load(final UUID id) {
+		String result = dbi.withHandle(new HandleCallback<String>() {
 			@Override
-			public AggregateRootHistory withHandle(Handle h) throws Exception {
+			public String withHandle(Handle h) throws Exception {
 				byte[] clob = dbi.withHandle(new HandleCallback<byte[]>() {
 					@Override
 					public byte[] withHandle(Handle h) throws Exception {
@@ -87,16 +83,15 @@ public class HzAggregateRootHistoryMapStore implements MapStore<UUID, AggregateR
 						 .map(ByteArrayMapper.FIRST).first();
 					}
 				});
-				AggregateRootHistory _result = clob == null ? null : gson.fromJson(new String(clob), AggregateRootHistory.class);
-				return _result; 
+				return clob == null ? null : new String(clob); 
 			}
 		});
 		return result;
 	}
 
 	@Override
-	public Map<UUID, AggregateRootHistory> loadAll(Collection<UUID> ids) {
-		Map<UUID, AggregateRootHistory> result = new HashMap<>();
+	public Map<UUID, String> loadAll(Collection<UUID> ids) {
+		Map<UUID, String> result = new HashMap<>();
 		for (UUID id : ids){
 			result.put(id, load(id));
 		}
@@ -125,14 +120,14 @@ public class HzAggregateRootHistoryMapStore implements MapStore<UUID, AggregateR
 	}
 
 	@Override
-	public void store(UUID id, AggregateRootHistory value) {
-		Map<UUID, AggregateRootHistory> map = new HashMap<>();
+	public void store(UUID id, String value) {
+		Map<UUID, String> map = new HashMap<>();
 		map.put(id, value);
 		storeAll(map);
 	}
 
 	@Override
-	public void storeAll(final Map<UUID, AggregateRootHistory> id_value_pairs) {
+	public void storeAll(final Map<UUID, String> id_value_pairs) {
 		log.info(String.format("storing all within table %s", tableName));		
 		
 		final Set<UUID> currentKeysOnTable = loadAllKeys();
@@ -142,12 +137,12 @@ public class HzAggregateRootHistoryMapStore implements MapStore<UUID, AggregateR
 			public Integer inTransaction(Handle h, TransactionStatus ts)
 					throws Exception {
 				PreparedBatch pb = h.prepareBatch(String.format("insert into %s values (:id, :aggregate_root_data)", tableName));
-				for (Entry<UUID, AggregateRootHistory> entry : id_value_pairs.entrySet()){
+				for (Entry<UUID, String> entry : id_value_pairs.entrySet()){
 					// lets insert only the new ones
 					if (!currentKeysOnTable.contains(entry.getKey())){
 						final String id = entry.getKey().toString();
-						final String asJson = gson.toJson(entry.getValue());
-						pb.add().bind("id", id).bind("aggregate_root_data", asJson.getBytes());		
+						final String value = entry.getValue();
+						pb.add().bind("id", id).bind("aggregate_root_data", value.getBytes());		
 						log.debug(String.format("inserting with id %s into table %s", id, tableName));	
 					}
 				}
@@ -160,12 +155,12 @@ public class HzAggregateRootHistoryMapStore implements MapStore<UUID, AggregateR
 			public Integer inTransaction(Handle h, TransactionStatus ts)
 					throws Exception {
 				PreparedBatch pb = h.prepareBatch(String.format("update %s set aggregate_root_data = :aggregate_root_data where id = :id", tableName));
-				for (Entry<UUID, AggregateRootHistory> entry : id_value_pairs.entrySet()){
+				for (Entry<UUID, String> entry : id_value_pairs.entrySet()){
 					// lets update the existing
 					if (currentKeysOnTable.contains(entry.getKey())){
 						final String id = entry.getKey().toString();
-						final String asJson = gson.toJson(entry.getValue());
-						pb.add().bind("id", id).bind("aggregate_root_data", asJson.getBytes());	
+						final String value = entry.getValue();
+						pb.add().bind("id", id).bind("aggregate_root_data", value.getBytes());	
 						log.debug(String.format("updating with id %s into table %s", id, tableName));	
 					}
 				}

@@ -10,9 +10,11 @@ import org.myeslib.core.AggregateRoot;
 import org.myeslib.core.Command;
 import org.myeslib.core.CommandHandler;
 import org.myeslib.core.Event;
+import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.storage.TransactionalCommandHandler;
 
+import com.google.common.base.Function;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
 
@@ -20,8 +22,10 @@ import com.hazelcast.transaction.TransactionContext;
 public class HzTransactionalCommandHandler<K, A extends AggregateRoot> implements TransactionalCommandHandler<K, A> {
 
 	private final HazelcastInstance hazelcastInstance;
-	private final HzAggregateRootHistoryTxMapFactory<K, A> txMapFactory;
+	private final HzStringTxMapFactory<K> txMapFactory;
 	private final String mapId;
+	private final Function<String, AggregateRootHistory> fromStringFunction ;
+	private final Function<AggregateRootHistory, String> toStringFunction ;
 	
 	/* (non-Javadoc)
 	 * @see org.myeslib.hazelcast.ITransactionalCommandHandler#handle(K, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
@@ -31,7 +35,7 @@ public class HzTransactionalCommandHandler<K, A extends AggregateRoot> implement
 		
 		TransactionContext transactionContext = hazelcastInstance.newTransactionContext();
 		transactionContext.beginTransaction(); 
-		HzEventStore<K> store = new HzEventStore<>(txMapFactory.get(transactionContext, mapId));
+		HzEventStore<K> store = new HzEventStore<>(txMapFactory.get(transactionContext, mapId), toStringFunction, fromStringFunction);
 
 		UnitOfWork uow = null;
 		try {

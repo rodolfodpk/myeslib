@@ -1,15 +1,15 @@
-package org.myeslib.example.infra;
+package org.myeslib.example;
 
 import java.lang.reflect.Modifier;
 
 import org.myeslib.core.Command;
 import org.myeslib.core.Event;
-import org.myeslib.example.SampleCoreDomain.CreateInventoryItem;
-import org.myeslib.example.SampleCoreDomain.DecreaseInventory;
-import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
-import org.myeslib.example.SampleCoreDomain.InventoryDecreased;
-import org.myeslib.example.SampleCoreDomain.InventoryIncreased;
-import org.myeslib.example.SampleCoreDomain.InventoryItemCreated;
+import org.myeslib.example.SampleDomain.CreateInventoryItem;
+import org.myeslib.example.SampleDomain.DecreaseInventory;
+import org.myeslib.example.SampleDomain.IncreaseInventory;
+import org.myeslib.example.SampleDomain.InventoryDecreased;
+import org.myeslib.example.SampleDomain.InventoryIncreased;
+import org.myeslib.example.SampleDomain.InventoryItemCreated;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,11 +19,11 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
  * Produces a Gson instance able to ser/deserialize polymorfic types. 
  * Jackson is probably faster but it requires those @JsonCreator and @JsonProperty annotations which can be a bit verbose and error prone.
  */
-public class GsonFactory {
+public class SampleDomainGsonFactory {
 	
 	private final Gson gson;
 	
-	public GsonFactory() {
+	public SampleDomainGsonFactory() {
 		
 		final RuntimeTypeAdapterFactory<Command> commandAdapter = 
 				RuntimeTypeAdapterFactory.of(Command.class)

@@ -8,12 +8,15 @@ import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.storage.EventStore;
 
+import com.google.common.base.Function;
 import com.hazelcast.core.TransactionalMap;
 
 @AllArgsConstructor
 public class HzEventStore<K> implements EventStore<K>{
 
-	private final TransactionalMap<K, AggregateRootHistory> pastTransactionsMap ;
+	private final TransactionalMap<K, String> pastTransactionsMap ;
+	private final Function<AggregateRootHistory, String> toStringFunction ;
+	private final Function<String, AggregateRootHistory> fromStringFunction ;
 	
 	public void store(final K id, final UnitOfWork uow) {
 		final AggregateRootHistory history = getHistoryFor(id);
@@ -25,12 +28,14 @@ public class HzEventStore<K> implements EventStore<K>{
 														
 		} 
 		history.add(uow);
-		pastTransactionsMap.set(id, history); // hazelcast optimization --> set instead of put since is void
+		String asString = toStringFunction.apply(history);
+		pastTransactionsMap.set(id, asString); // hazelcast optimization --> set instead of put since is void
 	}
 		
 	private AggregateRootHistory getHistoryFor(final K id) {
-		AggregateRootHistory pastTransactions = pastTransactionsMap.get(id);
-		return pastTransactions == null ? new AggregateRootHistory() : pastTransactions;
+		String asString = pastTransactionsMap.get(id);
+		AggregateRootHistory history = fromStringFunction.apply(asString);
+		return history == null ? new AggregateRootHistory() : history;
 	}
 
 }

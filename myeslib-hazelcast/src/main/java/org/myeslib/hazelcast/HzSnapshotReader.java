@@ -13,11 +13,14 @@ import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.Snapshot;
 import org.myeslib.storage.SnapshotReader;
 
+import com.google.common.base.Function;
+
 @AllArgsConstructor
 public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
     
-	private final Map<K, AggregateRootHistory> eventsMap ;
+	private final Map<K, String> eventsMap ;
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
+	private final Function<String, AggregateRootHistory> fromStringFunction ;
 	
 	public Snapshot<A> get(final K id, final A aggregateRootFreshInstance) {
 		final AggregateRootHistory transactionHistory = getEventsOrEmptyIfNull(id);
@@ -37,7 +40,8 @@ public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotRea
 	}
 
 	private AggregateRootHistory getEventsOrEmptyIfNull(final K id) {
-		final AggregateRootHistory events = eventsMap.get(id);
+		String asString = eventsMap.get(id);
+		final AggregateRootHistory events = fromStringFunction.apply(asString);
 		return events == null ? new AggregateRootHistory() : events;
 	}
 	

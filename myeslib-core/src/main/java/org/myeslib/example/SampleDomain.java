@@ -19,7 +19,7 @@ import org.myeslib.core.CommandHandler;
 import org.myeslib.core.Event;
 
 @SuppressWarnings("serial")
-public class SampleCoreDomain {
+public class SampleDomain {
 
 	@AllArgsConstructor
 	public static class InventoryItemCommandHandler implements CommandHandler<InventoryItemAggregateRoot> {

@@ -22,19 +22,25 @@ import org.myeslib.core.Command;
 import org.myeslib.core.Event;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
-import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
-import org.myeslib.example.SampleCoreDomain.InventoryIncreased;
+import org.myeslib.example.SampleDomain.IncreaseInventory;
+import org.myeslib.example.SampleDomain.InventoryIncreased;
+import org.myeslib.example.SampleDomainGsonFactory;
+import org.myeslib.gson.FromStringFunction;
+import org.myeslib.gson.ToStringFunction;
 
+import com.google.gson.Gson;
 import com.hazelcast.core.TransactionalMap;
 
 @RunWith(MockitoJUnitRunner.class) 
 public class HzEventStoreTest {
 	
 	@Mock
-	TransactionalMap<UUID, AggregateRootHistory> mapWithUuidKey;
+	TransactionalMap<UUID, String> mapWithUuidKey;
 	
 	@Mock
-	TransactionalMap<Long, AggregateRootHistory> mapWithLongKey;
+	TransactionalMap<Long, String> mapWithLongKey;
+	
+	final Gson gson = new SampleDomainGsonFactory().create();
 	
 	@Test
 	public void oneTransaction() {
@@ -48,13 +54,13 @@ public class HzEventStoreTest {
 		toStore.add(t);
 		
 		// first get on map will returns null, second will returns toStore 
-		when(mapWithUuidKey.get(id)).thenReturn(null, toStore);
+		when(mapWithUuidKey.get(id)).thenReturn(null, gson.toJson(toStore));
 		
-		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey);
+		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
 		store.store(id, t);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
-		ArgumentCaptor<AggregateRootHistory> argumentValue = ArgumentCaptor.forClass(AggregateRootHistory.class);
+		ArgumentCaptor<String> argumentValue = ArgumentCaptor.forClass(String.class);
 
 		verify(mapWithUuidKey, times(1)).set(argumentKey.capture(), argumentValue.capture());
 		
@@ -62,9 +68,11 @@ public class HzEventStoreTest {
 		assertThat(argumentKey.getValue(), sameInstance(id));
 
 		// checks for all transactions fields except the timestamp
-		UnitOfWork copy = argumentValue.getValue().getUnitsOfWork().get(0);
-		assertThat(copy.getCommand(), sameInstance(command));
-		assertThat(copy.getVersion(), sameInstance(1l));
+		String asString = argumentValue.getValue();
+		AggregateRootHistory asObj = gson.fromJson(asString, AggregateRootHistory.class);
+		UnitOfWork copy = asObj.getUnitsOfWork().get(0);
+		assertThat(copy.getCommand(), is(command));
+		assertThat(copy.getVersion(), is(1l));
 		assertThat("contains events", copy.getEvents().containsAll(events));
 
 	}
@@ -80,32 +88,35 @@ public class HzEventStoreTest {
 		AggregateRootHistory toStore = new AggregateRootHistory();
 		toStore.add(t);
 		
-		when(mapWithUuidKey.get(id)).thenReturn(toStore);
+		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 		
-		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey);
+		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
 		UnitOfWork t2 = UnitOfWork.create(command, 1l, events);
 		store.store(id, t2);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
-		ArgumentCaptor<AggregateRootHistory> argumentValue = ArgumentCaptor.forClass(AggregateRootHistory.class);
+		ArgumentCaptor<String> argumentValue = ArgumentCaptor.forClass(String.class);
 
 		verify(mapWithUuidKey, times(1)).set(argumentKey.capture(), argumentValue.capture());
 		
 		// checks for key
 		assertThat(argumentKey.getValue(), sameInstance(id));
 
+		String asString = argumentValue.getValue();
+		AggregateRootHistory asObj = gson.fromJson(asString, AggregateRootHistory.class);
+
 		// should have 2 transactions
-		assertThat(argumentValue.getValue().getUnitsOfWork().size(), is(2));
+		assertThat(asObj.getUnitsOfWork().size(), is(2));
 
 		// checks for all transactions fields except the timestamp
-		UnitOfWork copy = argumentValue.getValue().getUnitsOfWork().get(0);
-		assertThat(copy.getCommand(), sameInstance(command));
+		UnitOfWork copy = asObj.getUnitsOfWork().get(0);
+		assertThat(copy.getCommand(), is(command));
 		assertThat(copy.getVersion(), is(1l));
 		assertThat("contains events", copy.getEvents().containsAll(events));
 
 		// checks for all transactions fields except the timestamp
-		UnitOfWork t2Candidate = argumentValue.getValue().getUnitsOfWork().get(1);
-		assertThat(t2Candidate.getCommand(), sameInstance(command));
+		UnitOfWork t2Candidate = asObj.getUnitsOfWork().get(1);
+		assertThat(t2Candidate.getCommand(), is(command));
 		assertThat(t2Candidate.getVersion(), is(2l));
 		assertThat("contains events", t2Candidate.getEvents().containsAll(events));
 
@@ -122,45 +133,11 @@ public class HzEventStoreTest {
 		AggregateRootHistory toStore = new AggregateRootHistory();
 		toStore.add(t);
 		
-		when(mapWithUuidKey.get(id)).thenReturn(toStore);
+		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 
-		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey);
+		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
 		UnitOfWork t2 = UnitOfWork.create(command, 0l, events);
 		store.store(id, t2);
-
-	}
-	
-	@SuppressWarnings("serial")
-	@Test
-	public void oneTransactionWithLongKey() {
-		
-		Long id = new Long(1);
-		Command command = new Command() {};
-		Event event1 = new Event() {};
-		List<Event> events = Arrays.asList(event1);
-		UnitOfWork t = UnitOfWork.create(command, 0l, events);
-		AggregateRootHistory toStore = new AggregateRootHistory();
-		toStore.add(t);
-		
-		// first get on map will returns null, second will returns toStore 
-		when(mapWithLongKey.get(id)).thenReturn(null, toStore);
-		
-		HzEventStore<Long> store = new HzEventStore<>(mapWithLongKey);
-		store.store(id, t);
-
-		ArgumentCaptor<Long> argumentKey = ArgumentCaptor.forClass(Long.class);
-		ArgumentCaptor<AggregateRootHistory> argumentValue = ArgumentCaptor.forClass(AggregateRootHistory.class);
-
-		verify(mapWithLongKey, times(1)).set(argumentKey.capture(), argumentValue.capture());
-		
-		// checks for key
-		assertThat(argumentKey.getValue(), is(id));
-
-		// checks for all transactions fields except the timestamp
-		UnitOfWork copy = argumentValue.getValue().getUnitsOfWork().get(0);
-		assertThat(copy.getCommand(), sameInstance(command));
-		assertThat(copy.getVersion(), is(1l));
-		assertThat("contains events", copy.getEvents().containsAll(events));
 
 	}
 	

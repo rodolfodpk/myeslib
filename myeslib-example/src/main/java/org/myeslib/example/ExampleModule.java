@@ -9,17 +9,19 @@ import javax.inject.Singleton;
 import javax.sql.DataSource;
 
 import org.h2.jdbcx.JdbcConnectionPool;
-import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.Snapshot;
-import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
-import org.myeslib.example.SampleCoreDomain.ItemDescriptionGeneratorService;
-import org.myeslib.example.infra.GsonFactory;
+import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
+import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.HazelcastConfigFactory;
 import org.myeslib.example.infra.HazelcastMaps;
+import org.myeslib.example.infra.InventoryItemMapConfigFactory;
+import org.myeslib.example.infra.SerializersConfigSetFactory;
 import org.myeslib.example.routes.ConsumeCommandsRoute;
-import org.myeslib.hazelcast.HzAggregateRootHistoryTxMapFactory;
+import org.myeslib.gson.FromStringFunction;
+import org.myeslib.gson.ToStringFunction;
 import org.myeslib.hazelcast.HzCamelComponent;
 import org.myeslib.hazelcast.HzSnapshotReader;
+import org.myeslib.hazelcast.HzStringTxMapFactory;
 import org.myeslib.hazelcast.HzTransactionalCommandHandler;
 import org.myeslib.storage.SnapshotReader;
 import org.myeslib.storage.TransactionalCommandHandler;
@@ -42,13 +44,13 @@ public class ExampleModule extends AbstractModule {
 	@Provides
 	@Singleton
 	public Gson gson() {
-		return new GsonFactory().create();
+		return new SampleDomainGsonFactory().create();
 	}
 
 	@Provides
 	@Singleton
-	public Config config(DataSource datasource, Gson gson) {
-		return new HazelcastConfigFactory(datasource, gson).getConfig();
+	public Config config(InventoryItemMapConfigFactory mapConfigFactory, SerializersConfigSetFactory serializersFactory) {
+		return new HazelcastConfigFactory(mapConfigFactory.create(), serializersFactory.create()).getConfig();
 	}
 
 	@Provides
@@ -65,17 +67,17 @@ public class ExampleModule extends AbstractModule {
 	
 	@Provides
 	@Singleton
-	public SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader(HazelcastInstance hazelcastInstance) {
-		Map<UUID, AggregateRootHistory> historyMap = hazelcastInstance.getMap(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name());
+	public SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader(HazelcastInstance hazelcastInstance, Gson gson) {
+		Map<UUID, String> historyMap = hazelcastInstance.getMap(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name());
 		Map<UUID, Snapshot<InventoryItemAggregateRoot>> snapshotMap = hazelcastInstance.getMap(HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT.name());
-		return new HzSnapshotReader<UUID, InventoryItemAggregateRoot>(historyMap, snapshotMap);
+		return new HzSnapshotReader<UUID, InventoryItemAggregateRoot>(historyMap, snapshotMap, new FromStringFunction(gson));
 	}
 
 	@Provides
 	@Singleton
-	public TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txCommandHandler(HazelcastInstance hazelcastInstance) {
-		HzAggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot> txMapFactory = new HzAggregateRootHistoryTxMapFactory<UUID, InventoryItemAggregateRoot>(); 
-		return new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, INVENTORY_ITEM_AGGREGATE_HISTORY.name());
+	public TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txCommandHandler(HazelcastInstance hazelcastInstance, Gson gson) {
+		HzStringTxMapFactory<UUID> txMapFactory = new HzStringTxMapFactory<>(); 
+		return new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, INVENTORY_ITEM_AGGREGATE_HISTORY.name(), new FromStringFunction(gson), new ToStringFunction(gson));
 	}
 
 	@Provides
@@ -88,6 +90,8 @@ public class ExampleModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class);
+		bind(InventoryItemMapConfigFactory.class);
+		bind(SerializersConfigSetFactory.class);
 	}
 	
 
