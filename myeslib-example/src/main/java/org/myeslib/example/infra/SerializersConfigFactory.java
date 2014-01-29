@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.hazelcast.config.SerializerConfig;
 
-public class SerializersConfigSetFactory {
+public class SerializersConfigFactory {
 
 	private final Gson gson;
 
@@ -32,7 +32,7 @@ public class SerializersConfigSetFactory {
 	
 
 	@Inject
-	public SerializersConfigSetFactory(Gson gson) {
+	public SerializersConfigFactory(Gson gson) {
 		this.gson = gson;
 	}
 

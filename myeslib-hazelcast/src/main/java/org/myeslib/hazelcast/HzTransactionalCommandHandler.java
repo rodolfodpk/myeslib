@@ -28,7 +28,7 @@ public class HzTransactionalCommandHandler<K, A extends AggregateRoot> implement
 	private final Function<AggregateRootHistory, String> toStringFunction ;
 	
 	/* (non-Javadoc)
-	 * @see org.myeslib.hazelcast.ITransactionalCommandHandler#handle(K, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
+	 * @see org.myeslib.hazelcast.TransactionalCommandHandler#handle(K, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
 	 */
 	@Override
 	public UnitOfWork handle(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {

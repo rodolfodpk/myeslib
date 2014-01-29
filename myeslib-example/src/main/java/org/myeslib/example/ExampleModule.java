@@ -15,7 +15,7 @@ import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.HazelcastConfigFactory;
 import org.myeslib.example.infra.HazelcastMaps;
 import org.myeslib.example.infra.InventoryItemMapConfigFactory;
-import org.myeslib.example.infra.SerializersConfigSetFactory;
+import org.myeslib.example.infra.SerializersConfigFactory;
 import org.myeslib.example.routes.ConsumeCommandsRoute;
 import org.myeslib.gson.FromStringFunction;
 import org.myeslib.gson.ToStringFunction;
@@ -49,7 +49,7 @@ public class ExampleModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public Config config(InventoryItemMapConfigFactory mapConfigFactory, SerializersConfigSetFactory serializersFactory) {
+	public Config config(InventoryItemMapConfigFactory mapConfigFactory, SerializersConfigFactory serializersFactory) {
 		return new HazelcastConfigFactory(mapConfigFactory.create(), serializersFactory.create()).getConfig();
 	}
 
@@ -91,7 +91,7 @@ public class ExampleModule extends AbstractModule {
 	protected void configure() {
 		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class);
 		bind(InventoryItemMapConfigFactory.class);
-		bind(SerializersConfigSetFactory.class);
+		bind(SerializersConfigFactory.class);
 	}
 	
 
