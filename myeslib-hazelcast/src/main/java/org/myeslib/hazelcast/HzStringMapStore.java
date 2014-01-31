@@ -79,7 +79,7 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 					@Override
 					public byte[] withHandle(Handle h) throws Exception {
 						return h.createQuery(String.format("select aggregate_root_data from %s where id = :id", tableName))
-								.bind("id", id)
+								.bind("id", id.toString())
 						 .map(ByteArrayMapper.FIRST).first();
 					}
 				});
