@@ -33,6 +33,7 @@ public class HzEventStore<K> implements EventStore<K>{
 	}
 		
 	private AggregateRootHistory getHistoryFor(final K id) {
+		// TODO WARNING https://github.com/hazelcast/hazelcast/issues/1593 
 		String asString = pastTransactionsMap.get(id);
 		AggregateRootHistory history = fromStringFunction.apply(asString);
 		return history == null ? new AggregateRootHistory() : history;
