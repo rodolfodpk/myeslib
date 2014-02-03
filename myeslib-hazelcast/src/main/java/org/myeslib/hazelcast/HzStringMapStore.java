@@ -1,5 +1,7 @@
 package org.myeslib.hazelcast;
 
+import java.io.InputStreamReader;
+import java.sql.Clob;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,9 +22,9 @@ import org.skife.jdbi.v2.PreparedBatch;
 import org.skife.jdbi.v2.TransactionCallback;
 import org.skife.jdbi.v2.TransactionStatus;
 import org.skife.jdbi.v2.tweak.HandleCallback;
-import org.skife.jdbi.v2.util.ByteArrayMapper;
 import org.skife.jdbi.v2.util.StringMapper;
 
+import com.google.common.io.CharStreams;
 import com.hazelcast.core.MapStore;
 
 @Slf4j
@@ -54,7 +56,7 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 	@Override
 	public Set<UUID> loadAllKeys() {
 		// TODO define how many keys will be pre-loaded
-		log.info(String.format("loading all keys  within table %s", tableName));
+		log.info("loading all keys from table {}", tableName);
 		Set<UUID> result = dbi.withHandle(new HandleCallback<Set<UUID>>() {
 			@Override
 			public Set<UUID> withHandle(Handle h) throws Exception {
@@ -67,34 +69,48 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 				return uResult;
 			}
 		});
+		log.info("{} keys within table {} were loaded", result.size(), tableName);
 		return result;	
 	}
 	
 	@Override
 	public String load(final UUID id) {
-		String result = dbi.withHandle(new HandleCallback<String>() {
-			@Override
-			public String withHandle(Handle h) throws Exception {
-				byte[] clob = dbi.withHandle(new HandleCallback<byte[]>() {
-					@Override
-					public byte[] withHandle(Handle h) throws Exception {
-						return h.createQuery(String.format("select aggregate_root_data from %s where id = :id", tableName))
-								.bind("id", id.toString())
-						 .map(ByteArrayMapper.FIRST).first();
-					}
-				});
-				return clob == null ? null : new String(clob); 
-			}
-		});
-		return result;
+		try {
+			log.info("will load {} from table {}", id.toString(), tableName);
+			String result = dbi.withHandle(new HandleCallback<String>() {
+				@Override
+				public String withHandle(Handle h) throws Exception {
+					Clob clob = dbi.withHandle(new HandleCallback<Clob>() {
+						@Override
+						public Clob withHandle(Handle h) throws Exception {
+							String sql = String.format("select aggregate_root_data from %s where id = :id", tableName);
+							return h.createQuery(sql)
+									.bind("id", id.toString())
+									.map(ClobMapper.FIRST).first();
+						}
+					});
+					String string = CharStreams.toString(clob.getCharacterStream());
+					System.out.println("----> "+ string);
+					System.out.println("----> "+ new String(string.getBytes()));
+					return clob == null ? null : string; 
+				}
+			});
+			log.info("loaded {} {} from table {}", id.toString(), result == null ? "NULL": result.substring(0, 10), tableName);
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
 	public Map<UUID, String> loadAll(Collection<UUID> ids) {
+		log.info("loading {} keys  within table {}", ids.size(), tableName);
 		Map<UUID, String> result = new HashMap<>();
 		for (UUID id : ids){
 			result.put(id, load(id));
 		}
+		log.info("{} keys were loaded from table {}", result.size(), tableName);
 		return result;
 	}
 
@@ -142,7 +158,7 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 					if (!currentKeysOnTable.contains(entry.getKey())){
 						final String id = entry.getKey().toString();
 						final String value = entry.getValue();
-						pb.add().bind("id", id).bind("aggregate_root_data", value.getBytes());		
+						pb.add().bind("id", id).bind("aggregate_root_data", value);		// value.getBytes... testando sem o 
 						log.debug(String.format("inserting with id %s into table %s", id, tableName));	
 					}
 				}
@@ -160,7 +176,7 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 					if (currentKeysOnTable.contains(entry.getKey())){
 						final String id = entry.getKey().toString();
 						final String value = entry.getValue();
-						pb.add().bind("id", id).bind("aggregate_root_data", value.getBytes());	
+						pb.add().bind("id", id).bind("aggregate_root_data", value);	
 						log.debug(String.format("updating with id %s into table %s", id, tableName));	
 					}
 				}
