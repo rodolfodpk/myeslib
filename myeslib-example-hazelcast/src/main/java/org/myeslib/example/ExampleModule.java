@@ -23,8 +23,8 @@ import org.myeslib.hazelcast.HzCamelComponent;
 import org.myeslib.hazelcast.HzSnapshotReader;
 import org.myeslib.hazelcast.HzStringTxMapFactory;
 import org.myeslib.hazelcast.HzTransactionalCommandHandler;
+import org.myeslib.storage.CommandHandlerInvoker;
 import org.myeslib.storage.SnapshotReader;
-import org.myeslib.storage.TransactionalCommandHandler;
 
 import com.google.gson.Gson;
 import com.google.inject.AbstractModule;
@@ -75,7 +75,7 @@ public class ExampleModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txCommandHandler(HazelcastInstance hazelcastInstance, Gson gson) {
+	public CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> txCommandHandler(HazelcastInstance hazelcastInstance, Gson gson) {
 		HzStringTxMapFactory<UUID> txMapFactory = new HzStringTxMapFactory<>(); 
 		return new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, INVENTORY_ITEM_AGGREGATE_HISTORY.name(), new FromStringFunction(gson), new ToStringFunction(gson));
 	}
@@ -83,7 +83,7 @@ public class ExampleModule extends AbstractModule {
 	@Provides
 	@Singleton
 	public ConsumeCommandsRoute route(SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader, 
-			TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txCommandHandler) {
+			CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> txCommandHandler) {
 		return new ConsumeCommandsRoute(snapshotReader, txCommandHandler);
 	}
 	

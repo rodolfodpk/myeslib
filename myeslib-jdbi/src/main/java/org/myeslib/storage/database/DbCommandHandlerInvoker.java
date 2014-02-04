@@ -11,15 +11,16 @@ import org.myeslib.core.Command;
 import org.myeslib.core.CommandHandler;
 import org.myeslib.core.Event;
 import org.myeslib.data.UnitOfWork;
-import org.myeslib.storage.TransactionalCommandHandler;
+import org.myeslib.storage.CommandHandlerInvoker;
 
 @AllArgsConstructor
-public class DbTransactionalCommandHandler<K, A extends AggregateRoot> implements TransactionalCommandHandler<K, A> {
+public class DbCommandHandlerInvoker<K, A extends AggregateRoot> implements CommandHandlerInvoker<K, A> {
 
 	final DbEventStore<K> store;
-	
-	/* (non-Javadoc)
-	 * @see org.myeslib.hazelcast.TransactionalCommandHandler#handle(K, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.myeslib.storage.CommandHandlerInvoker#handle(java.lang.Object, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
 	 */
 	@Override
 	public UnitOfWork handle(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {

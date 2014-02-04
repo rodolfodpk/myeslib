@@ -24,7 +24,7 @@ import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.SampleDomainGsonFactory;
 import org.myeslib.gson.FromStringFunction;
 import org.myeslib.gson.ToStringFunction;
-import org.myeslib.storage.TransactionalCommandHandler;
+import org.myeslib.storage.CommandHandlerInvoker;
 
 import com.google.common.base.Function;
 import com.google.gson.Gson;
@@ -86,7 +86,7 @@ public class HzTransactionalCommandHandlerTest {
 		TransactionalMap<UUID, String> txMapMock = Mockito.mock(TransactionalMap.class);
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock);
 	
-		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = 
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
 				new HzTransactionalCommandHandler<UUID, InventoryItemAggregateRoot>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
@@ -120,7 +120,7 @@ public class HzTransactionalCommandHandlerTest {
 		TransactionalMap<UUID, String> txMapMock = Mockito.mock(TransactionalMap.class);
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
-		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = 
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
 				new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
 		
 		try {
@@ -151,7 +151,7 @@ public class HzTransactionalCommandHandlerTest {
 		TransactionalMap<UUID, String> txMapMock = Mockito.mock(TransactionalMap.class);
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
-		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = 
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
 				new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
 		
 		try {

@@ -12,14 +12,14 @@ import org.myeslib.core.CommandHandler;
 import org.myeslib.core.Event;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
-import org.myeslib.storage.TransactionalCommandHandler;
+import org.myeslib.storage.CommandHandlerInvoker;
 
 import com.google.common.base.Function;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
 
 @AllArgsConstructor
-public class HzTransactionalCommandHandler<K, A extends AggregateRoot> implements TransactionalCommandHandler<K, A> {
+public class HzTransactionalCommandHandler<K, A extends AggregateRoot> implements CommandHandlerInvoker<K, A> {
 
 	private final HazelcastInstance hazelcastInstance;
 	private final HzStringTxMapFactory<K> txMapFactory;

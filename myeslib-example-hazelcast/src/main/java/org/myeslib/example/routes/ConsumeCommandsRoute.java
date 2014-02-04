@@ -12,19 +12,19 @@ import org.myeslib.data.Snapshot;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
+import org.myeslib.storage.CommandHandlerInvoker;
 import org.myeslib.storage.SnapshotReader;
-import org.myeslib.storage.TransactionalCommandHandler;
 
 public class ConsumeCommandsRoute extends RouteBuilder {
 
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
-	final TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txProcessor;
+	final CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker;
 	
 	@Inject
 	public ConsumeCommandsRoute(SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
-								TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> txProcessor) {
+			CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker) {
 		this.snapshotReader = snapshotReader;
-		this.txProcessor = txProcessor;
+		this.cmdHandlerInvoker = cmdHandlerInvoker;
 	}
 	
 	@Override
@@ -55,7 +55,7 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 			InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(snapshot.getAggregateInstance());
 			UnitOfWork uow = null;
 			try {
-				uow = txProcessor.handle(id, snapshot.getVersion(), command, commandHandler);
+				uow = cmdHandlerInvoker.handle(id, snapshot.getVersion(), command, commandHandler);
 			} catch (Throwable t) {
 				t.printStackTrace();
 				throw new Exception(t);

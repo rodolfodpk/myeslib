@@ -23,9 +23,9 @@ import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.example.SampleDomain.InventoryItemCreated;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
-import org.myeslib.storage.TransactionalCommandHandler;
+import org.myeslib.storage.CommandHandlerInvoker;
 import org.myeslib.storage.database.DbEventStore;
-import org.myeslib.storage.database.DbTransactionalCommandHandler;
+import org.myeslib.storage.database.DbCommandHandlerInvoker;
 
 import com.google.common.base.Function;
 
@@ -65,7 +65,7 @@ public class DbTransactionalCommandHandlerTest {
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 
-		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = new DbTransactionalCommandHandler<UUID, InventoryItemAggregateRoot>(dbEventStore);
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new DbCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(dbEventStore);
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
@@ -91,7 +91,7 @@ public class DbTransactionalCommandHandlerTest {
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 	
-		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = new DbTransactionalCommandHandler<UUID, InventoryItemAggregateRoot>(dbEventStore);
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new DbCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(dbEventStore);
 
 		try {
 			tcp.handle(id, version, command, commandHandler);
@@ -114,7 +114,7 @@ public class DbTransactionalCommandHandlerTest {
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 	
-		TransactionalCommandHandler<UUID, InventoryItemAggregateRoot> tcp = new DbTransactionalCommandHandler<UUID, InventoryItemAggregateRoot>(dbEventStore);
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new DbCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(dbEventStore);
 
 		try {
 			tcp.handle(id, version, command, commandHandler);
