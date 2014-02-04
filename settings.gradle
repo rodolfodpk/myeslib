@@ -5,5 +5,5 @@ include 'myeslib-3rd-party'
 include 'myeslib-core'
 include 'myeslib-hazelcast'
 include 'myeslib-example-hazelcast'
-include 'myeslib-database'
+include 'myeslib-jdbi'
 

@@ -59,7 +59,7 @@ project(':myeslib-core') {
 	}
 }
 
-project(':myeslib-database') {
+project(':myeslib-jdbi') {
 	dependencies {
 		compile project(':myeslib-core')
 		compile 'ch.qos.logback:logback-classic:1.0.13'
