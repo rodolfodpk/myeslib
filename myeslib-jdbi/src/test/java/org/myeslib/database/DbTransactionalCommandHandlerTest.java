@@ -69,7 +69,7 @@ public class DbTransactionalCommandHandlerTest {
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
-		UnitOfWork uow = tcp.handle(id, version, command, commandHandler);
+		UnitOfWork uow = tcp.invoke(id, version, command, commandHandler);
 		
 		verify(dbEventStore).store(id, uow);
 		
@@ -94,7 +94,7 @@ public class DbTransactionalCommandHandlerTest {
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new DbCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(dbEventStore);
 
 		try {
-			tcp.handle(id, version, command, commandHandler);
+			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
 			verify(dbEventStore, times(0)).store(any(UUID.class), any(UnitOfWork.class));
 			throw t;
@@ -117,7 +117,7 @@ public class DbTransactionalCommandHandlerTest {
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new DbCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(dbEventStore);
 
 		try {
-			tcp.handle(id, version, command, commandHandler);
+			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
 			verify(dbEventStore, times(0)).store(any(UUID.class), any(UnitOfWork.class));
 			throw t;

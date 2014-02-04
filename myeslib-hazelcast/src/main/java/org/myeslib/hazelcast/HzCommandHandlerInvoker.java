@@ -19,7 +19,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
 
 @AllArgsConstructor
-public class HzTransactionalCommandHandler<K, A extends AggregateRoot> implements CommandHandlerInvoker<K, A> {
+public class HzCommandHandlerInvoker<K, A extends AggregateRoot> implements CommandHandlerInvoker<K, A> {
 
 	private final HazelcastInstance hazelcastInstance;
 	private final HzStringTxMapFactory<K> txMapFactory;
@@ -27,11 +27,9 @@ public class HzTransactionalCommandHandler<K, A extends AggregateRoot> implement
 	private final Function<String, AggregateRootHistory> fromStringFunction ;
 	private final Function<AggregateRootHistory, String> toStringFunction ;
 	
-	/* (non-Javadoc)
-	 * @see org.myeslib.hazelcast.TransactionalCommandHandler#handle(K, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
-	 */
+	
 	@Override
-	public UnitOfWork handle(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {
+	public UnitOfWork invoke(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {
 		
 		TransactionContext transactionContext = hazelcastInstance.newTransactionContext();
 		transactionContext.beginTransaction(); 

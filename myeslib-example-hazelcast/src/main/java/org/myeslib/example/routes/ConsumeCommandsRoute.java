@@ -55,7 +55,7 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 			InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(snapshot.getAggregateInstance());
 			UnitOfWork uow = null;
 			try {
-				uow = cmdHandlerInvoker.handle(id, snapshot.getVersion(), command, commandHandler);
+				uow = cmdHandlerInvoker.invoke(id, snapshot.getVersion(), command, commandHandler);
 			} catch (Throwable t) {
 				t.printStackTrace();
 				throw new Exception(t);

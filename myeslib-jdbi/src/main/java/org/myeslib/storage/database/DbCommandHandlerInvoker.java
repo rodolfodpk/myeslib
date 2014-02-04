@@ -23,7 +23,7 @@ public class DbCommandHandlerInvoker<K, A extends AggregateRoot> implements Comm
 	 * @see org.myeslib.storage.CommandHandlerInvoker#handle(java.lang.Object, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
 	 */
 	@Override
-	public UnitOfWork handle(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {
+	public UnitOfWork invoke(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {
 		
 		UnitOfWork uow = null;
 		try {

@@ -33,7 +33,7 @@ import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.transaction.TransactionContext;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HzTransactionalCommandHandlerTest {
+public class HzCommandHandlerInvokerTest {
 
 	@Mock
 	HazelcastInstance hazelcastInstance;
@@ -87,11 +87,11 @@ public class HzTransactionalCommandHandlerTest {
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock);
 	
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
-				new HzTransactionalCommandHandler<UUID, InventoryItemAggregateRoot>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
+				new HzCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
-		UnitOfWork uow = tcp.handle(id, version, command, commandHandler);
+		UnitOfWork uow = tcp.invoke(id, version, command, commandHandler);
 		
 		verify(hazelcastInstance).newTransactionContext();
 		verify(txContext).beginTransaction();
@@ -121,10 +121,10 @@ public class HzTransactionalCommandHandlerTest {
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
-				new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
+				new HzCommandHandlerInvoker<>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
 		
 		try {
-			tcp.handle(id, version, command, commandHandler);
+			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
 			verify(hazelcastInstance).newTransactionContext();
 			verify(txContext).beginTransaction();
@@ -152,10 +152,10 @@ public class HzTransactionalCommandHandlerTest {
 		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
-				new HzTransactionalCommandHandler<>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
+				new HzCommandHandlerInvoker<>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
 		
 		try {
-			tcp.handle(id, version, command, commandHandler);
+			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
 			verify(hazelcastInstance).newTransactionContext();
 			verify(txContext).beginTransaction();

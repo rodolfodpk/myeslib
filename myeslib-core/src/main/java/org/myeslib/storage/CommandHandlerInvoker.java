@@ -7,7 +7,7 @@ import org.myeslib.data.UnitOfWork;
 
 public interface CommandHandlerInvoker<K, A extends AggregateRoot> {
 
-	public abstract UnitOfWork handle(K id, Long version, Command command,
+	public abstract UnitOfWork invoke(K id, Long version, Command command,
 			CommandHandler<A> commandHandler) throws Throwable;
 
 }
