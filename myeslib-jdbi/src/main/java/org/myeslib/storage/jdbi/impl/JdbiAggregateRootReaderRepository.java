@@ -1,4 +1,4 @@
-package org.myeslib.storage.database.jdbi;
+package org.myeslib.storage.jdbi.impl;
 
 import java.util.ArrayList;
 import java.util.List;

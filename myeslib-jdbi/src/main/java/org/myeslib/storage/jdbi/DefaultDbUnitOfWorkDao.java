@@ -1,4 +1,4 @@
-package org.myeslib.storage.database;
+package org.myeslib.storage.jdbi;
 
 import java.util.ConcurrentModificationException;
 
@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
 import org.myeslib.storage.UnitOfWorkRepository;
-import org.myeslib.storage.database.jdbi.AggregateRootReaderRepository;
-import org.myeslib.storage.database.jdbi.AggregateRootWriterRepository;
+import org.myeslib.storage.jdbi.impl.AggregateRootReaderRepository;
+import org.myeslib.storage.jdbi.impl.AggregateRootWriterRepository;
 import org.skife.jdbi.v2.Handle;
 
 @AllArgsConstructor

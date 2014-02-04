@@ -19,9 +19,9 @@ import org.myeslib.example.SampleDomain.DecreaseInventory;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryDecreased;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
-import org.myeslib.storage.database.DefaultDbUnitOfWorkDao;
-import org.myeslib.storage.database.jdbi.AggregateRootReaderRepository;
-import org.myeslib.storage.database.jdbi.AggregateRootWriterRepository;
+import org.myeslib.storage.jdbi.DefaultDbUnitOfWorkDao;
+import org.myeslib.storage.jdbi.impl.AggregateRootReaderRepository;
+import org.myeslib.storage.jdbi.impl.AggregateRootWriterRepository;
 import org.skife.jdbi.v2.Handle;
 
 @RunWith(MockitoJUnitRunner.class) 

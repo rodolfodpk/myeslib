@@ -24,8 +24,8 @@ import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.example.SampleDomain.InventoryItemCreated;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.storage.CommandHandlerInvoker;
-import org.myeslib.storage.database.DefaultDbUnitOfWorkDao;
-import org.myeslib.storage.database.DbCommandHandlerInvoker;
+import org.myeslib.storage.jdbi.DbCommandHandlerInvoker;
+import org.myeslib.storage.jdbi.DefaultDbUnitOfWorkDao;
 
 import com.google.common.base.Function;
 

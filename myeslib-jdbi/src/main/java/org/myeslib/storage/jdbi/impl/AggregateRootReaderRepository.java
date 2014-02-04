@@ -1,4 +1,4 @@
-package org.myeslib.storage.database.jdbi;
+package org.myeslib.storage.jdbi.impl;
 
 import org.myeslib.data.AggregateRootHistory;
 import org.skife.jdbi.v2.Handle;

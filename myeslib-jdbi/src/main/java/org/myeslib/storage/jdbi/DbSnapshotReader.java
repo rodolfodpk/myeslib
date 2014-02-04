@@ -1,4 +1,4 @@
-package org.myeslib.storage.database;
+package org.myeslib.storage.jdbi;
 
 import static org.myeslib.util.EventSourcingMagicHelper.applyEventsOn;
 
@@ -12,7 +12,7 @@ import org.myeslib.core.Event;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.Snapshot;
 import org.myeslib.storage.SnapshotReader;
-import org.myeslib.storage.database.jdbi.AggregateRootReaderRepository;
+import org.myeslib.storage.jdbi.impl.AggregateRootReaderRepository;
 import org.skife.jdbi.v2.Handle;
 
 @AllArgsConstructor

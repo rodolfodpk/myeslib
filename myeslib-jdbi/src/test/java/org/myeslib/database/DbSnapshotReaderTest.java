@@ -23,8 +23,8 @@ import org.myeslib.data.Snapshot;
 import org.myeslib.example.SampleDomain.InventoryDecreased;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
-import org.myeslib.storage.database.DbSnapshotReader;
-import org.myeslib.storage.database.jdbi.AggregateRootReaderRepository;
+import org.myeslib.storage.jdbi.DbSnapshotReader;
+import org.myeslib.storage.jdbi.impl.AggregateRootReaderRepository;
 import org.skife.jdbi.v2.Handle;
 
 @RunWith(MockitoJUnitRunner.class) 

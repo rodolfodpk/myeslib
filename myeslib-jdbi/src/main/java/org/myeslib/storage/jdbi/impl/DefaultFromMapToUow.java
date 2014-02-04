@@ -1,4 +1,4 @@
-package org.myeslib.storage.database.jdbi;
+package org.myeslib.storage.jdbi.impl;
 
 import java.io.InputStreamReader;
 import java.io.Reader;

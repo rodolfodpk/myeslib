@@ -1,4 +1,4 @@
-package org.myeslib.storage.database;
+package org.myeslib.storage.jdbi;
 
 import static org.myeslib.util.EventSourcingMagicHelper.applyCommandOn;
 

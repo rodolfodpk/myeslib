@@ -23,7 +23,7 @@ import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryDecreased;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.example.SampleDomainGsonFactory;
-import org.myeslib.storage.database.jdbi.JdbiAggregateRootWriterRepository;
+import org.myeslib.storage.jdbi.impl.JdbiAggregateRootWriterRepository;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
