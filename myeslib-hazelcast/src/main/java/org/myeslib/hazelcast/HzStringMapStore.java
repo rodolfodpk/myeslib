@@ -1,6 +1,5 @@
 package org.myeslib.hazelcast;
 
-import java.io.InputStreamReader;
 import java.sql.Clob;
 import java.util.Arrays;
 import java.util.Collection;

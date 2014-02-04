@@ -59,6 +59,20 @@ project(':myeslib-core') {
 	}
 }
 
+project(':myeslib-database') {
+	dependencies {
+		compile project(':myeslib-core')
+		compile 'ch.qos.logback:logback-classic:1.0.13'
+		compile 'org.projectlombok:lombok:0.12.0'
+		compile 'com.google.guava:guava:15.0'
+		compile 'org.jdbi:jdbi:2.51'
+		compile 'com.h2database:h2:1.3.170'
+	    compile 'com.google.code.gson:gson:2.2.4'
+		testCompile 'junit:junit:4.11'
+		testCompile 'org.mockito:mockito-all:1.9.5'		
+	}
+}
+
 project(':myeslib-hazelcast') {
 	dependencies {
 		compile project(':myeslib-core')
@@ -73,7 +87,7 @@ project(':myeslib-hazelcast') {
 	}
 }
 
-project(':myeslib-example') {
+project(':myeslib-example-hazelcast') {
 	apply plugin: 'application'
 	mainClassName = "org.myeslib.example.Example"
 	sourceSets {
