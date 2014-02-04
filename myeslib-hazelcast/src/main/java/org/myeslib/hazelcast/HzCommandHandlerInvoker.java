@@ -33,14 +33,14 @@ public class HzCommandHandlerInvoker<K, A extends AggregateRoot> implements Comm
 		
 		TransactionContext transactionContext = hazelcastInstance.newTransactionContext();
 		transactionContext.beginTransaction(); 
-		HzEventStore<K> store = new HzEventStore<>(txMapFactory.get(transactionContext, mapId), toStringFunction, fromStringFunction);
+		HzUnitOfWorkRepository<K> store = new HzUnitOfWorkRepository<>(txMapFactory.get(transactionContext, mapId), toStringFunction, fromStringFunction);
 
 		UnitOfWork uow = null;
 		try {
 			//List<? extends Event> newEvents = commandHandler.handle(command); 
 			List<? extends Event> newEvents = applyCommandOn(command, commandHandler);
 			uow = UnitOfWork.create(command, version, newEvents);
-			store.store(id, uow);
+			store.insert(id, uow);
 			transactionContext.commitTransaction();
 		} catch (Throwable t) {
 			transactionContext.rollbackTransaction();

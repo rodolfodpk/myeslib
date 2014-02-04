@@ -6,13 +6,13 @@ import lombok.AllArgsConstructor;
 
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.UnitOfWork;
-import org.myeslib.storage.EventStore;
+import org.myeslib.storage.UnitOfWorkRepository;
 import org.myeslib.storage.database.jdbi.AggregateRootReaderRepository;
 import org.myeslib.storage.database.jdbi.AggregateRootWriterRepository;
 import org.skife.jdbi.v2.Handle;
 
 @AllArgsConstructor
-public class DbEventStore<K> implements EventStore<K>{
+public class DefaultDbUnitOfWorkDao<K> implements UnitOfWorkRepository<K>{
 
 	private final Handle handle;
 	private final AggregateRootReaderRepository<K> arReader ;
@@ -20,9 +20,9 @@ public class DbEventStore<K> implements EventStore<K>{
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.storage.EventStore#store(java.lang.Object, org.myeslib.data.UnitOfWork)
+	 * @see org.myeslib.storage.UnitOfWorkDao#insert(java.lang.Object, org.myeslib.data.UnitOfWork)
 	 */
-	public void store(final K id, final UnitOfWork uow) {
+	public void insert(final K id, final UnitOfWork uow) {
 		final AggregateRootHistory history = getHistoryFor(id);
 		if (history.getLastVersion() != uow.getBaseVersion()){
 			throw new ConcurrentModificationException(String.format("base version ( %s ) does not match the last version ( %s )", 

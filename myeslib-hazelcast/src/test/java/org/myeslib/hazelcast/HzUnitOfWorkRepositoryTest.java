@@ -32,7 +32,7 @@ import com.google.gson.Gson;
 import com.hazelcast.core.TransactionalMap;
 
 @RunWith(MockitoJUnitRunner.class) 
-public class HzEventStoreTest {
+public class HzUnitOfWorkRepositoryTest {
 	
 	@Mock
 	TransactionalMap<UUID, String> mapWithUuidKey;
@@ -56,8 +56,8 @@ public class HzEventStoreTest {
 		// first get on map will returns null, second will returns toStore 
 		when(mapWithUuidKey.get(id)).thenReturn(null, gson.toJson(toStore));
 		
-		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
-		store.store(id, t);
+		HzUnitOfWorkRepository<UUID> store = new HzUnitOfWorkRepository<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
+		store.insert(id, t);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
 		ArgumentCaptor<String> argumentValue = ArgumentCaptor.forClass(String.class);
@@ -90,9 +90,9 @@ public class HzEventStoreTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 		
-		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
+		HzUnitOfWorkRepository<UUID> store = new HzUnitOfWorkRepository<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
 		UnitOfWork t2 = UnitOfWork.create(command, 1l, events);
-		store.store(id, t2);
+		store.insert(id, t2);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
 		ArgumentCaptor<String> argumentValue = ArgumentCaptor.forClass(String.class);
@@ -135,9 +135,9 @@ public class HzEventStoreTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 
-		HzEventStore<UUID> store = new HzEventStore<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
+		HzUnitOfWorkRepository<UUID> store = new HzUnitOfWorkRepository<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
 		UnitOfWork t2 = UnitOfWork.create(command, 0l, events);
-		store.store(id, t2);
+		store.insert(id, t2);
 
 	}
 	

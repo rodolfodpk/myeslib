@@ -16,7 +16,7 @@ import org.myeslib.storage.CommandHandlerInvoker;
 @AllArgsConstructor
 public class DbCommandHandlerInvoker<K, A extends AggregateRoot> implements CommandHandlerInvoker<K, A> {
 
-	final DbEventStore<K> store;
+	final DefaultDbUnitOfWorkDao<K> store;
 
 	/*
 	 * (non-Javadoc)
@@ -30,7 +30,7 @@ public class DbCommandHandlerInvoker<K, A extends AggregateRoot> implements Comm
 			//List<? extends Event> newEvents = commandHandler.handle(command); 
 			List<? extends Event> newEvents = applyCommandOn(command, commandHandler);
 			uow = UnitOfWork.create(command, version, newEvents);
-			store.store(id, uow);
+			store.insert(id, uow);
 			return uow;
 		} catch (Throwable t) {
 			throw t.getCause();

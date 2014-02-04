@@ -19,7 +19,7 @@ import org.myeslib.example.SampleDomain.DecreaseInventory;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryDecreased;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
-import org.myeslib.storage.database.DbEventStore;
+import org.myeslib.storage.database.DefaultDbUnitOfWorkDao;
 import org.myeslib.storage.database.jdbi.AggregateRootReaderRepository;
 import org.myeslib.storage.database.jdbi.AggregateRootWriterRepository;
 import org.skife.jdbi.v2.Handle;
@@ -45,9 +45,9 @@ public class DbEventStoreTest {
 		
 		when(arReader.get(id, handle)).thenReturn(null);
 		
-		DbEventStore<UUID> store = new DbEventStore<>(handle, arReader, arWriter);
+		DefaultDbUnitOfWorkDao<UUID> store = new DefaultDbUnitOfWorkDao<>(handle, arReader, arWriter);
 		
-		store.store(id, newUow);
+		store.insert(id, newUow);
 		
 		verify(arReader, times(1)).get(id, handle);
 		verify(arWriter, times(1)).insert(id, newUow, handle);
@@ -69,9 +69,9 @@ public class DbEventStoreTest {
 		
 		UnitOfWork newUow = UnitOfWork.create(new DecreaseInventory(id, 1), 1L, Arrays.asList(new InventoryDecreased(id, 1)));
 		
-		DbEventStore<UUID> store = new DbEventStore<>(handle, arReader, arWriter);
+		DefaultDbUnitOfWorkDao<UUID> store = new DefaultDbUnitOfWorkDao<>(handle, arReader, arWriter);
 		
-		store.store(id, newUow);
+		store.insert(id, newUow);
 		
 		verify(arReader, times(1)).get(id, handle);
 		verify(arWriter, times(1)).insert(id, newUow, handle);
@@ -93,9 +93,9 @@ public class DbEventStoreTest {
 
 		UnitOfWork newUow = UnitOfWork.create(new DecreaseInventory(id, 1), 0L, Arrays.asList(new InventoryDecreased(id, 1)));
 		
-		DbEventStore<UUID> store = new DbEventStore<>(handle, arReader, arWriter);
+		DefaultDbUnitOfWorkDao<UUID> store = new DefaultDbUnitOfWorkDao<>(handle, arReader, arWriter);
 		
-		store.store(id, newUow);
+		store.insert(id, newUow);
 		
 		verify(arReader, times(1)).get(id, handle);
 		verify(arWriter, times(0)).insert(any(UUID.class), any(UnitOfWork.class), any(Handle.class));

@@ -24,7 +24,7 @@ import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.example.SampleDomain.InventoryItemCreated;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.storage.CommandHandlerInvoker;
-import org.myeslib.storage.database.DbEventStore;
+import org.myeslib.storage.database.DefaultDbUnitOfWorkDao;
 import org.myeslib.storage.database.DbCommandHandlerInvoker;
 
 import com.google.common.base.Function;
@@ -40,7 +40,7 @@ public class DbTransactionalCommandHandlerTest {
 	};
 	
 	@Mock
-	DbEventStore<UUID> dbEventStore;
+	DefaultDbUnitOfWorkDao<UUID> dbEventStore;
 	
 	@Test
 	public void sucess() throws Throwable {
@@ -71,7 +71,7 @@ public class DbTransactionalCommandHandlerTest {
 			
 		UnitOfWork uow = tcp.invoke(id, version, command, commandHandler);
 		
-		verify(dbEventStore).store(id, uow);
+		verify(dbEventStore).insert(id, uow);
 		
 		InventoryItemCreated resultingEvent = (InventoryItemCreated) uow.getEvents().get(0);
 		
@@ -96,7 +96,7 @@ public class DbTransactionalCommandHandlerTest {
 		try {
 			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
-			verify(dbEventStore, times(0)).store(any(UUID.class), any(UnitOfWork.class));
+			verify(dbEventStore, times(0)).insert(any(UUID.class), any(UnitOfWork.class));
 			throw t;
 		}
 
@@ -119,7 +119,7 @@ public class DbTransactionalCommandHandlerTest {
 		try {
 			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
-			verify(dbEventStore, times(0)).store(any(UUID.class), any(UnitOfWork.class));
+			verify(dbEventStore, times(0)).insert(any(UUID.class), any(UnitOfWork.class));
 			throw t;
 		}
 
