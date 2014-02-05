@@ -8,12 +8,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.myeslib.core.Command;
-import org.myeslib.data.Snapshot;
-import org.myeslib.data.UnitOfWork;
+import org.myeslib.core.data.Snapshot;
+import org.myeslib.core.data.UnitOfWork;
+import org.myeslib.core.function.CommandHandlerInvoker;
+import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
-import org.myeslib.storage.CommandHandlerInvoker;
-import org.myeslib.storage.SnapshotReader;
 
 public class ConsumeCommandsRoute extends RouteBuilder {
 

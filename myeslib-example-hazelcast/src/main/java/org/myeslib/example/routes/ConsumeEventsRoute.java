@@ -8,9 +8,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.myeslib.data.Snapshot;
+import org.myeslib.core.data.Snapshot;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
-import org.myeslib.hazelcast.HzSnapshotReader;
+import org.myeslib.hazelcast.storage.HzSnapshotReader;
 
 @AllArgsConstructor
 public class ConsumeEventsRoute extends RouteBuilder {

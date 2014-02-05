@@ -8,8 +8,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.main.Main;
+import org.myeslib.example.infra.HzCamelComponent;
 import org.myeslib.example.routes.ConsumeCommandsRoute;
-import org.myeslib.hazelcast.HzCamelComponent;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

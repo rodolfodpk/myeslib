@@ -23,8 +23,10 @@ public class InventoryItemMapConfigFactory {
 		mapConfig.setName(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name());
 		mapConfig.setInMemoryFormat(MapConfig.InMemoryFormat.OBJECT);
 		MapStoreConfig mapStoreConfig = new MapStoreConfig();
+		
 		HzStringMapStore store = new HzStringMapStore(ds, HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name());
 		store.createTableForMap();
+		
 		mapStoreConfig.setImplementation(store);
 		mapStoreConfig.setEnabled(true);
 		mapStoreConfig.setWriteDelaySeconds(0);

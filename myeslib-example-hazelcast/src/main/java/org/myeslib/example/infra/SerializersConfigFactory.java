@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.spi.UnitOfWork;
-import org.myeslib.data.AggregateRootHistory;
-import org.myeslib.data.Snapshot;
+import org.myeslib.core.data.AggregateRootHistory;
+import org.myeslib.core.data.Snapshot;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.DecreaseInventory;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
