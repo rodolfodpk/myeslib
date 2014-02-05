@@ -77,32 +77,25 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 	public String load(final UUID id) {
 		try {
 			log.info("will load {} from table {}", id.toString(), tableName);
-			String result = dbi.withHandle(new HandleCallback<String>() {
+			Clob clob = dbi.withHandle(new HandleCallback<Clob>() {
 				@Override
-				public String withHandle(Handle h) throws Exception {
-					Clob clob = dbi.withHandle(new HandleCallback<Clob>() {
-						@Override
-						public Clob withHandle(Handle h) throws Exception {
-							String sql = String.format("select aggregate_root_data from %s where id = :id", tableName);
-							return h.createQuery(sql)
-									.bind("id", id.toString())
-									.map(ClobMapper.FIRST).first();
-						}
-					});
-					if (clob==null) {
-						log.warn("found a null value for id {}", id.toString());
-						return null;
-					} else {
-						String string = CharStreams.toString(clob.getCharacterStream());
-						//System.out.println("----> "+ string);
-						//System.out.println("----> "+ new String(string.getBytes()));
-						return string; 
-					}
+				public Clob withHandle(Handle h) throws Exception {
+					String sql = String.format("select aggregate_root_data from %s where id = :id", tableName);
+					return h.createQuery(sql)
+							.bind("id", id.toString())
+							.map(ClobMapper.FIRST).first();
 				}
 			});
-			log.info("loaded {} {} from table {}", id.toString(), result == null ? "NULL": result.substring(0, 10), tableName);
-			return result;
+			if (clob==null) {
+				log.warn("found a null value for id {}", id.toString());
+				return null;
+			} else {
+				String result = CharStreams.toString(clob.getCharacterStream());
+				log.info("loaded {} {} from table {}", id.toString(), result, tableName);
+				return result; 
+			}
 		} catch (Exception e) {
+			log.error("error when loading {} from table {}", id.toString(), tableName);
 			e.printStackTrace();
 			return null;
 		}
@@ -157,7 +150,7 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 			@Override
 			public Integer inTransaction(Handle h, TransactionStatus ts)
 					throws Exception {
-				PreparedBatch pb = h.prepareBatch(String.format("insert into %s values (:id, :aggregate_root_data)", tableName));
+				PreparedBatch pb = h.prepareBatch(String.format("insert into %s (id, aggregate_root_data) values (:id, :aggregate_root_data)", tableName));
 				for (Entry<UUID, String> entry : id_value_pairs.entrySet()){
 					// lets insert only the new ones
 					if (!currentKeysOnTable.contains(entry.getKey())){
