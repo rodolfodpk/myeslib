@@ -1,7 +1,7 @@
 myeslib
 =======
 
-My Event Sourcing library / toolkit built mostly upon Camel and Hazelcast
+An Event Sourcing library / toolkit 
 
 It was inspired by:
 
