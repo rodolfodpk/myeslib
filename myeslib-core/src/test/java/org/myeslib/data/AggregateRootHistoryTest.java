@@ -13,8 +13,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.myeslib.core.Command;
 import org.myeslib.core.Event;
-import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
-import org.myeslib.example.SampleCoreDomain.InventoryIncreased;
+import org.myeslib.example.SampleDomain.IncreaseInventory;
+import org.myeslib.example.SampleDomain.InventoryIncreased;
 
 @RunWith(MockitoJUnitRunner.class) 
 public class AggregateRootHistoryTest {

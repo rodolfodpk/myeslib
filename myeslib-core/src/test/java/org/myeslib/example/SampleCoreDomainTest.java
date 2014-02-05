@@ -14,15 +14,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.myeslib.core.Event;
-import org.myeslib.example.SampleCoreDomain.CreateInventoryItem;
-import org.myeslib.example.SampleCoreDomain.DecreaseInventory;
-import org.myeslib.example.SampleCoreDomain.IncreaseInventory;
-import org.myeslib.example.SampleCoreDomain.InventoryDecreased;
-import org.myeslib.example.SampleCoreDomain.InventoryIncreased;
-import org.myeslib.example.SampleCoreDomain.InventoryItemAggregateRoot;
-import org.myeslib.example.SampleCoreDomain.InventoryItemCommandHandler;
-import org.myeslib.example.SampleCoreDomain.InventoryItemCreated;
-import org.myeslib.example.SampleCoreDomain.ItemDescriptionGeneratorService;
+import org.myeslib.example.SampleDomain.CreateInventoryItem;
+import org.myeslib.example.SampleDomain.DecreaseInventory;
+import org.myeslib.example.SampleDomain.IncreaseInventory;
+import org.myeslib.example.SampleDomain.InventoryDecreased;
+import org.myeslib.example.SampleDomain.InventoryIncreased;
+import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
+import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
+import org.myeslib.example.SampleDomain.InventoryItemCreated;
+import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SampleCoreDomainTest {

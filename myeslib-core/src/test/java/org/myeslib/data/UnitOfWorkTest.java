@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.myeslib.core.Command;
 import org.myeslib.core.Event;
 import org.myeslib.data.UnitOfWork;
-import org.myeslib.example.SampleCoreDomain.InventoryIncreased;
+import org.myeslib.example.SampleDomain.InventoryIncreased;
 
 public class UnitOfWorkTest {
 

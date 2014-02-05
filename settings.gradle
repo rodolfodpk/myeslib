@@ -4,5 +4,6 @@ rootProject.name = 'myeslib'
 include 'myeslib-3rd-party'
 include 'myeslib-core'
 include 'myeslib-hazelcast'
-include 'myeslib-example'
+include 'myeslib-example-hazelcast'
+include 'myeslib-jdbi'
 

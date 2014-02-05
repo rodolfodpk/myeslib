@@ -1,4 +1,4 @@
-package org.myeslib.hazelcast;
+package org.myeslib.storage.jdbi;
 
 import static org.myeslib.util.EventSourcingMagicHelper.applyEventsOn;
 
@@ -12,16 +12,20 @@ import org.myeslib.core.Event;
 import org.myeslib.data.AggregateRootHistory;
 import org.myeslib.data.Snapshot;
 import org.myeslib.storage.SnapshotReader;
-
-import com.google.common.base.Function;
+import org.myeslib.storage.jdbi.impl.AggregateRootReaderRepository;
+import org.skife.jdbi.v2.Handle;
 
 @AllArgsConstructor
-public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
+public class DbSnapshotReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
     
-	private final Map<K, String> eventsMap ;
+	private final Handle handle;
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
-	private final Function<String, AggregateRootHistory> fromStringFunction ;
+	private final AggregateRootReaderRepository<K> arReader ;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.myeslib.storage.SnapshotReader#get(java.lang.Object, org.myeslib.core.AggregateRoot)
+	 */
 	public Snapshot<A> get(final K id, final A aggregateRootFreshInstance) {
 		final AggregateRootHistory transactionHistory = getEventsOrEmptyIfNull(id);
 		final Long lastVersion = transactionHistory.getLastVersion();
@@ -40,8 +44,7 @@ public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotRea
 	}
 
 	private AggregateRootHistory getEventsOrEmptyIfNull(final K id) {
-		String asString = eventsMap.get(id);
-		final AggregateRootHistory events = fromStringFunction.apply(asString);
+		final AggregateRootHistory events = arReader.get(id, handle);
 		return events == null ? new AggregateRootHistory() : events;
 	}
 	
