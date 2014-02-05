@@ -88,10 +88,15 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 									.map(ClobMapper.FIRST).first();
 						}
 					});
-					String string = CharStreams.toString(clob.getCharacterStream());
-					System.out.println("----> "+ string);
-					System.out.println("----> "+ new String(string.getBytes()));
-					return clob == null ? null : string; 
+					if (clob==null) {
+						log.warn("found a null value for id {}", id.toString());
+						return null;
+					} else {
+						String string = CharStreams.toString(clob.getCharacterStream());
+						//System.out.println("----> "+ string);
+						//System.out.println("----> "+ new String(string.getBytes()));
+						return string; 
+					}
 				}
 			});
 			log.info("loaded {} {} from table {}", id.toString(), result == null ? "NULL": result.substring(0, 10), tableName);
