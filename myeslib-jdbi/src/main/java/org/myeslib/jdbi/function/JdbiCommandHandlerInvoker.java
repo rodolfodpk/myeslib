@@ -21,7 +21,7 @@ public class JdbiCommandHandlerInvoker<K, A extends AggregateRoot> implements Co
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.storage.CommandHandlerInvoker#handle(java.lang.Object, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
+	 * @see org.myeslib.core.function.CommandHandlerInvoker#invoke(java.lang.Object, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
 	 */
 	@Override
 	public UnitOfWork invoke(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {

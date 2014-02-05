@@ -29,7 +29,10 @@ public class HzCommandHandlerInvoker<K, A extends AggregateRoot> implements Comm
 	private final Function<String, AggregateRootHistory> fromStringFunction ;
 	private final Function<AggregateRootHistory, String> toStringFunction ;
 	
-	
+	/*
+	 * (non-Javadoc)
+	 * @see org.myeslib.core.function.CommandHandlerInvoker#invoke(java.lang.Object, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
+	 */
 	@Override
 	public UnitOfWork invoke(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {
 		

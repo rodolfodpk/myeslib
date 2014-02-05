@@ -24,7 +24,7 @@ public class JdbiSnapshotReader<K, A extends AggregateRoot> implements SnapshotR
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.storage.SnapshotReader#get(java.lang.Object, org.myeslib.core.AggregateRoot)
+	 * @see org.myeslib.core.storage.SnapshotReader#get(java.lang.Object, org.myeslib.core.AggregateRoot)
 	 */
 	public Snapshot<A> get(final K id, final A aggregateRootFreshInstance) {
 		final AggregateRootHistory transactionHistory = getEventsOrEmptyIfNull(id);

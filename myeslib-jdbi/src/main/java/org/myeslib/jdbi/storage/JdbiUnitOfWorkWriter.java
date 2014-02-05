@@ -20,7 +20,7 @@ public class JdbiUnitOfWorkWriter<K> implements UnitOfWorkWriter<K>{
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.storage.UnitOfWorkDao#insert(java.lang.Object, org.myeslib.data.UnitOfWork)
+	 * @see org.myeslib.core.storage.UnitOfWorkWriter#insert(java.lang.Object, org.myeslib.core.data.UnitOfWork)
 	 */
 	public void insert(final K id, final UnitOfWork uow) {
 		final AggregateRootHistory history = getHistoryFor(id);

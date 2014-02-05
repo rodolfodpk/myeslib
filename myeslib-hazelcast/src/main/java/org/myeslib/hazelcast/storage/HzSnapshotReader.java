@@ -22,6 +22,10 @@ public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotRea
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
 	private final Function<String, AggregateRootHistory> fromStringFunction ;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.myeslib.core.storage.SnapshotReader#get(java.lang.Object, org.myeslib.core.AggregateRoot)
+	 */
 	public Snapshot<A> get(final K id, final A aggregateRootFreshInstance) {
 		final AggregateRootHistory transactionHistory = getEventsOrEmptyIfNull(id);
 		final Long lastVersion = transactionHistory.getLastVersion();

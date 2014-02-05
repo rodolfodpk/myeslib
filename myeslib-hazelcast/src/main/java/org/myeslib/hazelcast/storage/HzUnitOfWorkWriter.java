@@ -18,6 +18,10 @@ public class HzUnitOfWorkWriter<K> implements UnitOfWorkWriter<K>{
 	private final Function<AggregateRootHistory, String> toStringFunction ;
 	private final Function<String, AggregateRootHistory> fromStringFunction ;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.myeslib.core.storage.UnitOfWorkWriter#insert(java.lang.Object, org.myeslib.core.data.UnitOfWork)
+	 */
 	public void insert(final K id, final UnitOfWork uow) {
 		final AggregateRootHistory history = getHistoryFor(id);
 		if (history.getLastVersion() != uow.getBaseVersion()){
