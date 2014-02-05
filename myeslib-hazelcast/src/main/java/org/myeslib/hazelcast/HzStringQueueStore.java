@@ -136,7 +136,7 @@ public class HzStringQueueStore implements QueueStore<String> {
 				PreparedBatch pb = h.prepareBatch(String.format("insert into %s (id, value) values (:id, :value)", tableName));
 				for (Map.Entry<Long, String> entry : items.entrySet()){
 					log.info("store " + entry.getKey() + ", value = " + entry.getValue());
-					pb.add().bind("id", entry.getKey()).bind("value", entry.getValue().getBytes());
+					pb.add().bind("id", entry.getKey()).bind("value", entry.getValue());
 				}
 				return pb.execute().length;
 			}
