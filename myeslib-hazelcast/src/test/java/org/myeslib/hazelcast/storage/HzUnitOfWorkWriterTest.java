@@ -57,7 +57,7 @@ public class HzUnitOfWorkWriterTest {
 		// first get on map will returns null, second will returns toStore 
 		when(mapWithUuidKey.get(id)).thenReturn(null, gson.toJson(toStore));
 		
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
+		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ToStringFunction(gson), new FromStringFunction(gson), mapWithUuidKey);
 		store.insert(id, t);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
@@ -91,7 +91,7 @@ public class HzUnitOfWorkWriterTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 		
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
+		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ToStringFunction(gson), new FromStringFunction(gson), mapWithUuidKey);
 		UnitOfWork t2 = UnitOfWork.create(command, 1l, events);
 		store.insert(id, t2);
 
@@ -136,7 +136,7 @@ public class HzUnitOfWorkWriterTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(mapWithUuidKey, new ToStringFunction(gson), new FromStringFunction(gson));
+		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ToStringFunction(gson), new FromStringFunction(gson), mapWithUuidKey);
 		UnitOfWork t2 = UnitOfWork.create(command, 0l, events);
 		store.insert(id, t2);
 

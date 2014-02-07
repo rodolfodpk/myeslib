@@ -39,7 +39,8 @@ public class Example {
 		
 		CamelContext context = new DefaultCamelContext(registry);
 		context.addComponent("hz", justAnotherHazelcastComponent);
-	
+
+		registry.put("inventoryCommandsDataset", new CommandsDataSet());
 		context.addRoutes(consumeCommandsRoute);
 				
 		main.getCamelContexts().clear();

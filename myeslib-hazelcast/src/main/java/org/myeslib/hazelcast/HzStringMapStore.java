@@ -1,6 +1,5 @@
 package org.myeslib.hazelcast;
 
-import java.sql.Clob;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,16 +14,16 @@ import javax.sql.DataSource;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.myeslib.hazelcast.jdbi.ClobMapper;
+import org.myeslib.hazelcast.jdbi.ClobMapperToString;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.PreparedBatch;
 import org.skife.jdbi.v2.TransactionCallback;
+import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.TransactionStatus;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.util.StringMapper;
 
-import com.google.common.io.CharStreams;
 import com.hazelcast.core.MapStore;
 
 @Slf4j
@@ -75,30 +74,29 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 	
 	@Override
 	public String load(final UUID id) {
+		String result = null;
 		try {
 			log.info("will load {} from table {}", id.toString(), tableName);
-			Clob clob = dbi.withHandle(new HandleCallback<Clob>() {
-				@Override
-				public Clob withHandle(Handle h) throws Exception {
-					String sql = String.format("select aggregate_root_data from %s where id = :id", tableName);
-					return h.createQuery(sql)
-							.bind("id", id.toString())
-							.map(ClobMapper.FIRST).first();
-				}
-			});
-			if (clob==null) {
-				log.warn("found a null value for id {}", id.toString());
-				return null;
+			result = dbi.inTransaction(TransactionIsolationLevel.READ_COMMITTED,
+					new TransactionCallback<String>() {
+						@Override
+						public String inTransaction(Handle h, TransactionStatus ts) throws Exception {
+							String sql = String.format("select aggregate_root_data from %s where id = :id", tableName);
+							return h.createQuery(sql).bind("id", id.toString()).map(ClobMapperToString.FIRST).first();
+						}
+					});
+			// http://stackoverflow.com/questions/9779324/program-hangs-after-retrieving-100-rows-containg-clob
+			if (result == null) {
+				log.warn("found a null or zero length value for id {}", id.toString());
 			} else {
-				String result = CharStreams.toString(clob.getCharacterStream());
-				log.info("loaded {} {} from table {}", id.toString(), result, tableName);
-				return result; 
+				log.info("loaded {} {} from table {}", id.toString(), result.replace("\n", "").substring(0, Math.min(10, result.length()-1)), tableName);
 			}
 		} catch (Exception e) {
 			log.error("error when loading {} from table {}", id.toString(), tableName);
 			e.printStackTrace();
-			return null;
+		} finally {
 		}
+		return result;
 	}
 
 	@Override
@@ -119,7 +117,7 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 
 	@Override
 	public void deleteAll(final Collection<UUID> ids) {
-		log.info(String.format("deleting all within table %s", tableName));
+		log.info("deleting {} rows within table {}", ids.size(), tableName);
 		dbi.inTransaction(new TransactionCallback<Integer>() {
 			@Override
 			public Integer inTransaction(Handle h, TransactionStatus ts)
@@ -141,44 +139,47 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 	}
 
 	@Override
-	public void storeAll(final Map<UUID, String> id_value_pairs) {
-		log.info(String.format("storing all within table %s", tableName));		
+	public void storeAll(final Map<UUID, String> id_value_pairs) { 
 		
-		final Set<UUID> currentKeysOnTable = loadAllKeys();
-		
+		log.info("storing {} rows within table {}", id_value_pairs.size(), tableName);		
+
 		dbi.inTransaction(new TransactionCallback<Integer>() {
 			@Override
 			public Integer inTransaction(Handle h, TransactionStatus ts)
 					throws Exception {
-				PreparedBatch pb = h.prepareBatch(String.format("insert into %s (id, aggregate_root_data) values (:id, :aggregate_root_data)", tableName));
+				
+				int inserts = 0, updates = 0;
+				boolean hasInsert = false, hasUpdate = false;
+				PreparedBatch pbInsert = h.prepareBatch(String.format("insert into %s (id, aggregate_root_data) values (:id, :aggregate_root_data)", tableName));
+				PreparedBatch pbUpdate = h.prepareBatch(String.format("update %s set aggregate_root_data = :aggregate_root_data where id = :id", tableName));
+				
 				for (Entry<UUID, String> entry : id_value_pairs.entrySet()){
-					// lets insert only the new ones
-					if (!currentKeysOnTable.contains(entry.getKey())){
-						final String id = entry.getKey().toString();
-						final String value = entry.getValue();
-						pb.add().bind("id", id).bind("aggregate_root_data", value);		// value.getBytes... testando sem o 
+				
+					final String id = entry.getKey().toString();
+					final String value = entry.getValue();
+					
+					String idOnTable = h.createQuery(String.format("select id from %s where id = :id", tableName)).bind("id", id).map(StringMapper.FIRST).first();
+					
+					if (id.equals(idOnTable)) {
+						hasUpdate = true;
+						pbUpdate.add().bind("id", id).bind("aggregate_root_data", value);	
+						log.debug(String.format("updating with id %s into table %s", id, tableName));
+					} else {
+						hasInsert = true;
+						pbInsert.add().bind("id", id).bind("aggregate_root_data", value);		// value.getBytes... testando sem o 
 						log.debug(String.format("inserting with id %s into table %s", id, tableName));	
 					}
+					
 				}
-				return pb.execute().length;
-			}
-		}) ;
-		
-		dbi.inTransaction(new TransactionCallback<Integer>() {
-			@Override
-			public Integer inTransaction(Handle h, TransactionStatus ts)
-					throws Exception {
-				PreparedBatch pb = h.prepareBatch(String.format("update %s set aggregate_root_data = :aggregate_root_data where id = :id", tableName));
-				for (Entry<UUID, String> entry : id_value_pairs.entrySet()){
-					// lets update the existing
-					if (currentKeysOnTable.contains(entry.getKey())){
-						final String id = entry.getKey().toString();
-						final String value = entry.getValue();
-						pb.add().bind("id", id).bind("aggregate_root_data", value);	
-						log.debug(String.format("updating with id %s into table %s", id, tableName));	
-					}
+				
+				if (hasInsert) {
+					inserts = pbInsert.execute().length;
 				}
-				return pb.execute().length;
+				if (hasUpdate) {
+					updates = pbUpdate.execute().length;
+				}
+				
+				return inserts + updates;
 			}
 		}) ;
 		

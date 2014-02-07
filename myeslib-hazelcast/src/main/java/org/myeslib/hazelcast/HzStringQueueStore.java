@@ -1,6 +1,5 @@
 package org.myeslib.hazelcast;
 
-import java.sql.Clob;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,15 +12,15 @@ import javax.sql.DataSource;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.myeslib.hazelcast.jdbi.ClobMapper;
+import org.myeslib.hazelcast.jdbi.ClobMapperToString;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.PreparedBatch;
 import org.skife.jdbi.v2.TransactionCallback;
+import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.TransactionStatus;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 
-import com.google.common.io.CharStreams;
 import com.hazelcast.core.QueueStore;
 
 @Slf4j
@@ -70,30 +69,27 @@ public class HzStringQueueStore implements QueueStore<String> {
 
 	@Override
 	public String load(final Long id) {
+		String result = null;
 		try {
 			log.info("will load {} from table {}", id.toString(), tableName);
-			Clob clob = dbi.withHandle(new HandleCallback<Clob>() {
-				@Override
-				public Clob withHandle(Handle h) throws Exception {
-					String sql = String.format("select value from %s where id = :id", tableName);
-					return h.createQuery(sql)
-							.bind("id", id.toString())
-							.map(ClobMapper.FIRST).first();
-				}
-			});
-			if (clob==null) {
+			result = dbi.inTransaction(TransactionIsolationLevel.READ_COMMITTED,
+					new TransactionCallback<String>() {
+						@Override
+						public String inTransaction(Handle h, TransactionStatus ts) throws Exception {
+							String sql = String.format("select value from %s where id = :id", tableName);
+							return h.createQuery(sql).bind("id", id).map(ClobMapperToString.FIRST).first();
+						}
+					});
+			if (result==null) {
 				log.warn("found a null value for id {}", id.toString());
-				return null;
 			} else {
-				String result = CharStreams.toString(clob.getCharacterStream());
 				log.info("loaded {} {} from table {}", id.toString(), result, tableName);
-				return result; 
 			}
 		} catch (Exception e) {
 			log.error("error when loading {} from table {}", id.toString(), tableName);
 			e.printStackTrace();
-			return null;
-		}		
+		}
+		return result;
 	}
 
 	@Override
