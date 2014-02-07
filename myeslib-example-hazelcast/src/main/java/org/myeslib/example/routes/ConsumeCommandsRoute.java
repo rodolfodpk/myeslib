@@ -69,9 +69,10 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 					e.getOut().setBody(snapshot);
 				}
 			 })
-			 .log("snapshot after all commands: ${body}");
+			 .log("*** snapshot after all commands: ${body}");
 	      
 	      from("direct:dead-letter-channel")
+	      	.routeId("direct:dead-letter-channel")
 	         .log("error !!");
 
 	}

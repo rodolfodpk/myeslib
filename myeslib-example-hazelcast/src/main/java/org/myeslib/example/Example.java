@@ -21,7 +21,7 @@ public class Example {
 	final SimpleRegistry registry;
 	final CamelContext context;
 	
-	public final static int HOW_MANY_COMMANDS_TO_TEST = 1000;
+	public final static int HOW_MANY_COMMANDS_TO_TEST = 100;
 	
 	public static void main(String[] args) throws Exception {
 

@@ -15,7 +15,7 @@ public class CommandsDataSet extends DataSetSupport {
 	
 	public CommandsDataSet(int howManyCommands) {
 		setSize(howManyCommands);
-		setReportCount(100);
+		setReportCount(10);
 	}
 
 	@Override
