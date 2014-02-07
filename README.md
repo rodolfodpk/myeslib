@@ -11,6 +11,15 @@ and off course:
 
 https://github.com/gregoryyoung/m-r
 
+Getting Started
+===============
+
+cd myeslib-example-hazelcast
+
+mvn clean install
+
+java -jar target/myeslib-example-hazelcast-0.0.1-SNAPSHOT.jar
+
 Notes
 =====
 
