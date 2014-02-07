@@ -72,7 +72,7 @@ public class HzStringQueueStore implements QueueStore<String> {
 		String result = null;
 		try {
 			log.info("will load {} from table {}", id.toString(), tableName);
-			result = dbi.inTransaction(TransactionIsolationLevel.SERIALIZABLE,
+			result = dbi.inTransaction(TransactionIsolationLevel.READ_COMMITTED,
 					new TransactionCallback<String>() {
 						@Override
 						public String inTransaction(Handle h, TransactionStatus ts) throws Exception {
