@@ -57,7 +57,9 @@ public class HzUnitOfWorkWriter<K> implements UnitOfWorkWriter<K>{
 		// TODO WARNING https://github.com/hazelcast/hazelcast/issues/1593 
 		log.debug("looking for {} on map {} ", id, pastTransactionsMap.getName());
 		String asString = pastTransactionsMap.get(id);
-		log.debug("found NULL value for {} on map {} ", id, pastTransactionsMap.getName());
+		if (asString==null) {
+			log.debug("found NULL value for {} on map {} ", id, pastTransactionsMap.getName());
+		}
 		AggregateRootHistory history = fromStringFunction.apply(asString);
 		return history == null ? new AggregateRootHistory() : history;
 	}
