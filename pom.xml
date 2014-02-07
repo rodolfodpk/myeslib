@@ -79,11 +79,6 @@
 				<version>1.0.13</version>
 			</dependency>
 			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>15.0</version>
-			</dependency>
-			<dependency>
 				<groupId>org.jdbi</groupId>
 				<artifactId>jdbi</artifactId>
 				<version>2.51</version>
