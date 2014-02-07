@@ -9,11 +9,11 @@ import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.DecreaseInventory;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 
-class CommandsDataSet extends DataSetSupport {
+public class CommandsDataSet extends DataSetSupport {
 
 	final UUID id = UUID.randomUUID();
 	
-	CommandsDataSet() {
+	public CommandsDataSet() {
 		setSize(1000);
 		setReportCount(100);
 	}

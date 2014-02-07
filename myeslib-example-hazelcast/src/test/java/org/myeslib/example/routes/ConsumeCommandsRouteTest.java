@@ -14,6 +14,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,12 +24,14 @@ import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.storage.SnapshotReader;
+import org.myeslib.example.CommandsDataSet;
 import org.myeslib.example.ExampleModule;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.HazelcastMaps;
+import org.myeslib.hazelcast.jdbi.ClobMapperToString;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
@@ -46,6 +49,7 @@ import com.google.inject.util.Modules;
 public class ConsumeCommandsRouteTest extends CamelTestSupport {
 
 	private static Injector injector ;
+	
 	@Produce(uri = "direct:handle-inventory-item-command")
 	protected ProducerTemplate template;
 	
@@ -81,6 +85,14 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 		super.setUp();
 	}
 
+	@Override 
+	public JndiRegistry createRegistry() {
+		// wtf, this should be SimpleRegistry instead...
+		JndiRegistry r = new  JndiRegistry();
+		r.bind("inventoryCommandsDataset", new CommandsDataSet());
+		return r;
+	}
+	
 	@Test
 	public void test() {
 		
@@ -113,24 +125,22 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 	
    @Override
     protected RouteBuilder createRouteBuilder() {
-	   
 	   return consumeCommandsRoute;
-	   
    }
 	
 	String getAggregateRootHistoryAsJson(final String id){
 		
 		DBI dbi = new DBI(ds);
 		
-		byte[] clob = dbi.withHandle(new HandleCallback<byte[]>() {
+		String clob = dbi.withHandle(new HandleCallback<String>() {
 			@Override
-			public byte[] withHandle(Handle h) throws Exception {
+			public String withHandle(Handle h) throws Exception {
 				return h.createQuery(String.format("select aggregate_root_data from %s where id = :id", HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()))
 						.bind("id", id)
-				 .map(ByteArrayMapper.FIRST).first();
+				 .map(ClobMapperToString.FIRST).first();
 			}
 		});
 		
-		return new String(clob);
+		return clob;
 	}
 }
