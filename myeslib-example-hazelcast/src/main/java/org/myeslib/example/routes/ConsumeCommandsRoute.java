@@ -13,6 +13,7 @@ import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.function.CommandHandlerInvoker;
 import org.myeslib.core.storage.SnapshotReader;
+import org.myeslib.example.Example;
 import org.myeslib.example.ExampleModule.HzUnitOfWorkWriterFactory;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
@@ -53,13 +54,13 @@ public class ConsumeCommandsRoute extends RouteBuilder {
 		 	.routeId("dataset:inventoryCommandsDataset")
 		    .to("direct:handle-inventory-item-command");
 			
-	      from("direct:handle-inventory-item-command")
+	     from("direct:handle-inventory-item-command")
 	         .routeId("handle-inventory-item-command")
 	      	 .log("received = ${body}")
 	         .setHeader("id", simple("${body.getId()}"))
 	         .process(new ItemInventoryProcessor())
 	      	 .log("resulting body = ${body}")
-	      	 .aggregate(header("id")).completionSize(5).aggregationStrategy(new UseLatestAggregationStrategy())
+	      	 .aggregate(header("id")).completionSize(Example.HOW_MANY_COMMANDS_TO_TEST).aggregationStrategy(new UseLatestAggregationStrategy())
 	      	 .process(new Processor() {
 				@Override
 				public void process(Exchange e) throws Exception {

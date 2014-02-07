@@ -25,6 +25,7 @@ import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.CommandsDataSet;
+import org.myeslib.example.Example;
 import org.myeslib.example.ExampleModule;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
@@ -35,7 +36,6 @@ import org.myeslib.hazelcast.jdbi.ClobMapperToString;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
-import org.skife.jdbi.v2.util.ByteArrayMapper;
 
 import com.google.gson.Gson;
 import com.google.inject.Binder;
@@ -89,7 +89,7 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 	public JndiRegistry createRegistry() {
 		// wtf, this should be SimpleRegistry instead...
 		JndiRegistry r = new  JndiRegistry();
-		r.bind("inventoryCommandsDataset", new CommandsDataSet());
+		r.bind("inventoryCommandsDataset", new CommandsDataSet(Example.HOW_MANY_COMMANDS_TO_TEST));
 		return r;
 	}
 	

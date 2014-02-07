@@ -21,8 +21,12 @@ public class Example {
 	final SimpleRegistry registry;
 	final CamelContext context;
 	
+	public final static int HOW_MANY_COMMANDS_TO_TEST = 1000;
+	
 	public static void main(String[] args) throws Exception {
 
+		log.info("starting...");
+		
 		Injector injector = Guice.createInjector(new ExampleModule());
 	    Example example = injector.getInstance(Example.class);
 		example.main.run();
@@ -40,7 +44,7 @@ public class Example {
 		CamelContext context = new DefaultCamelContext(registry);
 		context.addComponent("hz", justAnotherHazelcastComponent);
 
-		registry.put("inventoryCommandsDataset", new CommandsDataSet());
+		registry.put("inventoryCommandsDataset", new CommandsDataSet(HOW_MANY_COMMANDS_TO_TEST));
 		context.addRoutes(consumeCommandsRoute);
 				
 		main.getCamelContexts().clear();
@@ -48,8 +52,6 @@ public class Example {
 		main.setDuration(-1);
 		main.start();
 		
-		log.info("starting...");
-	
 	}
 
 }

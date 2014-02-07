@@ -13,8 +13,8 @@ public class CommandsDataSet extends DataSetSupport {
 
 	final UUID id = UUID.randomUUID();
 	
-	public CommandsDataSet() {
-		setSize(1000);
+	public CommandsDataSet(int howManyCommands) {
+		setSize(howManyCommands);
 		setReportCount(100);
 	}
 
