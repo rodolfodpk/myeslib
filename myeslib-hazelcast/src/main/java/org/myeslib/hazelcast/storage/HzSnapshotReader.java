@@ -1,11 +1,12 @@
 package org.myeslib.hazelcast.storage;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.myeslib.util.EventSourcingMagicHelper.applyEventsOn;
 
 import java.util.List;
 import java.util.Map;
 
-import lombok.AllArgsConstructor;
+import javax.inject.Inject;
 
 import org.myeslib.core.AggregateRoot;
 import org.myeslib.core.Event;
@@ -15,18 +16,31 @@ import org.myeslib.core.storage.SnapshotReader;
 
 import com.google.common.base.Function;
 
-@AllArgsConstructor
 public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
-    
+
 	private final Map<K, String> eventsMap ;
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
 	private final Function<String, AggregateRootHistory> fromStringFunction ;
-	
+    
+	@Inject
+	public HzSnapshotReader(Map<K, String> eventsMap,
+			Map<K, Snapshot<A>> lastSnapshotMap,
+			Function<String, AggregateRootHistory> fromStringFunction) {
+		checkNotNull(eventsMap);
+		checkNotNull(lastSnapshotMap);
+		checkNotNull(fromStringFunction);
+		this.eventsMap = eventsMap;
+		this.lastSnapshotMap = lastSnapshotMap;
+		this.fromStringFunction = fromStringFunction;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.myeslib.core.storage.SnapshotReader#get(java.lang.Object, org.myeslib.core.AggregateRoot)
 	 */
 	public Snapshot<A> get(final K id, final A aggregateRootFreshInstance) {
+		checkNotNull(id);
+		checkNotNull(aggregateRootFreshInstance);
 		final AggregateRootHistory transactionHistory = getEventsOrEmptyIfNull(id);
 		final Long lastVersion = transactionHistory.getLastVersion();
 		final Snapshot<A> lastSnapshot = lastSnapshotMap.get(id);

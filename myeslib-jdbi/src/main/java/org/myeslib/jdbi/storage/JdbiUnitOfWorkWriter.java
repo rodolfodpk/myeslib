@@ -24,7 +24,7 @@ public class JdbiUnitOfWorkWriter<K> implements UnitOfWorkWriter<K>{
 	 */
 	public void insert(final K id, final UnitOfWork uow) {
 		final AggregateRootHistory history = getHistoryFor(id);
-		if (history.getLastVersion() != uow.getBaseVersion()){
+		if (!history.getLastVersion().equals(uow.getBaseVersion())){
 			throw new ConcurrentModificationException(String.format("base version ( %s ) does not match the last version ( %s )", 
 																	uow.getBaseVersion().toString(),
 																	history.getLastVersion().toString()												

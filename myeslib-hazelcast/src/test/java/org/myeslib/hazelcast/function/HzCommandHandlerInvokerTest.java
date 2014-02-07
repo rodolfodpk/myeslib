@@ -2,6 +2,8 @@ package org.myeslib.hazelcast.function;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,34 +24,15 @@ import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.example.SampleDomain.InventoryItemCreated;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
-import org.myeslib.example.SampleDomainGsonFactory;
-import org.myeslib.hazelcast.HzStringTxMapFactory;
-import org.myeslib.hazelcast.gson.FromStringFunction;
-import org.myeslib.hazelcast.gson.ToStringFunction;
+import org.myeslib.hazelcast.storage.HzUnitOfWorkWriter;
 
 import com.google.common.base.Function;
-import com.google.gson.Gson;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.TransactionalMap;
-import com.hazelcast.transaction.TransactionContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HzCommandHandlerInvokerTest {
 
 	@Mock
-	HazelcastInstance hazelcastInstance;
-	
-	@Mock
-	HzStringTxMapFactory<UUID> txMapFactory ;
-	
-
-	final Gson gson = new SampleDomainGsonFactory().create();
-	
-	final FromStringFunction fromStringFunction = new FromStringFunction(gson);
-	
-	final ToStringFunction toStringFunction = new ToStringFunction(gson);
-	
-	String mapId = "map4test";
+	HzUnitOfWorkWriter<UUID> writer ;
 	
 	Function<UUID, String> generateDescription = new Function<UUID, String>() {
 		@Override
@@ -73,30 +56,21 @@ public class HzCommandHandlerInvokerTest {
 				return generateDescription.apply(id);
 			}
 		})
-		
 		;
+		
 		command.setService(service);
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 
-		TransactionContext txContext = Mockito.mock(TransactionContext.class);
-		when(hazelcastInstance.newTransactionContext()).thenReturn(txContext );
-		
-		@SuppressWarnings("unchecked")
-		TransactionalMap<UUID, String> txMapMock = Mockito.mock(TransactionalMap.class);
-		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock);
-	
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
-				new HzCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
+				new HzCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(writer);
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
 		UnitOfWork uow = tcp.invoke(id, version, command, commandHandler);
 		
-		verify(hazelcastInstance).newTransactionContext();
-		verify(txContext).beginTransaction();
-		verify(txContext).commitTransaction();	
+		verify(writer).insert(id, uow);	
 		
 		InventoryItemCreated resultingEvent = (InventoryItemCreated) uow.getEvents().get(0);
 		
@@ -115,21 +89,13 @@ public class HzCommandHandlerInvokerTest {
 		
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
-		TransactionContext txContext = Mockito.mock(TransactionContext.class);
-		when(hazelcastInstance.newTransactionContext()).thenReturn(txContext );
-		@SuppressWarnings("unchecked")
-		TransactionalMap<UUID, String> txMapMock = Mockito.mock(TransactionalMap.class);
-		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
-		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
-				new HzCommandHandlerInvoker<>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new HzCommandHandlerInvoker<>(writer);
 		
 		try {
 			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
-			verify(hazelcastInstance).newTransactionContext();
-			verify(txContext).beginTransaction();
-			verify(txContext).rollbackTransaction();	
+			verify(writer, times(0)).insert(any(UUID.class), any(UnitOfWork.class));	
 			throw t;
 		}
 
@@ -146,21 +112,13 @@ public class HzCommandHandlerInvokerTest {
 		instance.setId(id);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
-		TransactionContext txContext = Mockito.mock(TransactionContext.class);
-		when(hazelcastInstance.newTransactionContext()).thenReturn(txContext );
-		@SuppressWarnings("unchecked")
-		TransactionalMap<UUID, String> txMapMock = Mockito.mock(TransactionalMap.class);
-		when(txMapFactory.get(txContext, mapId)).thenReturn(txMapMock );
 	
-		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
-				new HzCommandHandlerInvoker<>(hazelcastInstance, txMapFactory, mapId, fromStringFunction, toStringFunction);
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new HzCommandHandlerInvoker<>(writer);
 		
 		try {
 			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
-			verify(hazelcastInstance).newTransactionContext();
-			verify(txContext).beginTransaction();
-			verify(txContext).rollbackTransaction();	
+			verify(writer, times(0)).insert(any(UUID.class), any(UnitOfWork.class));	
 			throw t;
 		}
 
