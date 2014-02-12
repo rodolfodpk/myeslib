@@ -3,6 +3,7 @@ package org.myeslib.jdbi.storage;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,17 +25,17 @@ import org.myeslib.example.SampleDomain.InventoryDecreased;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.jdbi.AggregateRootHistoryReader;
-import org.myeslib.jdbi.storage.JdbiSnapshotReader;
-import org.skife.jdbi.v2.Handle;
+
+import com.google.common.base.Function;
 
 @RunWith(MockitoJUnitRunner.class) 
 public class JdbiSnapshotReaderTest {
 	
 	@Mock
-	Handle handle;
-	
-	@Mock
 	Map<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap ; 
+
+	@Mock
+	Function<Void, InventoryItemAggregateRoot> newInstanceFunction;
 	
 	@Mock
 	AggregateRootHistoryReader<UUID> arReader ;
@@ -46,14 +47,15 @@ public class JdbiSnapshotReaderTest {
 		
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 		
-		JdbiSnapshotReader<UUID, InventoryItemAggregateRoot> st = new JdbiSnapshotReader<UUID, InventoryItemAggregateRoot>(handle, lastSnapshotMap, arReader);
+		JdbiSnapshotReader<UUID, InventoryItemAggregateRoot> st = new JdbiSnapshotReader<UUID, InventoryItemAggregateRoot>(lastSnapshotMap, arReader, newInstanceFunction);
 		
-		when(arReader.get(id, handle)).thenReturn(null);
+		when(newInstanceFunction.apply(any(Void.class))).thenReturn(freshInstance);
+		when(arReader.get(id)).thenReturn(null);
 		when(lastSnapshotMap.get(id)).thenReturn(null);
 
-		assertThat(st.get(id, freshInstance).getAggregateInstance(), sameInstance(freshInstance));
+		assertThat(st.get(id).getAggregateInstance(), sameInstance(freshInstance));
 
-		verify(arReader).get(id, handle);
+		verify(arReader).get(id);
 		verify(lastSnapshotMap).get(id);
 		
 	}
@@ -75,13 +77,14 @@ public class JdbiSnapshotReaderTest {
 		
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 
-		JdbiSnapshotReader<UUID, InventoryItemAggregateRoot> st = new JdbiSnapshotReader<UUID, InventoryItemAggregateRoot>(handle, lastSnapshotMap, arReader);
-
-		when(arReader.get(id, handle)).thenReturn(transactionHistory);
+		JdbiSnapshotReader<UUID, InventoryItemAggregateRoot> st = new JdbiSnapshotReader<UUID, InventoryItemAggregateRoot>(lastSnapshotMap, arReader, newInstanceFunction);
 		
-		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id, freshInstance);
+		when(newInstanceFunction.apply(any(Void.class))).thenReturn(freshInstance);
+		when(arReader.get(id)).thenReturn(transactionHistory);
 		
-		verify(arReader).get(id, handle);
+		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id);
+		
+		verify(arReader).get(id);
 		verify(lastSnapshotMap).get(id);
 		verify(transactionHistory, times(2)).getLastVersion(); 
 		verify(transactionHistory).getEventsUntil(originalVersion); 
@@ -116,13 +119,14 @@ public class JdbiSnapshotReaderTest {
 	
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 
-		JdbiSnapshotReader<UUID, InventoryItemAggregateRoot> st = new JdbiSnapshotReader<UUID, InventoryItemAggregateRoot>(handle, lastSnapshotMap, arReader);
-
-		when(arReader.get(id, handle)).thenReturn(transactionHistory);
-
-		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id, freshInstance);
+		JdbiSnapshotReader<UUID, InventoryItemAggregateRoot> st = new JdbiSnapshotReader<UUID, InventoryItemAggregateRoot>(lastSnapshotMap, arReader, newInstanceFunction);
 		
-		verify(arReader).get(id, handle);
+		when(newInstanceFunction.apply(any(Void.class))).thenReturn(freshInstance);
+		when(arReader.get(id)).thenReturn(transactionHistory);
+
+		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id);
+		
+		verify(arReader).get(id);
 		verify(lastSnapshotMap).get(id);
 		verify(transactionHistory, times(2)).getLastVersion(); 
 		verify(transactionHistory).getEventsAfterUntil(firstVersion, versionNotYetOnLastSnapshot);

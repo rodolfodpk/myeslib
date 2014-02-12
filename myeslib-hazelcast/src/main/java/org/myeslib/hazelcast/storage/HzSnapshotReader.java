@@ -21,26 +21,29 @@ public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotRea
 	private final Map<K, String> eventsMap ;
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
 	private final Function<String, AggregateRootHistory> fromStringFunction ;
+	private final Function<Void, A> newInstanceFactory ;
     
 	@Inject
 	public HzSnapshotReader(Map<K, String> eventsMap,
 			Map<K, Snapshot<A>> lastSnapshotMap,
-			Function<String, AggregateRootHistory> fromStringFunction) {
+			Function<String, AggregateRootHistory> fromStringFunction,
+			Function<Void, A> newInstanceFactory) {
 		checkNotNull(eventsMap);
 		checkNotNull(lastSnapshotMap);
 		checkNotNull(fromStringFunction);
 		this.eventsMap = eventsMap;
 		this.lastSnapshotMap = lastSnapshotMap;
-		this.fromStringFunction = fromStringFunction;
+		this.fromStringFunction = fromStringFunction;	
+		this.newInstanceFactory = newInstanceFactory;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.core.storage.SnapshotReader#get(java.lang.Object, org.myeslib.core.AggregateRoot)
+	 * @see org.myeslib.core.storage.SnapshotReader#get(java.lang.Object)
 	 */
-	public Snapshot<A> get(final K id, final A aggregateRootFreshInstance) {
+	public Snapshot<A> get(final K id) {
 		checkNotNull(id);
-		checkNotNull(aggregateRootFreshInstance);
+		final A aggregateRootFreshInstance = newInstanceFactory.apply(null);
 		final AggregateRootHistory transactionHistory = getEventsOrEmptyIfNull(id);
 		final Long lastVersion = transactionHistory.getLastVersion();
 		final Snapshot<A> lastSnapshot = lastSnapshotMap.get(id);
@@ -59,8 +62,11 @@ public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotRea
 
 	private AggregateRootHistory getEventsOrEmptyIfNull(final K id) {
 		String asString = eventsMap.get(id);
-		final AggregateRootHistory events = fromStringFunction.apply(asString);
-		return events == null ? new AggregateRootHistory() : events;
+		if (asString==null){
+			return new AggregateRootHistory();
+		} else {
+			return fromStringFunction.apply(asString);
+		}
 	}
 	
 	private Snapshot<A> applyAllEventsOnFreshInstance(final AggregateRootHistory transactionHistory, 

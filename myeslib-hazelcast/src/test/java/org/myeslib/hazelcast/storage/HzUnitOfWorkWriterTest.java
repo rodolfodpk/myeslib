@@ -25,21 +25,17 @@ import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.example.SampleDomainGsonFactory;
-import org.myeslib.hazelcast.gson.FromStringFunction;
-import org.myeslib.hazelcast.gson.ToStringFunction;
-import org.myeslib.hazelcast.storage.HzUnitOfWorkWriter;
+import org.myeslib.util.gson.ArhFromStringFunction;
+import org.myeslib.util.gson.ArhToStringFunction;
 
 import com.google.gson.Gson;
-import com.hazelcast.core.TransactionalMap;
+import com.hazelcast.core.IMap;
 
 @RunWith(MockitoJUnitRunner.class) 
 public class HzUnitOfWorkWriterTest {
 	
 	@Mock
-	TransactionalMap<UUID, String> mapWithUuidKey;
-	
-	@Mock
-	TransactionalMap<Long, String> mapWithLongKey;
+	IMap<UUID, String> mapWithUuidKey;
 	
 	final Gson gson = new SampleDomainGsonFactory().create();
 	
@@ -57,7 +53,7 @@ public class HzUnitOfWorkWriterTest {
 		// first get on map will returns null, second will returns toStore 
 		when(mapWithUuidKey.get(id)).thenReturn(null, gson.toJson(toStore));
 		
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ToStringFunction(gson), new FromStringFunction(gson), mapWithUuidKey);
+		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
 		store.insert(id, t);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
@@ -91,7 +87,7 @@ public class HzUnitOfWorkWriterTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 		
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ToStringFunction(gson), new FromStringFunction(gson), mapWithUuidKey);
+		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
 		UnitOfWork t2 = UnitOfWork.create(command, 1l, events);
 		store.insert(id, t2);
 
@@ -136,7 +132,7 @@ public class HzUnitOfWorkWriterTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ToStringFunction(gson), new FromStringFunction(gson), mapWithUuidKey);
+		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
 		UnitOfWork t2 = UnitOfWork.create(command, 0l, events);
 		store.insert(id, t2);
 

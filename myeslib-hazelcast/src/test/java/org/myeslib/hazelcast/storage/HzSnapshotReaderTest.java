@@ -3,11 +3,12 @@ package org.myeslib.hazelcast.storage;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -22,9 +23,9 @@ import org.myeslib.core.data.Snapshot;
 import org.myeslib.example.SampleDomain.InventoryDecreased;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
+import org.myeslib.example.SampleDomain.InventoryItemCreated;
 import org.myeslib.example.SampleDomainGsonFactory;
-import org.myeslib.hazelcast.gson.FromStringFunction;
-import org.myeslib.hazelcast.storage.HzSnapshotReader;
+import org.myeslib.util.gson.ArhFromStringFunction;
 
 import com.google.common.base.Function;
 import com.google.gson.Gson;
@@ -38,19 +39,23 @@ public class HzSnapshotReaderTest {
 	@Test 
 	public void lastSnapshotNullNoTransactionHistory() {
 
-		Map<Long, String> eventsMap = Mockito.mock(Map.class);
-		Map<Long, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap = Mockito.mock(Map.class);
-		Long id = 1l;
+		Map<UUID, String> eventsMap = Mockito.mock(Map.class);
+		Map<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap = Mockito.mock(Map.class);
+		Function<Void, InventoryItemAggregateRoot> inventoryItemInstanceFactory = Mockito.mock(Function.class);
+		
+		UUID id = UUID.randomUUID();
 		
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 		
-		HzSnapshotReader<Long, InventoryItemAggregateRoot> st = new HzSnapshotReader<Long, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, new FromStringFunction(gson));
+		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<UUID, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, new ArhFromStringFunction(gson), inventoryItemInstanceFactory);
 		
+		when(inventoryItemInstanceFactory.apply(any(Void.class))).thenReturn(freshInstance);
 		when(eventsMap.get(id)).thenReturn(null);
 		when(lastSnapshotMap.get(id)).thenReturn(null);
 
-		assertThat(st.get(id, freshInstance).getAggregateInstance(), sameInstance(freshInstance));
+		assertThat(st.get(id).getAggregateInstance(), sameInstance(freshInstance));
 
+		verify(inventoryItemInstanceFactory).apply(any(Void.class));
 		verify(eventsMap).get(id);
 		verify(lastSnapshotMap).get(id);
 		
@@ -65,35 +70,39 @@ public class HzSnapshotReaderTest {
 		Map<UUID, String> eventsMap = Mockito.mock(Map.class);
 		Map<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap = Mockito.mock(Map.class);
 		Function<String, AggregateRootHistory> fromStringFunction = Mockito.mock(Function.class);
-		AggregateRootHistory transactionHistory = Mockito.mock(AggregateRootHistory.class);
-	
+		Function<Void, InventoryItemAggregateRoot> inventoryItemInstanceFactory = Mockito.mock(Function.class);
+		AggregateRootHistory transactionHistoryWithOneUnitOfWork = Mockito.mock(AggregateRootHistory.class);
+
+		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 		long originalVersion = 1;
 		
-		List<Event> events = Arrays.asList((Event)new InventoryIncreased(id, 2));
+		List<Event> events = new ArrayList<>();
+		events.add((Event)new InventoryItemCreated(id, "desc"));
+		events.add((Event)new InventoryIncreased(id, 4));
+		events.add((Event)new InventoryDecreased(id, 2));
 		
-		when(eventsMap.get(id)).thenReturn("");
-		when(fromStringFunction.apply("")).thenReturn(transactionHistory);
-		when(transactionHistory.getLastVersion()).thenReturn(originalVersion);
+		when(eventsMap.get(id)).thenReturn("json-representation");
+		when(fromStringFunction.apply("json-representation")).thenReturn(transactionHistoryWithOneUnitOfWork);
+		when(transactionHistoryWithOneUnitOfWork.getLastVersion()).thenReturn(originalVersion);
+		when(transactionHistoryWithOneUnitOfWork.getEventsUntil(originalVersion)).thenReturn(events);
 		when(lastSnapshotMap.get(id)).thenReturn(null);
-		when(transactionHistory.getEventsUntil(originalVersion)).thenReturn(events);
+		when(inventoryItemInstanceFactory.apply(any(Void.class))).thenReturn(freshInstance);
 		
-		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
+		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<UUID, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, fromStringFunction, inventoryItemInstanceFactory);
 
-		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<>(eventsMap, lastSnapshotMap, fromStringFunction);
-
-		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id, freshInstance);
+		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id);
 		
 		verify(eventsMap).get(id);
-		verify(fromStringFunction).apply("");
+		verify(fromStringFunction).apply("json-representation");
 		verify(lastSnapshotMap).get(id);
-		verify(transactionHistory, times(2)).getLastVersion(); 
-		verify(transactionHistory).getEventsUntil(originalVersion); 
+		verify(transactionHistoryWithOneUnitOfWork, times(2)).getLastVersion(); 
+		verify(transactionHistoryWithOneUnitOfWork).getEventsUntil(originalVersion);
+		verify(inventoryItemInstanceFactory).apply(any(Void.class));
+		verify(transactionHistoryWithOneUnitOfWork).getEventsUntil(1); 
 		
 		assertThat(resultingSnapshot.getVersion(), is(originalVersion));
 		
-		InventoryItemAggregateRoot fromSnapshot = resultingSnapshot.getAggregateInstance();
-
-		assertThat(fromSnapshot.getAvaliable(), is(2));
+		assertThat(resultingSnapshot.getAggregateInstance().getAvaliable(), is(2));
 
 	}
 	
@@ -106,40 +115,46 @@ public class HzSnapshotReaderTest {
 		Map<UUID, String> eventsMap = Mockito.mock(Map.class);
 		Map<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap = Mockito.mock(Map.class);
 		Function<String, AggregateRootHistory> fromStringFunction = Mockito.mock(Function.class);
-		AggregateRootHistory transactionHistory = Mockito.mock(AggregateRootHistory.class);
+		Function<Void, InventoryItemAggregateRoot> inventoryItemInstanceFactory = Mockito.mock(Function.class);
+		AggregateRootHistory transactionHistoryWithOneUnitOfWork = Mockito.mock(AggregateRootHistory.class);
 	
 		long firstVersion = 1;
 		long versionNotYetOnLastSnapshot = 2;
 		
-		List<Event> events = Arrays.asList((Event)new InventoryDecreased(id, 2));
+		List<Event> events = new ArrayList<>();
+		events.add((Event)new InventoryItemCreated(id, "desc"));
+		events.add((Event)new InventoryIncreased(id, 4));
+		events.add((Event)new InventoryDecreased(id, 2));
 		
 		InventoryItemAggregateRoot aggregateInstance = new InventoryItemAggregateRoot();
-		aggregateInstance.setAvaliable(3);
+		aggregateInstance.setAvaliable(4);
 		Snapshot<InventoryItemAggregateRoot> snapshotInstance = new Snapshot<>(aggregateInstance, firstVersion);
-	
-		when(eventsMap.get(id)).thenReturn("");
-		when(fromStringFunction.apply("")).thenReturn(transactionHistory);
-		when(transactionHistory.getLastVersion()).thenReturn(versionNotYetOnLastSnapshot);
-		when(lastSnapshotMap.get(id)).thenReturn(snapshotInstance);
-		when(transactionHistory.getEventsAfterUntil(firstVersion, versionNotYetOnLastSnapshot)).thenReturn(events);
-	
+
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 
-		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<>(eventsMap, lastSnapshotMap, fromStringFunction);
-
-		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id, freshInstance);
+		when(eventsMap.get(id)).thenReturn("json-representation");
+		when(fromStringFunction.apply("json-representation")).thenReturn(transactionHistoryWithOneUnitOfWork);
+		when(transactionHistoryWithOneUnitOfWork.getLastVersion()).thenReturn(versionNotYetOnLastSnapshot);
+		when(lastSnapshotMap.get(id)).thenReturn(snapshotInstance);
+		when(transactionHistoryWithOneUnitOfWork.getEventsAfterUntil(firstVersion, versionNotYetOnLastSnapshot)).thenReturn(events);
+	
+		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<UUID, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, fromStringFunction, inventoryItemInstanceFactory);
+		
+		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id);
 		
 		verify(eventsMap).get(id);
-		verify(fromStringFunction).apply("");
+		verify(fromStringFunction).apply("json-representation");
 		verify(lastSnapshotMap).get(id);
-		verify(transactionHistory, times(2)).getLastVersion(); 
-		verify(transactionHistory).getEventsAfterUntil(firstVersion, versionNotYetOnLastSnapshot);
+		verify(transactionHistoryWithOneUnitOfWork, times(2)).getLastVersion(); 
+		when(inventoryItemInstanceFactory.apply(any(Void.class))).thenReturn(freshInstance);
+		verify(inventoryItemInstanceFactory).apply(any(Void.class));
+		verify(transactionHistoryWithOneUnitOfWork).getEventsAfterUntil(firstVersion, versionNotYetOnLastSnapshot);
 		
 		assertThat(resultingSnapshot.getVersion(), is(versionNotYetOnLastSnapshot));
 		
 		InventoryItemAggregateRoot fromSnapshot = resultingSnapshot.getAggregateInstance();
 
-		assertThat(fromSnapshot.getAvaliable(), is(1));
+		assertThat(fromSnapshot.getAvaliable(), is(2));
 
 	}
 

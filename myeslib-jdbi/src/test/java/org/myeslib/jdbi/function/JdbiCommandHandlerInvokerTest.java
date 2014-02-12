@@ -2,16 +2,12 @@ package org.myeslib.jdbi.function;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -24,7 +20,6 @@ import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.example.SampleDomain.InventoryItemCreated;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
-import org.myeslib.jdbi.storage.JdbiUnitOfWorkWriter;
 
 import com.google.common.base.Function;
 
@@ -37,9 +32,6 @@ public class JdbiCommandHandlerInvokerTest {
 			return String.format("description for item with id=", id.toString());
 		}
 	};
-	
-	@Mock
-	JdbiUnitOfWorkWriter<UUID> dbEventStore;
 	
 	@Test
 	public void sucess() throws Throwable {
@@ -64,13 +56,11 @@ public class JdbiCommandHandlerInvokerTest {
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 
-		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(dbEventStore);
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
 		UnitOfWork uow = tcp.invoke(id, version, command, commandHandler);
-		
-		verify(dbEventStore).insert(id, uow);
 		
 		InventoryItemCreated resultingEvent = (InventoryItemCreated) uow.getEvents().get(0);
 		
@@ -90,12 +80,11 @@ public class JdbiCommandHandlerInvokerTest {
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 	
-		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(dbEventStore);
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
 
 		try {
 			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
-			verify(dbEventStore, times(0)).insert(any(UUID.class), any(UnitOfWork.class));
 			throw t;
 		}
 
@@ -113,12 +102,11 @@ public class JdbiCommandHandlerInvokerTest {
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 	
-		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(dbEventStore);
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
 
 		try {
 			tcp.invoke(id, version, command, commandHandler);
 		} catch (Throwable t) {
-			verify(dbEventStore, times(0)).insert(any(UUID.class), any(UnitOfWork.class));
 			throw t;
 		}
 

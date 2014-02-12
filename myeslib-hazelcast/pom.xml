@@ -20,7 +20,11 @@
 			<groupId>org.myeslib</groupId>
 			<artifactId>myeslib-core</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.myeslib</groupId>
+			<artifactId>myeslib-util</artifactId>
+		</dependency>
+		
 		<!-- Others -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>

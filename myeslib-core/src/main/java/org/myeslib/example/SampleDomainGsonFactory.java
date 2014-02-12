@@ -2,6 +2,7 @@ package org.myeslib.example;
 
 import java.lang.reflect.Modifier;
 
+import org.myeslib.core.AggregateRoot;
 import org.myeslib.core.Command;
 import org.myeslib.core.Event;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
@@ -9,6 +10,7 @@ import org.myeslib.example.SampleDomain.DecreaseInventory;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryDecreased;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
+import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCreated;
 
 import com.google.gson.Gson;
@@ -24,7 +26,11 @@ public class SampleDomainGsonFactory {
 	private final Gson gson;
 	
 	public SampleDomainGsonFactory() {
-		
+
+		final RuntimeTypeAdapterFactory<AggregateRoot> aggregateRootAdapter = 
+				RuntimeTypeAdapterFactory.of(AggregateRoot.class)
+				.registerSubtype(InventoryItemAggregateRoot.class, InventoryItemAggregateRoot.class.getSimpleName());
+
 		final RuntimeTypeAdapterFactory<Command> commandAdapter = 
 				RuntimeTypeAdapterFactory.of(Command.class)
 				.registerSubtype(CreateInventoryItem.class, CreateInventoryItem.class.getSimpleName())
@@ -37,9 +43,12 @@ public class SampleDomainGsonFactory {
 				.registerSubtype(InventoryIncreased.class, InventoryIncreased.class.getSimpleName())
 				.registerSubtype(InventoryDecreased.class, InventoryDecreased.class.getSimpleName());	
 		
-		this.gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithModifiers(Modifier.TRANSIENT)
+		
+		this.gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.TRANSIENT)
+			.registerTypeAdapterFactory(aggregateRootAdapter)
 			.registerTypeAdapterFactory(commandAdapter)
 			.registerTypeAdapterFactory(eventAdapter)
+			//.setPrettyPrinting()
 			.create();
 	
 	}

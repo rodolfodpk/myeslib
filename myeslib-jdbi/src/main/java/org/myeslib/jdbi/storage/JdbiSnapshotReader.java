@@ -1,11 +1,10 @@
 package org.myeslib.jdbi.storage;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.myeslib.util.EventSourcingMagicHelper.applyEventsOn;
 
 import java.util.List;
 import java.util.Map;
-
-import lombok.AllArgsConstructor;
 
 import org.myeslib.core.AggregateRoot;
 import org.myeslib.core.Event;
@@ -13,20 +12,36 @@ import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.jdbi.AggregateRootHistoryReader;
-import org.skife.jdbi.v2.Handle;
 
-@AllArgsConstructor
+import com.google.common.base.Function;
+import com.google.inject.Inject;
+
 public class JdbiSnapshotReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
     
-	private final Handle handle;
+	@Inject
+	public JdbiSnapshotReader(
+			Map<K, Snapshot<A>> lastSnapshotMap,
+			AggregateRootHistoryReader<K> arReader,
+			Function<Void, A> newInstanceFactory) {
+		checkNotNull(lastSnapshotMap);
+		checkNotNull(arReader);
+		checkNotNull(newInstanceFactory);
+		this.lastSnapshotMap = lastSnapshotMap;
+		this.arReader = arReader;
+		this.newInstanceFactory = newInstanceFactory;
+	}
+
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
 	private final AggregateRootHistoryReader<K> arReader ;
+	private final Function<Void, A> newInstanceFactory ;
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.core.storage.SnapshotReader#get(java.lang.Object, org.myeslib.core.AggregateRoot)
+	 * @see org.myeslib.core.storage.SnapshotReader#get(java.lang.Object)
 	 */
-	public Snapshot<A> get(final K id, final A aggregateRootFreshInstance) {
+	public Snapshot<A> get(final K id) {
+		checkNotNull(id);
+		final A aggregateRootFreshInstance = newInstanceFactory.apply(null);
 		final AggregateRootHistory transactionHistory = getEventsOrEmptyIfNull(id);
 		final Long lastVersion = transactionHistory.getLastVersion();
 		final Snapshot<A> lastSnapshot = lastSnapshotMap.get(id);
@@ -44,7 +59,7 @@ public class JdbiSnapshotReader<K, A extends AggregateRoot> implements SnapshotR
 	}
 
 	private AggregateRootHistory getEventsOrEmptyIfNull(final K id) {
-		final AggregateRootHistory events = arReader.get(id, handle);
+		final AggregateRootHistory events = arReader.get(id);
 		return events == null ? new AggregateRootHistory() : events;
 	}
 	

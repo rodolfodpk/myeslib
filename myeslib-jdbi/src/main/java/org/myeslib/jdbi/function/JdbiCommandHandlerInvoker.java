@@ -12,12 +12,9 @@ import org.myeslib.core.CommandHandler;
 import org.myeslib.core.Event;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.function.CommandHandlerInvoker;
-import org.myeslib.jdbi.storage.JdbiUnitOfWorkWriter;
 
 @AllArgsConstructor
 public class JdbiCommandHandlerInvoker<K, A extends AggregateRoot> implements CommandHandlerInvoker<K, A> {
-
-	final JdbiUnitOfWorkWriter<K> store;
 
 	/*
 	 * (non-Javadoc)
@@ -31,7 +28,6 @@ public class JdbiCommandHandlerInvoker<K, A extends AggregateRoot> implements Co
 			//List<? extends Event> newEvents = commandHandler.handle(command); 
 			List<? extends Event> newEvents = applyCommandOn(command, commandHandler);
 			uow = UnitOfWork.create(command, version, newEvents);
-			store.insert(id, uow);
 			return uow;
 		} catch (Throwable t) {
 			throw t.getCause();

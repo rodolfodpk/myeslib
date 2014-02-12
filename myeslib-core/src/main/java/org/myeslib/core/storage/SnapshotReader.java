@@ -5,6 +5,6 @@ import org.myeslib.core.data.Snapshot;
 
 public interface SnapshotReader<K, A extends AggregateRoot> {
 	
-	public Snapshot<A> get(final K id, final A aggregateRootFreshInstance) ;
+	public Snapshot<A> get(final K id) ;
 
 }

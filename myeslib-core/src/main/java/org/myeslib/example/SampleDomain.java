@@ -18,6 +18,8 @@ import org.myeslib.core.Command;
 import org.myeslib.core.CommandHandler;
 import org.myeslib.core.Event;
 
+import com.google.common.base.Function;
+
 @SuppressWarnings("serial")
 public class SampleDomain {
 
@@ -122,4 +124,13 @@ public class SampleDomain {
 		String generate(UUID id);
 	}
 	
+	public static class InventoryItemInstanceFactory implements Function<Void, InventoryItemAggregateRoot> {
+
+		@Override
+		public InventoryItemAggregateRoot apply(Void input) {
+			return new InventoryItemAggregateRoot();
+		}
+
+	}
+
 }

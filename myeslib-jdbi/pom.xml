@@ -19,7 +19,11 @@
 			<groupId>org.myeslib</groupId>
 			<artifactId>myeslib-core</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.myeslib</groupId>
+			<artifactId>myeslib-util</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -31,6 +35,14 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject.extensions</groupId>
+			<artifactId>guice-assistedinject</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

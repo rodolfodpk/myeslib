@@ -43,9 +43,9 @@ public class HzCommandHandlerInvoker<K, A extends AggregateRoot> implements Comm
 			//List<? extends Event> newEvents = commandHandler.handle(command); 
 			final List<? extends Event> newEvents = applyCommandOn(command, commandHandler);
 			final UnitOfWork uow = UnitOfWork.create(command, version, newEvents);
-			log.info("got UnitOfWork");
+			log.debug("got UnitOfWork");
 			writer.insert(id, uow);
-			log.info("inserted UnitOfWork");
+			log.debug("inserted UnitOfWork");
 			return uow;
 		} catch (Throwable t) {
 			// t.printStackTrace();

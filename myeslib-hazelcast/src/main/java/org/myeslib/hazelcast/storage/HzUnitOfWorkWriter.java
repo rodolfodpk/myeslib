@@ -1,5 +1,7 @@
 package org.myeslib.hazelcast.storage;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.ConcurrentModificationException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,20 +13,19 @@ import org.myeslib.core.storage.UnitOfWorkWriter;
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.hazelcast.core.TransactionalMap;
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.hazelcast.core.IMap;
 
 @Slf4j
 public class HzUnitOfWorkWriter<K> implements UnitOfWorkWriter<K>{
 
 	private final Function<AggregateRootHistory, String> toStringFunction ;
 	private final Function<String, AggregateRootHistory> fromStringFunction ;
-	private final TransactionalMap<K, String> pastTransactionsMap ;
+	private final IMap<K, String> pastTransactionsMap ;
 	
 	@Inject
 	public HzUnitOfWorkWriter(Function<AggregateRootHistory, String> toStringFunction,
 			 Function<String, AggregateRootHistory> fromStringFunction,
-			@Assisted TransactionalMap<K, String> pastTransactionsMap) {
+			@Assisted IMap<K, String> pastTransactionsMap) {
 		checkNotNull(toStringFunction);
 		checkNotNull(fromStringFunction);
 		checkNotNull(pastTransactionsMap);
