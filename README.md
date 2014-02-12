@@ -14,11 +14,13 @@ https://github.com/gregoryyoung/m-r
 Getting Started
 ===============
 
-cd myeslib-example-hazelcast
+cd myeslib-hazelcast-example
 
 mvn clean install
 
-java -jar target/myeslib-example-hazelcast-0.0.1-SNAPSHOT.jar
+java -jar target/myeslib-hazelcast-example-0.0.1-SNAPSHOT.jar
+
+and the same as above for jdbi-example
 
 Notes
 =====
