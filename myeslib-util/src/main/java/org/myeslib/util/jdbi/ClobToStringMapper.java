@@ -9,18 +9,18 @@ import org.skife.jdbi.v2.util.TypedMapper;
 
 import com.google.common.io.CharStreams;
 
-public class ClobMapperToString extends TypedMapper<String> {
+public class ClobToStringMapper extends TypedMapper<String> {
 	
-	public ClobMapperToString(){
+	public ClobToStringMapper(){
 		super();
 	}
 
-	public ClobMapperToString(int index)
+	public ClobToStringMapper(int index)
     {
         super(index);
     }
 
-	public ClobMapperToString(String name)
+	public ClobToStringMapper(String name)
     {
         super(name);
     }
@@ -51,5 +51,5 @@ public class ClobMapperToString extends TypedMapper<String> {
 		return null;		
 	}
 
-    public static final ClobMapperToString FIRST = new ClobMapperToString();
+    public static final ClobToStringMapper FIRST = new ClobToStringMapper();
 }

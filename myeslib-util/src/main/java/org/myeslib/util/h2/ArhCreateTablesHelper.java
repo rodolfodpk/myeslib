@@ -42,7 +42,7 @@ public class ArhCreateTablesHelper {
 				h.execute(sql2);
 				
 				String sql3 = String.format("create trigger before_update before insert on %s for each row "
-										+ "	call \"org.myeslib.util.h2.BeforeInsertTrigger\" ", 
+										+ "	call \"org.myeslib.util.h2.ArhBeforeInsertTrigger\" ", 
 								tables.getUnitOfWorkTable());
 				
 				log.info(sql3);

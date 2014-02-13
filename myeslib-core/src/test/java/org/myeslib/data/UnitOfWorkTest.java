@@ -8,25 +8,26 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.Test;
-import org.myeslib.core.Command;
 import org.myeslib.core.Event;
 import org.myeslib.core.data.UnitOfWork;
+import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
 
 public class UnitOfWorkTest {
 
-	@SuppressWarnings("serial")
 	@Test
 	public void baseVersionShouldBeFormerVersion() {
 		List<Event> events = Arrays.asList((Event) new InventoryIncreased(UUID.randomUUID(), 1));
-		UnitOfWork uow = new UnitOfWork(new Command() {}, 1L, events, System.currentTimeMillis());
+		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), 1, 1L);
+		UnitOfWork uow = new UnitOfWork(command, 1L, events, System.currentTimeMillis());
 		assertThat(uow.getBaseVersion(), is(0L));
 	}
 
-	@SuppressWarnings({ "unused", "serial" })
+	@SuppressWarnings("unused")
 	@Test(expected=NullPointerException.class)
 	public void nullEvent() {
 		List<Event> events = Arrays.asList((Event) null);
-		UnitOfWork uow = new UnitOfWork(new Command() {}, 1L, events, System.currentTimeMillis());
+		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), 1, 1L);
+		UnitOfWork uow = new UnitOfWork(command, 1L, events, System.currentTimeMillis());
 	}
 }

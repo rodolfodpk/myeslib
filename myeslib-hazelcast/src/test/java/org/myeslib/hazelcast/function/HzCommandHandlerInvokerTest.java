@@ -46,7 +46,7 @@ public class HzCommandHandlerInvokerTest {
 
 		UUID id = UUID.randomUUID();
 		Long version = 0L;
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(id, version, null);
 		ItemDescriptionGeneratorService service = Mockito.mock(ItemDescriptionGeneratorService.class);
 		
 		when(service.generate(id)).then(new Answer<String>() {
@@ -68,7 +68,7 @@ public class HzCommandHandlerInvokerTest {
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
-		UnitOfWork uow = tcp.invoke(id, version, command, commandHandler);
+		UnitOfWork uow = tcp.invoke(id, command, commandHandler);
 		
 		verify(writer).insert(id, uow);	
 		
@@ -83,7 +83,7 @@ public class HzCommandHandlerInvokerTest {
 
 		UUID id = UUID.randomUUID();
 		Long version = 0L;
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(id, version, null);
 	
 		command.setService(null);
 		
@@ -93,7 +93,7 @@ public class HzCommandHandlerInvokerTest {
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new HzCommandHandlerInvoker<>(writer);
 		
 		try {
-			tcp.invoke(id, version, command, commandHandler);
+			tcp.invoke(id, command, commandHandler);
 		} catch (Throwable t) {
 			verify(writer, times(0)).insert(any(UUID.class), any(UnitOfWork.class));	
 			throw t;
@@ -106,7 +106,7 @@ public class HzCommandHandlerInvokerTest {
 
 		UUID id = UUID.randomUUID();
 		Long version = 0L;
-		DecreaseInventory command = new DecreaseInventory(id, 5);
+		DecreaseInventory command = new DecreaseInventory(id, 5, version);
 	
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		instance.setId(id);
@@ -116,7 +116,7 @@ public class HzCommandHandlerInvokerTest {
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new HzCommandHandlerInvoker<>(writer);
 		
 		try {
-			tcp.invoke(id, version, command, commandHandler);
+			tcp.invoke(id, command, commandHandler);
 		} catch (Throwable t) {
 			verify(writer, times(0)).insert(any(UUID.class), any(UnitOfWork.class));	
 			throw t;

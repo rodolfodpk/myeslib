@@ -35,10 +35,10 @@ public class UnitOfWork implements Comparable<UnitOfWork>, Serializable {
 		this.timestamp = timestamp;
 	}
 	
-	public static UnitOfWork create(Command command, Long baseVersion, List<? extends Event> newEvents) {
-		checkNotNull(baseVersion, "baseVersion cannot be null");
-		checkArgument(baseVersion>=0, "invalid baseVersion");
-		return new UnitOfWork(command, baseVersion+1, newEvents, System.currentTimeMillis());
+	public static UnitOfWork create(Command command, List<? extends Event> newEvents) {
+		checkNotNull(command.getVersion(), "baseVersion cannot be null");
+		checkArgument(command.getVersion()>=0, "invalid baseVersion");
+		return new UnitOfWork(command, command.getVersion()+1, newEvents, System.currentTimeMillis());
 	}
 	
 	public List<Event> getEvents(){

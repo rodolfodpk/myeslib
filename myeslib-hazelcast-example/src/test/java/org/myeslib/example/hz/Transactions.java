@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.hazelcast.core.Hazelcast;
@@ -16,7 +17,7 @@ public class Transactions {
 	
 	final HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 	
-	@Test
+	@Test @Ignore
 	public void testLock() throws InterruptedException {
 
 		final IMap<UUID, String> map = hz.getMap("map1");

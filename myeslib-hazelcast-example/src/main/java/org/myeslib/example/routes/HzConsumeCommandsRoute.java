@@ -80,7 +80,13 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 			Command command = e.getIn().getBody(Command.class);
 			
 			Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id);
+			
+			if (command.getVersion()<snapshot.getVersion()) {
+				// NOW WHAT ???
+			}
+			
 			InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(snapshot.getAggregateInstance());
+			
 			boolean locked = false;
 			
 			try {
@@ -103,7 +109,7 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 				
 				UnitOfWork uow = null;
 				try {
-					uow = cmdHandlerInvoker.invoke(id, snapshot.getVersion(), command, commandHandler);
+					uow = cmdHandlerInvoker.invoke(id, command, commandHandler);
 					log.debug("commited transaction {} {}", id, Thread.currentThread());
 				} catch (Throwable t) {
 					log.error("how to rollback transaction? {} {}", id, Thread.currentThread());

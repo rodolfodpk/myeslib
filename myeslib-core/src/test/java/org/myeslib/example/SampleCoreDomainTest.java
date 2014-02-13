@@ -35,7 +35,7 @@ public class SampleCoreDomainTest {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
-		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID());
+		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), 0L, null);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 		
@@ -52,7 +52,7 @@ public class SampleCoreDomainTest {
 		
 		aggregateRoot.setId(id);
 		
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(id, 0L, null);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -70,7 +70,7 @@ public class SampleCoreDomainTest {
 		
 		aggregateRoot.setId(id);
 		
-		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), 1);
+		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), 1, 0L);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -86,7 +86,7 @@ public class SampleCoreDomainTest {
 		UUID id = UUID.randomUUID();
 		String desc = "item1";
 		
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(id, 0L, null);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -117,7 +117,7 @@ public class SampleCoreDomainTest {
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
-		IncreaseInventory command = new IncreaseInventory(id, 3);
+		IncreaseInventory command = new IncreaseInventory(id, 3, 0L);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -141,7 +141,7 @@ public class SampleCoreDomainTest {
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
-		DecreaseInventory command = new DecreaseInventory(id, 3);
+		DecreaseInventory command = new DecreaseInventory(id, 3, 0L);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -161,7 +161,7 @@ public class SampleCoreDomainTest {
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
-		DecreaseInventory command = new DecreaseInventory(id, 3);
+		DecreaseInventory command = new DecreaseInventory(id, 3, 0L);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	

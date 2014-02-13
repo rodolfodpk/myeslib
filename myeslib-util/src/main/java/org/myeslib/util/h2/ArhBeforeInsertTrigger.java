@@ -13,7 +13,7 @@ import org.skife.jdbi.v2.tweak.ConnectionFactory;
 import org.skife.jdbi.v2.util.BigDecimalMapper;
 
 @Slf4j
-public class BeforeInsertTrigger implements Trigger {
+public class ArhBeforeInsertTrigger implements Trigger {
 
 	String tableName;
 

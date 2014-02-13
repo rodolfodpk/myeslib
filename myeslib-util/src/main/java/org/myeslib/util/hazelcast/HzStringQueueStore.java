@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.myeslib.util.jdbi.ClobMapperToString;
+import org.myeslib.util.jdbi.ClobToStringMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.PreparedBatch;
@@ -77,7 +77,7 @@ public class HzStringQueueStore implements QueueStore<String> {
 						@Override
 						public String inTransaction(Handle h, TransactionStatus ts) throws Exception {
 							String sql = String.format("select value from %s where id = :id", tableName);
-							return h.createQuery(sql).bind("id", id).map(ClobMapperToString.FIRST).first();
+							return h.createQuery(sql).bind("id", id).map(ClobToStringMapper.FIRST).first();
 						}
 					});
 			if (result==null) {

@@ -61,14 +61,14 @@ public class JdbiExampleModule extends AbstractModule {
 	
 	@Provides
 	@Singleton
-	@Named("InventoryItemTable")
+	@Named("InventoryItem")
 	public String inventoryTableName() {
 		return "inventory_item" ;
 	}
 
 	@Provides
 	@Singleton
-	public ArTablesMetadata metadata(DBI dbi, @Named("InventoryItemTable") String tableName) {
+	public ArTablesMetadata metadata(DBI dbi, @Named("InventoryItem") String tableName) {
 		ArTablesMetadata metadata = new ArTablesMetadata(tableName);
 		new ArhCreateTablesHelper(metadata, dbi).createTables();;
 		return metadata;

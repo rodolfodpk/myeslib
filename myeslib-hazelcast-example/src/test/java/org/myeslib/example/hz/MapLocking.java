@@ -3,6 +3,7 @@ package org.myeslib.example.hz;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.hazelcast.core.Hazelcast;
@@ -13,7 +14,7 @@ public class MapLocking {
 	
 	final HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 	
-	@Test
+	@Test @Ignore
 	public void testLock() {
 
 		final IMap<String, String> map = hz.getMap("map1");

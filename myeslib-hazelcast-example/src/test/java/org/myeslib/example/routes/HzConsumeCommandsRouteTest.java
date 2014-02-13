@@ -32,7 +32,7 @@ import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.HazelcastData;
 import org.myeslib.util.hazelcast.HzCamelComponent;
-import org.myeslib.util.jdbi.ClobMapperToString;
+import org.myeslib.util.jdbi.ClobToStringMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
@@ -47,7 +47,7 @@ import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 
 @Slf4j
-public class ConsumeCommandsRouteTest extends CamelTestSupport {
+public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 
 	private static Injector injector ;
 	
@@ -100,11 +100,11 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 		
 		when(service.generate(any(UUID.class))).thenReturn("an inventory item description from mock");
 		
-		CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID());
-		command1.setService(service);;
+		CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID(), 0L, null);
+		command1.setService(service);
 		template.sendBody(command1);
 		
-		IncreaseInventory command2 = new IncreaseInventory(command1.getId(), 2);
+		IncreaseInventory command2 = new IncreaseInventory(command1.getId(), 2, 1L);
 		UnitOfWork uow = template.requestBody(command2, UnitOfWork.class);
 		
 		String fromDatabaseAsJson = getAggregateRootHistoryAsJson(command1.getId().toString());
@@ -139,7 +139,7 @@ public class ConsumeCommandsRouteTest extends CamelTestSupport {
 			public String withHandle(Handle h) throws Exception {
 				return h.createQuery(String.format("select aggregate_root_data from %s where id = :id", HazelcastData.INVENTORY_ITEM_AGGREGATE_HISTORY.name()))
 						.bind("id", id)
-				 .map(ClobMapperToString.FIRST).first();
+				 .map(ClobToStringMapper.FIRST).first();
 			}
 		});
 		

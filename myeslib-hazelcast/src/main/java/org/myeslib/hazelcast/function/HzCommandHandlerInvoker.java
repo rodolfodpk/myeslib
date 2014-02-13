@@ -27,22 +27,23 @@ public class HzCommandHandlerInvoker<K, A extends AggregateRoot> implements Comm
 		this.writer = writer;
 	}
 
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.core.function.CommandHandlerInvoker#invoke(java.lang.Object, java.lang.Long, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
+	 * @see org.myeslib.core.function.CommandHandlerInvoker#invoke(java.lang.Object, org.myeslib.core.Command, org.myeslib.core.CommandHandler)
 	 */
 	@Override
-	public UnitOfWork invoke(final K id, final Long version, final Command command, final CommandHandler<A> commandHandler) throws Throwable {
+	public UnitOfWork invoke(final K id, final Command command, final CommandHandler<A> commandHandler) throws Throwable {
 			
 			checkNotNull(id);
-			checkNotNull(version);
 			checkNotNull(command);
+			checkNotNull(command.getVersion());
 			checkNotNull(commandHandler);
 
 			try {
 			//List<? extends Event> newEvents = commandHandler.handle(command); 
 			final List<? extends Event> newEvents = applyCommandOn(command, commandHandler);
-			final UnitOfWork uow = UnitOfWork.create(command, version, newEvents);
+			final UnitOfWork uow = UnitOfWork.create(command, newEvents);
 			log.debug("got UnitOfWork");
 			writer.insert(id, uow);
 			log.debug("inserted UnitOfWork");

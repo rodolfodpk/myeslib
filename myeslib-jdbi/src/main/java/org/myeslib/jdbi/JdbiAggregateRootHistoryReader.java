@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.util.jdbi.ArTablesMetadata;
-import org.myeslib.util.jdbi.ClobMapperToString;
+import org.myeslib.util.jdbi.ClobToStringMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.StatementContext;
@@ -95,7 +95,7 @@ public class JdbiAggregateRootHistoryReader implements AggregateRootHistoryReade
 				throws SQLException {
 			String id = r.getString("id");
 			Integer version = r.getBigDecimal("version").intValue();
-			String uowData = new ClobMapperToString("uow_data").map(index, r, ctx); 
+			String uowData = new ClobToStringMapper("uow_data").map(index, r, ctx); 
 			return new UowRecord(id, version, uowData);
 		}
 	}

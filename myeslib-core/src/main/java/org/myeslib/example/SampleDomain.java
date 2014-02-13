@@ -81,21 +81,25 @@ public class SampleDomain {
 	// commands
 	
 	@Data
+	@AllArgsConstructor
 	public static class CreateInventoryItem implements Command {
-		transient ItemDescriptionGeneratorService service; 
 		@NonNull UUID id;
+		Long version;
+		transient ItemDescriptionGeneratorService service; 
 	}
 	
 	@Value
 	public static class IncreaseInventory implements Command {
 		@NonNull UUID id;
 		@NonNull Integer howMany;
+		Long version;
 	}
 	
 	@Value
 	public static class DecreaseInventory implements Command {
 		@NonNull UUID id;
 		@NonNull Integer howMany;
+		Long version;
 	}
 	
 	// events 

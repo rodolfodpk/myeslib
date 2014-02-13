@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.myeslib.util.jdbi.ClobMapperToString;
+import org.myeslib.util.jdbi.ClobToStringMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.PreparedBatch;
@@ -82,7 +82,7 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 						@Override
 						public String inTransaction(Handle h, TransactionStatus ts) throws Exception {
 							String sql = String.format("select aggregate_root_data from %s where id = :id", tableName);
-							return h.createQuery(sql).bind("id", id.toString()).map(ClobMapperToString.FIRST).first();
+							return h.createQuery(sql).bind("id", id.toString()).map(ClobToStringMapper.FIRST).first();
 						}
 					});
 			// http://stackoverflow.com/questions/9779324/program-hangs-after-retrieving-100-rows-containg-clob

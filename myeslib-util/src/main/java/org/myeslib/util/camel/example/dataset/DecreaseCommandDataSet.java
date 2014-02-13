@@ -14,15 +14,12 @@ public class DecreaseCommandDataSet extends DataSetSupport {
 		this.ids = ids;
 		setSize(howManyAggregates);
 		setReportCount(Math.min(100, howManyAggregates));
-		for (int i=0; i< howManyAggregates; i++){
-			ids.add(UUID.randomUUID());
-		}
 	}
 
 	@Override
 	protected Object createMessageBody(long messageIndex) {
 		UUID id = ids.get((int) messageIndex);
-		DecreaseInventory command = new DecreaseInventory(id, 1);
+		DecreaseInventory command = new DecreaseInventory(id, 1, 2L);
 		return command;
 	}
 	

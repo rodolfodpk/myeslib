@@ -38,7 +38,7 @@ public class JdbiCommandHandlerInvokerTest {
 
 		UUID id = UUID.randomUUID();
 		Long version = 0L;
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(id, version, null);
 		ItemDescriptionGeneratorService service = Mockito.mock(ItemDescriptionGeneratorService.class);
 		
 		when(service.generate(id)).then(new Answer<String>() {
@@ -60,7 +60,7 @@ public class JdbiCommandHandlerInvokerTest {
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
-		UnitOfWork uow = tcp.invoke(id, version, command, commandHandler);
+		UnitOfWork uow = tcp.invoke(id, command, commandHandler);
 		
 		InventoryItemCreated resultingEvent = (InventoryItemCreated) uow.getEvents().get(0);
 		
@@ -73,17 +73,15 @@ public class JdbiCommandHandlerInvokerTest {
 
 		UUID id = UUID.randomUUID();
 		Long version = 0L;
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(id, version, null);
 	
-		command.setService(null);
-		
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 	
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
 
 		try {
-			tcp.invoke(id, version, command, commandHandler);
+			tcp.invoke(id, command, commandHandler);
 		} catch (Throwable t) {
 			throw t;
 		}
@@ -95,7 +93,7 @@ public class JdbiCommandHandlerInvokerTest {
 
 		UUID id = UUID.randomUUID();
 		Long version = 0L;
-		DecreaseInventory command = new DecreaseInventory(id, 5);
+		DecreaseInventory command = new DecreaseInventory(id, 5, version);
 	
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		instance.setId(id);
@@ -105,7 +103,7 @@ public class JdbiCommandHandlerInvokerTest {
 		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
 
 		try {
-			tcp.invoke(id, version, command, commandHandler);
+			tcp.invoke(id, command, commandHandler);
 		} catch (Throwable t) {
 			throw t;
 		}

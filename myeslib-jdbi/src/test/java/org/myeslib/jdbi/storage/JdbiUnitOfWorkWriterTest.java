@@ -60,7 +60,7 @@ public class JdbiUnitOfWorkWriterTest {
 		UUID id = UUID.randomUUID();
 
 		AggregateRootHistory toSave = new AggregateRootHistory();
-		UnitOfWork newUow = UnitOfWork.create(new IncreaseInventory(id, 1), 0l, Arrays.asList(new InventoryIncreased(id, 1)));
+		UnitOfWork newUow = UnitOfWork.create(new IncreaseInventory(id, 1, 0L), Arrays.asList(new InventoryIncreased(id, 1)));
 		toSave.add(newUow);
 		
 		Handle h = dbi.open();
@@ -81,7 +81,7 @@ public class JdbiUnitOfWorkWriterTest {
 		UUID id = UUID.randomUUID();
 
 		AggregateRootHistory toSave = new AggregateRootHistory();
-		UnitOfWork newUow = UnitOfWork.create(new IncreaseInventory(id, 1), 0l, Arrays.asList(new InventoryIncreased(id, 1)));
+		UnitOfWork newUow = UnitOfWork.create(new IncreaseInventory(id, 1, 0L), Arrays.asList(new InventoryIncreased(id, 1)));
 		toSave.add(newUow);
 		
 		Handle h = dbi.open();
@@ -108,11 +108,11 @@ public class JdbiUnitOfWorkWriterTest {
 		
 		UUID id = UUID.randomUUID();
 
-		UnitOfWork existingUow = UnitOfWork.create(new IncreaseInventory(id, 1), 0l, Arrays.asList(new InventoryIncreased(id, 1)));
+		UnitOfWork existingUow = UnitOfWork.create(new IncreaseInventory(id, 1, 0L), Arrays.asList(new InventoryIncreased(id, 1)));
 		AggregateRootHistory existing = new AggregateRootHistory();
 		existing.add(existingUow);
 		
-		UnitOfWork newUow = UnitOfWork.create(new DecreaseInventory(id, 1), 1L, Arrays.asList(new InventoryDecreased(id, 1)));
+		UnitOfWork newUow = UnitOfWork.create(new DecreaseInventory(id, 1, 1L), Arrays.asList(new InventoryDecreased(id, 1)));
 		
 		Handle h = dbi.open();
 		
@@ -132,7 +132,7 @@ public class JdbiUnitOfWorkWriterTest {
 		
 		UUID id = UUID.randomUUID();
 
-		UnitOfWork existingUow = UnitOfWork.create(new IncreaseInventory(id, 1), 0l, Arrays.asList(new InventoryIncreased(id, 1)));
+		UnitOfWork existingUow = UnitOfWork.create(new IncreaseInventory(id, 1, 0L),  Arrays.asList(new InventoryIncreased(id, 1)));
 
 		AggregateRootHistory existing = new AggregateRootHistory();
 
@@ -144,7 +144,7 @@ public class JdbiUnitOfWorkWriterTest {
 
 		store.insert(id, existingUow);
 		
-		UnitOfWork newUow = UnitOfWork.create(new DecreaseInventory(id, 1), 0L, Arrays.asList(new InventoryDecreased(id, 1)));
+		UnitOfWork newUow = UnitOfWork.create(new DecreaseInventory(id, 1, 0L), Arrays.asList(new InventoryDecreased(id, 1)));
 		
 		store.insert(id, newUow);
 		

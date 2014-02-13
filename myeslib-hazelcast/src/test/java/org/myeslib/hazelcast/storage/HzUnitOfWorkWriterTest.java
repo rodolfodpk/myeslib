@@ -43,10 +43,10 @@ public class HzUnitOfWorkWriterTest {
 	public void oneTransaction() {
 		
 		UUID id = UUID.randomUUID();
-		Command command = new IncreaseInventory(id, 1);
+		Command command = new IncreaseInventory(id, 1, 0L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
-		UnitOfWork t = UnitOfWork.create(command, 0l, events);
+		UnitOfWork t = UnitOfWork.create(command, events);
 		AggregateRootHistory toStore = new AggregateRootHistory();
 		toStore.add(t);
 		
@@ -78,17 +78,18 @@ public class HzUnitOfWorkWriterTest {
 	public void withoutConcurrencyException() {
 		
 		UUID id = UUID.randomUUID();
-		Command command = new IncreaseInventory(id, 1);
+		Command command = new IncreaseInventory(id, 1, 0L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
-		UnitOfWork t = UnitOfWork.create(command, 0l, events);
+		UnitOfWork t = UnitOfWork.create(command, events);
 		AggregateRootHistory toStore = new AggregateRootHistory();
 		toStore.add(t);
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 		
 		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
-		UnitOfWork t2 = UnitOfWork.create(command, 1l, events);
+		Command command2 = new IncreaseInventory(id, 1, 1L);
+		UnitOfWork t2 = UnitOfWork.create(command2, events);
 		store.insert(id, t2);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
@@ -113,7 +114,7 @@ public class HzUnitOfWorkWriterTest {
 
 		// checks for all transactions fields except the timestamp
 		UnitOfWork t2Candidate = asObj.getUnitsOfWork().get(1);
-		assertThat(t2Candidate.getCommand(), is(command));
+		assertThat(t2Candidate.getCommand(), is(command2));
 		assertThat(t2Candidate.getVersion(), is(2l));
 		assertThat("contains events", t2Candidate.getEvents().containsAll(events));
 
@@ -123,17 +124,17 @@ public class HzUnitOfWorkWriterTest {
 	public void withConcurrencyException() {
 		
 		UUID id = UUID.randomUUID();
-		Command command = new IncreaseInventory(id, 1);
+		Command command = new IncreaseInventory(id, 1, 0L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
-		UnitOfWork t = UnitOfWork.create(command, 0l, events);
+		UnitOfWork t = UnitOfWork.create(command, events);
 		AggregateRootHistory toStore = new AggregateRootHistory();
 		toStore.add(t);
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 
 		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
-		UnitOfWork t2 = UnitOfWork.create(command, 0l, events);
+		UnitOfWork t2 = UnitOfWork.create(command, events);
 		store.insert(id, t2);
 
 	}

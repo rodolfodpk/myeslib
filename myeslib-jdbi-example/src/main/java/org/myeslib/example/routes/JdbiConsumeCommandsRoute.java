@@ -83,11 +83,16 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 			final Command command = e.getIn().getBody(Command.class);
 			
 			final Handle handle = dbi.open() ;
-			handle.begin();
 			handle.getConnection().setAutoCommit(false);
-			handle.setTransactionIsolation(TransactionIsolationLevel.READ_COMMITTED);
+			handle.begin();
+			handle.setTransactionIsolation(TransactionIsolationLevel.SERIALIZABLE);
 			
-			Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id); // version should came from command instead, right ?
+			Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id); 
+			
+			if (command.getVersion()<snapshot.getVersion()) {
+				// NOW WHAT ???
+			}
+			
 			InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(snapshot.getAggregateInstance());
 			
 			try {
@@ -100,7 +105,7 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 				
 				UnitOfWork uow = null;
 				try {
-					uow = cmdHandlerInvoker.invoke(id, snapshot.getVersion(), command, commandHandler);
+					uow = cmdHandlerInvoker.invoke(id, command, commandHandler);
 					uowWriter.insert(id, uow);
 					log.debug("commited transaction {} {}", id, Thread.currentThread());
 				} catch (Throwable t) {
@@ -114,10 +119,12 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 				e.getOut().setHeader("id", id);
 				e.getOut().setBody(uow);
 				
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				handle.rollback();
 				log.error("*** Error - rolback tx");
-
+				ex.printStackTrace();
+				throw ex;
+				
 			} finally {
 				handle.close();
 			}

@@ -3,6 +3,7 @@ package org.myeslib.data;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -31,28 +32,30 @@ public class AggregateRootHistoryTest {
 	@Test(expected=NullPointerException.class)
 	public void nullCommand() {
 		AggregateRootHistory transactions = new AggregateRootHistory();
-		transactions.add(UnitOfWork.create(null, 1l, Arrays.asList(Mockito.mock(Event.class))));
+		transactions.add(UnitOfWork.create(null, Arrays.asList(Mockito.mock(Event.class))));
 	}
 	
 	@Test(expected=NullPointerException.class)
 	public void nullEventsList() {
 		AggregateRootHistory transactions = new AggregateRootHistory();
-		transactions.add(UnitOfWork.create(Mockito.mock(Command.class), 1l, null));
+		transactions.add(UnitOfWork.create(Mockito.mock(Command.class), null));
 	}	
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void invalidVersion() {
 		AggregateRootHistory transactions = new AggregateRootHistory();
-		transactions.add(UnitOfWork.create(Mockito.mock(Command.class), -1l, Arrays.asList(Mockito.mock(Event.class))));
+		Command command = Mockito.mock(Command.class);
+		when(command.getVersion()).thenReturn(-1L);
+		transactions.add(UnitOfWork.create(command, Arrays.asList(Mockito.mock(Event.class))));
 	}	
 	
 	@Test 
 	public void firstTransaction() {
 		UUID id = UUID.randomUUID();
 		AggregateRootHistory transactions = new AggregateRootHistory();
-		Command command = new IncreaseInventory(id, 1);
+		Command command = new IncreaseInventory(id, 1, 0L);
 		Event event1 = new InventoryIncreased(id, 1);
-		transactions.add(UnitOfWork.create(command, 1l, Arrays.asList(event1)));
+		transactions.add(UnitOfWork.create(command, Arrays.asList(event1)));
 
 		assertThat(transactions.getUnitsOfWork().size(), is(1));
 		assertThat(transactions.getUnitsOfWork().get(0).getCommand(), sameInstance(command));
@@ -67,11 +70,11 @@ public class AggregateRootHistoryTest {
 		AggregateRootHistory transactions = new AggregateRootHistory();
 		
 		UUID id = UUID.randomUUID();
-		Command command = new IncreaseInventory(id, 2);
+		Command command = new IncreaseInventory(id, 2, 0l);
 		Event event1 = new InventoryIncreased(id, 1);
 		Event event2 = new InventoryIncreased(id, 1);	
 		
-		transactions.add(UnitOfWork.create(command, 0l, Arrays.asList(event1, event2)));
+		transactions.add(UnitOfWork.create(command, Arrays.asList(event1, event2)));
 		
 		assertThat(transactions.getLastVersion(), is(1L));
 		assertThat(transactions.getUnitsOfWork().size(), is(1));
@@ -88,9 +91,9 @@ public class AggregateRootHistoryTest {
 		
 		UUID id = UUID.randomUUID();
 		AggregateRootHistory transactions = new AggregateRootHistory();
-		Command command = new IncreaseInventory(id, 2);
+		Command command = new IncreaseInventory(id, 2, 1L);
 		Event event1 = (Event) null;
-		transactions.add(UnitOfWork.create(command, 1l, Arrays.asList(event1)));
+		transactions.add(UnitOfWork.create(command, Arrays.asList(event1)));
 
 	}	
 	
