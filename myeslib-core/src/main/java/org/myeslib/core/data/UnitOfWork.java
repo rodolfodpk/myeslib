@@ -23,7 +23,7 @@ public class UnitOfWork implements Comparable<UnitOfWork>, Serializable {
 	
 	public UnitOfWork(Command command, Long version, List<? extends Event> events, long timestamp) {
 		checkNotNull(command, "command cannot be null");
-		checkNotNull(version, "version cannot be null");
+		checkArgument(command.getVersion()>=0, "command version must be >= 0");
 		checkArgument(version>0, "invalid version");
 		checkNotNull(events, "events cannot be null");
 		for (Event e: events){
@@ -36,8 +36,8 @@ public class UnitOfWork implements Comparable<UnitOfWork>, Serializable {
 	}
 	
 	public static UnitOfWork create(Command command, List<? extends Event> newEvents) {
-		checkNotNull(command.getVersion(), "baseVersion cannot be null");
-		checkArgument(command.getVersion()>=0, "invalid baseVersion");
+		checkNotNull(command.getVersion(), "command version cannot be null");
+		checkArgument(command.getVersion()>=0, "command version must be >= 0");
 		return new UnitOfWork(command, command.getVersion()+1, newEvents, System.currentTimeMillis());
 	}
 	
@@ -50,18 +50,15 @@ public class UnitOfWork implements Comparable<UnitOfWork>, Serializable {
 	}
 	
 	public int compareTo(UnitOfWork other) {
-		if (timestamp < other.timestamp) {
+		if (version < other.version) {
 			return -1;
-		} else if (timestamp > other.timestamp) {
+		} else if (version > other.version) {
 			return 1;
 		}
 		return 0;
 	}
 
-	/*
-	 * baseVersion is version -1
-	 */
-	public Long getBaseVersion() {
-		return version -1;
+	public Long getCommandVersion() {
+		return command.getVersion();
 	}
 }

@@ -1,8 +1,8 @@
-package org.myeslib.jdbi;
+package org.myeslib.util.jdbi;
 
 import org.myeslib.core.data.AggregateRootHistory;
 
-public interface AggregateRootHistoryReader<K> {
+public interface AggregateRootHistoryReaderDao<K> {
 
 	AggregateRootHistory get(K id);
 	

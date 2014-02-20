@@ -1,4 +1,4 @@
-package org.myeslib.util.camel.example.dataset;
+package org.myeslib.util.camel;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AbstractListAggregationStrategy;

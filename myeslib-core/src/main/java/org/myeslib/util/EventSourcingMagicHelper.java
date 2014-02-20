@@ -12,7 +12,7 @@ import org.myeslib.core.Event;
 
 /**
  * Both CommandHandler and AggregateRoot ideally should have handle(Command command) and on(Event event), respectively.
- * But then we would need a big if statement to examine the parameter and to dispatch to appropriate method. 
+ * But then we would need a big if statement to examine the parameter and to dispatch it to appropriate method. 
  * This would be very boilerplate (if command instanceof IncreaseInventory....), so here we are using some magic instead.
  */
 public class EventSourcingMagicHelper {

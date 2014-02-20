@@ -1,9 +1,5 @@
 package org.myeslib.example;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.Vector;
-
 import javax.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +10,7 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.main.Main;
 import org.myeslib.example.routes.JdbiConsumeCommandsRoute;
 import org.myeslib.example.routes.JdbiConsumeEventsRoute;
-import org.myeslib.util.camel.example.dataset.CreateCommandDataSet;
-import org.myeslib.util.camel.example.dataset.DatasetsRoute;
-import org.myeslib.util.camel.example.dataset.DecreaseCommandDataSet;
-import org.myeslib.util.camel.example.dataset.IncreaseCommandDataSet;
+import org.myeslib.util.camel.ReceiveCommandsAsJsonRoute;
 import org.myeslib.util.hazelcast.HzCamelComponent;
 
 import com.google.inject.Guice;
@@ -30,9 +23,6 @@ public class JdbiExample {
 	final SimpleRegistry registry;
 	final CamelContext context;
 
-	public final static int HOW_MANY_AGGREGATES = 1000;
-	public final static List<UUID> ids = ids();
-	
 	public static void main(String[] args) throws Exception {
 
 		log.info("starting...");
@@ -42,34 +32,20 @@ public class JdbiExample {
 		example.main.run();
 		
 	}
-	
-	public static List<UUID> ids() {
-		Vector<UUID> ids = new Vector<>();
-		for (int i=0; i< HOW_MANY_AGGREGATES; i++){
-			ids.add(UUID.randomUUID());
-		}
-		return ids;
-	}
-	
+		
 	@Inject
 	JdbiExample(HzCamelComponent justAnotherHazelcastComponent, 
-				DatasetsRoute datasetRoute, 
+				ReceiveCommandsAsJsonRoute receiveCommandsRoute, 
 				JdbiConsumeCommandsRoute consumeCommandsRoute, 
 				JdbiConsumeEventsRoute consumeEventsRoute) throws Exception  {
 		
-		this.main = new Main() ;
-		this.main.enableHangupSupport();
-		this.registry = new SimpleRegistry();
-		this.context = new DefaultCamelContext(registry);
+		main = new Main() ;
+		main.enableHangupSupport();
+		registry = new SimpleRegistry();
+		context = new DefaultCamelContext(registry);
 		
-		CamelContext context = new DefaultCamelContext(registry);
 		context.addComponent("hz", justAnotherHazelcastComponent);
-
-		registry.put("createCommandDataset", new CreateCommandDataSet(ids, HOW_MANY_AGGREGATES));
-		registry.put("increaseCommandDataset", new IncreaseCommandDataSet(ids, HOW_MANY_AGGREGATES));
-		registry.put("decreaseCommandDataset", new DecreaseCommandDataSet(ids, HOW_MANY_AGGREGATES));
-
-		context.addRoutes(datasetRoute);
+		context.addRoutes(receiveCommandsRoute);
 		context.addRoutes(consumeCommandsRoute);
 		context.addRoutes(consumeEventsRoute);
 		

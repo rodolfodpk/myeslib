@@ -6,14 +6,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.util.toolbox.AggregationStrategies;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
-import org.myeslib.example.JdbiExample;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.infra.HazelcastData;
-import org.myeslib.util.camel.example.dataset.MyListOfSnapshotsStrategy;
+import org.myeslib.util.camel.MyListOfSnapshotsStrategy;
 import org.skife.jdbi.v2.DBI;
 
 import com.google.inject.Inject;
@@ -35,8 +33,6 @@ public class JdbiConsumeEventsRoute extends RouteBuilder {
       fromF("hz:seda:%s?transacted=true&concurrentConsumers=10", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name())
         .routeId("seda:eventsQueue")
         //.log("received ${body}")
-        .split(body())
-        .parallelProcessing()
         .process(new Processor() {
 			@Override
 			public void process(Exchange e) throws Exception {
@@ -47,10 +43,10 @@ public class JdbiConsumeEventsRoute extends RouteBuilder {
 			}
 		})
         //.log("produced ${body}")
-        .multicast(new UseLatestAggregationStrategy())
-        .to("direct:reflect-last-snapshot", "direct:reflect-query-model")
+        .to("direct:reflect-last-snapshot")
+        .to("direct:reflect-query-model")
         .aggregate(header("id"), AggregationStrategies.useLatest()).completionSize(3) // 3 commands per aggregate
-        .aggregate(constant(true), new MyListOfSnapshotsStrategy()).completionSize(JdbiExample.HOW_MANY_AGGREGATES) 
+        .aggregate(constant(true), new MyListOfSnapshotsStrategy()).completionInterval(60000) // print result every 1 minute
         .split(body()) 
 		.log("*** resulting snapshot after all commands: ${body}");
          ;
@@ -64,9 +60,14 @@ public class JdbiConsumeEventsRoute extends RouteBuilder {
       from("direct:reflect-query-model")
       	.routeId("direct:reflect-query-model")
         .process(new Processor() {
+			@SuppressWarnings("unchecked")
 			@Override
-			public void process(Exchange exchange) throws Exception {
-			 // do nothing 
+			public void process(Exchange e) throws Exception {
+				UUID id = e.getIn().getHeader("id", UUID.class);
+				Snapshot<InventoryItemAggregateRoot> snapshot = e.getIn().getBody(Snapshot.class);
+				e.getOut().setHeader("id", id);
+				e.getOut().setBody(snapshot);
+				// TODO.. update query model on database
 			}
 		});
       

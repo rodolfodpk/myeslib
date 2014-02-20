@@ -14,8 +14,8 @@ import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.function.CommandHandlerInvoker;
 import org.myeslib.core.storage.SnapshotReader;
+import org.myeslib.example.JdbiExampleModule.AggregateRootHistoryWriterDaoFactory;
 import org.myeslib.example.JdbiExampleModule.ServiceJustForTest;
-import org.myeslib.example.JdbiExampleModule.UnitOfWorkWriterFactory;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
@@ -32,7 +32,7 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 	final DBI dbi;
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
 	final CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker;
-	final UnitOfWorkWriterFactory unitOfWorkWriterFactory;
+	final AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory;
 	final String originUri;
 	final String destinationUri;
 	
@@ -41,13 +41,13 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 			DBI dbi,
 			SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
 			CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker,
-			UnitOfWorkWriterFactory unitOfWorkWriterFactory, 
+			AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory, 
 			@Named("originUri") String originUri,
 			@Named("eventsDestinationUri") String destinationUri) {
 		this.dbi = dbi;
 		this.snapshotReader = snapshotReader;
 		this.cmdHandlerInvoker = cmdHandlerInvoker;
-		this.unitOfWorkWriterFactory = unitOfWorkWriterFactory;
+		this.aggregateRootHistoryWriterDaoFactory = aggregateRootHistoryWriterDaoFactory;
 		this.originUri = originUri;
 		this.destinationUri = destinationUri;
 	}
@@ -57,13 +57,11 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 
 //		errorHandler(deadLetterChannel("direct:dead-letter-channel")
 //			    .maximumRedeliveries(3).redeliveryDelay(5000));
-		
-         from(originUri)
-			 .routeId("handle-inventory-item-command")
-	      	 // .log("received = ${body}")
-	         .setHeader("id", simple("${body.getId()}"))
+
+		from(originUri) 	
+		     .routeId("handle-inventory-item-command")
+	      	 .setHeader("id", simple("${body.getId()}"))
 	         .process(new ItemInventoryProcessor()) 
-	         // .log("resulting body = ${body}")
 	      	 .wireTap(destinationUri)
 	      			.newExchangeBody(header("id"))
 	      	  .end()		
@@ -101,7 +99,7 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 					((CreateInventoryItem)command).setService(new ServiceJustForTest());
 				}
 				
-				JdbiUnitOfWorkWriter<UUID> uowWriter = unitOfWorkWriterFactory.create(handle);
+				JdbiUnitOfWorkWriter<UUID> uowWriter = new JdbiUnitOfWorkWriter<>(aggregateRootHistoryWriterDaoFactory.create(handle));
 				
 				UnitOfWork uow = null;
 				try {

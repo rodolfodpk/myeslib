@@ -28,8 +28,8 @@ import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
-import org.myeslib.jdbi.AggregateRootHistoryReader;
 import org.myeslib.util.hazelcast.HzCamelComponent;
+import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
 import org.skife.jdbi.v2.DBI;
 
 import com.google.inject.Binder;
@@ -45,7 +45,7 @@ public class JdbiConsumeCommandsRouteTest extends CamelTestSupport {
 
 	private static Injector injector ;
 	
-	@Produce(uri = "direct:handle-inventory-item-command")
+	@Produce(uri = "direct:processCommand")
 	protected ProducerTemplate template;
 	
 	@EndpointInject(uri = "mock:result")
@@ -64,7 +64,7 @@ public class JdbiConsumeCommandsRouteTest extends CamelTestSupport {
 	SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
 	
 	@Inject 
-	AggregateRootHistoryReader<UUID> historyReader;
+	AggregateRootHistoryReaderDao<UUID> historyReader;
 	
 	@BeforeClass public static void staticSetUp() throws Exception {
 		injector = Guice.createInjector(Modules.override(new JdbiExampleModule()).with(new TestModule()));
@@ -73,7 +73,7 @@ public class JdbiConsumeCommandsRouteTest extends CamelTestSupport {
 	public static class TestModule implements Module {
 		@Override
 		public void configure(Binder binder) {
-			binder.bindConstant().annotatedWith(Names.named("originUri")).to("direct:handle-inventory-item-command");
+			binder.bindConstant().annotatedWith(Names.named("originUri")).to("direct:processCommand");
 			binder.bindConstant().annotatedWith(Names.named("eventsDestinationUri")).to("mock:result");
 			binder.bind(ItemDescriptionGeneratorService.class)
 				.toInstance(Mockito.mock(ItemDescriptionGeneratorService.class));
@@ -100,7 +100,7 @@ public class JdbiConsumeCommandsRouteTest extends CamelTestSupport {
 		UUID id = UUID.randomUUID();
 		CreateInventoryItem command1 = new CreateInventoryItem(id, 0L, null);
 		command1.setService(service);;
-		template.sendBody(command1);
+		template.sendBody(command1); // lets skip the http endpoint just for now
 		
 		IncreaseInventory command2 = new IncreaseInventory(id, 2, 1L);
 		UnitOfWork uow = template.requestBody(command2, UnitOfWork.class);

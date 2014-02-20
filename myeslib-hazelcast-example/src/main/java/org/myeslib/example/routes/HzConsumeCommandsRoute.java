@@ -12,11 +12,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.myeslib.core.Command;
+import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.function.CommandHandlerInvoker;
 import org.myeslib.core.storage.SnapshotReader;
-import org.myeslib.example.HzExampleModule.HzUnitOfWorkWriterFactory;
 import org.myeslib.example.HzExampleModule.ServiceJustForTest;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
@@ -31,19 +31,19 @@ import com.hazelcast.core.IMap;
 public class HzConsumeCommandsRoute extends RouteBuilder {
 
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
-	final HzUnitOfWorkWriterFactory hzUnitOfWorkWriterFactory ;
-	final IMap<UUID, String> inventoryItemMap ;
+	final HzUnitOfWorkWriter<UUID> hzUnitOfWorkWriter ;
+	final IMap<UUID, AggregateRootHistory> inventoryItemMap ;
 	final String originUri;
 	final String destinationUri;
 
 	@Inject
 	public HzConsumeCommandsRoute(SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
-			HzUnitOfWorkWriterFactory hzUnitOfWorkWriterFactory,
-			IMap<UUID, String> inventoryItemMap, 
+			HzUnitOfWorkWriter<UUID> hzUnitOfWorkWriter,
+			IMap<UUID, AggregateRootHistory> inventoryItemMap, 
 			@Named("originUri") String originUri,
 			@Named("eventsDestinationUri") String destinationUri) {
 		this.snapshotReader = snapshotReader;
-		this.hzUnitOfWorkWriterFactory = hzUnitOfWorkWriterFactory;
+		this.hzUnitOfWorkWriter = hzUnitOfWorkWriter;
 		this.inventoryItemMap = inventoryItemMap;
 		this.originUri = originUri;
 		this.destinationUri = destinationUri;
@@ -104,8 +104,7 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 					log.debug("locked{} {}", id, Thread.currentThread());
 				}
 				
-				HzUnitOfWorkWriter<UUID> uowWriter = hzUnitOfWorkWriterFactory.create(inventoryItemMap);
-				CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker = new HzCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(uowWriter);
+				CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker = new HzCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(hzUnitOfWorkWriter);
 				
 				UnitOfWork uow = null;
 				try {

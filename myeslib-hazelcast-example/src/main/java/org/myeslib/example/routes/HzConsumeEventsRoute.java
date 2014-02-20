@@ -10,10 +10,9 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.util.toolbox.AggregationStrategies;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
-import org.myeslib.example.HzExample;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.infra.HazelcastData;
-import org.myeslib.util.camel.example.dataset.MyListOfSnapshotsStrategy;
+import org.myeslib.util.camel.MyListOfSnapshotsStrategy;
 
 import com.google.inject.Inject;
 
@@ -33,8 +32,6 @@ public class HzConsumeEventsRoute extends RouteBuilder {
       fromF("hz:seda:%s?transacted=true&concurrentConsumers=10", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name())
         .routeId("seda:eventsQueue")
         //.log("received ${body}")
-        .split(body())
-        .parallelProcessing()
         .process(new Processor() {
 			@Override
 			public void process(Exchange e) throws Exception {
@@ -48,7 +45,7 @@ public class HzConsumeEventsRoute extends RouteBuilder {
         .multicast(new UseLatestAggregationStrategy())
         .to("direct:reflect-last-snapshot", "direct:reflect-query-model")
         .aggregate(header("id"), AggregationStrategies.useLatest()).completionSize(3) // 3 commands per aggregate
-        .aggregate(constant(true), new MyListOfSnapshotsStrategy()).completionSize(HzExample.HOW_MANY_AGGREGATES) 
+        .aggregate(constant(true), new MyListOfSnapshotsStrategy()).completionInterval(60000) // print result every 1 minute
         .split(body()) 
 		.log("*** resulting snapshot after all commands: ${body}");
       

@@ -24,7 +24,7 @@ import org.myeslib.core.data.Snapshot;
 import org.myeslib.example.SampleDomain.InventoryDecreased;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
-import org.myeslib.jdbi.AggregateRootHistoryReader;
+import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
 
 import com.google.common.base.Function;
 
@@ -38,7 +38,7 @@ public class JdbiSnapshotReaderTest {
 	Function<Void, InventoryItemAggregateRoot> newInstanceFunction;
 	
 	@Mock
-	AggregateRootHistoryReader<UUID> arReader ;
+	AggregateRootHistoryReaderDao<UUID> arReader ;
 	
 	@Test 
 	public void lastSnapshotNullNoTransactionHistory() {

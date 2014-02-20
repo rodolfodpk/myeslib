@@ -13,23 +13,23 @@ import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.function.CommandHandlerInvoker;
 import org.myeslib.core.storage.SnapshotReader;
-import org.myeslib.core.storage.UnitOfWorkWriter;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemInstanceFactory;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.HazelcastData;
 import org.myeslib.example.routes.JdbiConsumeEventsRoute;
-import org.myeslib.jdbi.AggregateRootHistoryReader;
-import org.myeslib.jdbi.JdbiAggregateRootHistoryReader;
 import org.myeslib.jdbi.function.JdbiCommandHandlerInvoker;
 import org.myeslib.jdbi.storage.JdbiSnapshotReader;
-import org.myeslib.jdbi.storage.JdbiUnitOfWorkWriter;
-import org.myeslib.util.camel.example.dataset.DatasetsRoute;
+import org.myeslib.util.camel.ReceiveCommandsAsJsonRoute;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
 import org.myeslib.util.h2.ArhCreateTablesHelper;
 import org.myeslib.util.hazelcast.HzCamelComponent;
+import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
+import org.myeslib.util.jdbi.AggregateRootHistoryWriterDao;
 import org.myeslib.util.jdbi.ArTablesMetadata;
+import org.myeslib.util.jdbi.JdbiAggregateRootHistoryReaderDao;
+import org.myeslib.util.jdbi.JdbiAggregateRootHistoryWriterDao;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
@@ -103,7 +103,8 @@ public class JdbiExampleModule extends AbstractModule {
 	@Singleton
 	@Named("originUri")
 	public String originUri() {
-		return "hz:seda:inventory-item-command?transacted=true&concurrentConsumers=10";
+		return "direct:processCommand";
+		// return "hz:seda:inventory-item-command?transacted=true&concurrentConsumers=10";
 	}
 
 	@Provides
@@ -111,6 +112,7 @@ public class JdbiExampleModule extends AbstractModule {
 	@Named("eventsDestinationUri")
 	public String destinationUri() {
 		return String.format("hz:seda:%s", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name());
+		// return "log:org.myeslib.example?level=INFO&groupSize=1000";
 	}
 	
 	
@@ -134,8 +136,8 @@ public class JdbiExampleModule extends AbstractModule {
 		
 	@Provides
 	@Singleton
-	public AggregateRootHistoryReader<UUID> arReader(ArTablesMetadata metadata, DBI dbi, Function<String, UnitOfWork> fromStringFunction) {
-		return new JdbiAggregateRootHistoryReader(metadata, dbi, fromStringFunction);
+	public AggregateRootHistoryReaderDao<UUID> arReader(ArTablesMetadata metadata, DBI dbi, Function<String, UnitOfWork> fromStringFunction) {
+		return new JdbiAggregateRootHistoryReaderDao(metadata, dbi, fromStringFunction);
 	}
 	
 	@Provides
@@ -148,7 +150,7 @@ public class JdbiExampleModule extends AbstractModule {
 	@Singleton
 	public SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader(
 			Map<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap, 
-			AggregateRootHistoryReader<UUID> arReader, 
+			AggregateRootHistoryReaderDao<UUID> arReader, 
 			Function<Void, InventoryItemAggregateRoot> newInstanceFactory) {
 		return new JdbiSnapshotReader<>(lastSnapshotMap, arReader, newInstanceFactory);
 	}
@@ -159,21 +161,26 @@ public class JdbiExampleModule extends AbstractModule {
 		return new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
 	}
 	
-	public interface UnitOfWorkWriterFactory {
-		JdbiUnitOfWorkWriter<UUID> create(Handle handle);
+	@Provides
+	@Singleton
+	public ReceiveCommandsAsJsonRoute receiveCommandsRoute(@Named("originUri") String originUri, Gson gson) {
+		return new ReceiveCommandsAsJsonRoute("jetty:http://localhost:8080/inventory-item-command?minThreads=5&maxThreads=10", originUri, gson);
 	}
-
+	
+	public interface AggregateRootHistoryWriterDaoFactory {
+	   JdbiAggregateRootHistoryWriterDao create(Handle handle);
+	}
+	
 	@Override
 	protected void configure() {
 
-		bind(DatasetsRoute.class);
 		bind(JdbiConsumeEventsRoute.class);
-		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class).asEagerSingleton();;
+		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class).asEagerSingleton();
 
 		install(new FactoryModuleBuilder()
-	        .implement(UnitOfWorkWriter.class, JdbiUnitOfWorkWriter.class)
-	        .build(UnitOfWorkWriterFactory.class)) ;
-		
+        .implement(AggregateRootHistoryWriterDao.class, JdbiAggregateRootHistoryWriterDao.class)
+        .build(AggregateRootHistoryWriterDaoFactory.class)) ;
+
 	}
 	
 	public static class ServiceJustForTest implements ItemDescriptionGeneratorService {

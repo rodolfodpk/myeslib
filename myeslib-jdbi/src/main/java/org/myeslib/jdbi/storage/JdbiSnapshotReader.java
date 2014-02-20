@@ -11,7 +11,7 @@ import org.myeslib.core.Event;
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
-import org.myeslib.jdbi.AggregateRootHistoryReader;
+import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
 
 import com.google.common.base.Function;
 import com.google.inject.Inject;
@@ -21,7 +21,7 @@ public class JdbiSnapshotReader<K, A extends AggregateRoot> implements SnapshotR
 	@Inject
 	public JdbiSnapshotReader(
 			Map<K, Snapshot<A>> lastSnapshotMap,
-			AggregateRootHistoryReader<K> arReader,
+			AggregateRootHistoryReaderDao<K> arReader,
 			Function<Void, A> newInstanceFactory) {
 		checkNotNull(lastSnapshotMap);
 		checkNotNull(arReader);
@@ -32,7 +32,7 @@ public class JdbiSnapshotReader<K, A extends AggregateRoot> implements SnapshotR
 	}
 
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
-	private final AggregateRootHistoryReader<K> arReader ;
+	private final AggregateRootHistoryReaderDao<K> arReader ;
 	private final Function<Void, A> newInstanceFactory ;
 	
 	/*

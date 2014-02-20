@@ -1,4 +1,4 @@
-package org.myeslib.util.camel.example.dataset;
+package org.myeslib.cmdproducer.datasets;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package org.myeslib.hazelcast.storage;
+package org.myeslib.hazelcast.storage.string;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.myeslib.util.EventSourcingMagicHelper.applyEventsOn;
@@ -16,7 +16,7 @@ import org.myeslib.core.storage.SnapshotReader;
 
 import com.google.common.base.Function;
 
-public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
+public class HzSnapshotStringReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
 
 	private final Map<K, String> eventsMap ;
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
@@ -24,7 +24,7 @@ public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotRea
 	private final Function<Void, A> newInstanceFactory ;
     
 	@Inject
-	public HzSnapshotReader(Map<K, String> eventsMap,
+	public HzSnapshotStringReader(Map<K, String> eventsMap,
 			Map<K, Snapshot<A>> lastSnapshotMap,
 			Function<String, AggregateRootHistory> fromStringFunction,
 			Function<Void, A> newInstanceFactory) {

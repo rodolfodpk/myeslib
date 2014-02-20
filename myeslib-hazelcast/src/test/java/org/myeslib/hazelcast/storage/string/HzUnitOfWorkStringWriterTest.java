@@ -1,4 +1,4 @@
-package org.myeslib.hazelcast.storage;
+package org.myeslib.hazelcast.storage.string;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -25,6 +25,7 @@ import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.example.SampleDomainGsonFactory;
+import org.myeslib.hazelcast.storage.string.HzUnitOfWorkStringWriter;
 import org.myeslib.util.gson.ArhFromStringFunction;
 import org.myeslib.util.gson.ArhToStringFunction;
 
@@ -32,7 +33,7 @@ import com.google.gson.Gson;
 import com.hazelcast.core.IMap;
 
 @RunWith(MockitoJUnitRunner.class) 
-public class HzUnitOfWorkWriterTest {
+public class HzUnitOfWorkStringWriterTest {
 	
 	@Mock
 	IMap<UUID, String> mapWithUuidKey;
@@ -53,7 +54,7 @@ public class HzUnitOfWorkWriterTest {
 		// first get on map will returns null, second will returns toStore 
 		when(mapWithUuidKey.get(id)).thenReturn(null, gson.toJson(toStore));
 		
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
+		HzUnitOfWorkStringWriter<UUID> store = new HzUnitOfWorkStringWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
 		store.insert(id, t);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
@@ -87,7 +88,7 @@ public class HzUnitOfWorkWriterTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 		
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
+		HzUnitOfWorkStringWriter<UUID> store = new HzUnitOfWorkStringWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
 		Command command2 = new IncreaseInventory(id, 1, 1L);
 		UnitOfWork t2 = UnitOfWork.create(command2, events);
 		store.insert(id, t2);
@@ -133,7 +134,7 @@ public class HzUnitOfWorkWriterTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(gson.toJson(toStore));
 
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
+		HzUnitOfWorkStringWriter<UUID> store = new HzUnitOfWorkStringWriter<>(new ArhToStringFunction(gson), new ArhFromStringFunction(gson), mapWithUuidKey);
 		UnitOfWork t2 = UnitOfWork.create(command, events);
 		store.insert(id, t2);
 

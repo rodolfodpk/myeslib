@@ -1,4 +1,4 @@
-package org.myeslib.jdbi;
+package org.myeslib.util.jdbi;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.UnitOfWork;
-import org.myeslib.util.jdbi.ArTablesMetadata;
-import org.myeslib.util.jdbi.ClobToStringMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.StatementContext;
@@ -22,10 +20,10 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 @Slf4j
-public class JdbiAggregateRootHistoryReader implements AggregateRootHistoryReader<UUID>{
+public class JdbiAggregateRootHistoryReaderDao implements AggregateRootHistoryReaderDao<UUID>{
 
 	@Inject
-	public JdbiAggregateRootHistoryReader(ArTablesMetadata tables,
+	public JdbiAggregateRootHistoryReaderDao(ArTablesMetadata tables,
 			DBI dbi, 
 			Function<String, UnitOfWork> fromStringFunction) {
 		

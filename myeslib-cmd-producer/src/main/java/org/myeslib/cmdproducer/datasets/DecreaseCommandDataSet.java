@@ -1,16 +1,16 @@
-package org.myeslib.util.camel.example.dataset;
+package org.myeslib.cmdproducer.datasets;
 
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.camel.component.dataset.DataSetSupport;
-import org.myeslib.example.SampleDomain.IncreaseInventory;
+import org.myeslib.example.SampleDomain.DecreaseInventory;
 
-public class IncreaseCommandDataSet extends DataSetSupport {
+public class DecreaseCommandDataSet extends DataSetSupport {
 
-	public final List<UUID> ids ;
+	public final List<UUID> ids;
 	
-	public IncreaseCommandDataSet(List<UUID> ids, int howManyAggregates) {
+	public DecreaseCommandDataSet(List<UUID> ids, int howManyAggregates) {
 		this.ids = ids;
 		setSize(howManyAggregates);
 		setReportCount(Math.min(100, howManyAggregates));
@@ -19,7 +19,7 @@ public class IncreaseCommandDataSet extends DataSetSupport {
 	@Override
 	protected Object createMessageBody(long messageIndex) {
 		UUID id = ids.get((int) messageIndex);
-		IncreaseInventory command = new IncreaseInventory(id, 2, 1L);
+		DecreaseInventory command = new DecreaseInventory(id, 1, 2L);
 		return command;
 	}
 	

@@ -27,7 +27,7 @@
 			<groupId>org.myeslib</groupId>
 			<artifactId>myeslib-jdbi</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
@@ -48,10 +48,10 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.oracle</groupId> -->
-<!-- 			<artifactId>ojdbc7</artifactId> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.oracle</groupId> -->
+		<!-- <artifactId>ojdbc7</artifactId> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>

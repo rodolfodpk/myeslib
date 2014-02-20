@@ -1,4 +1,4 @@
-package org.myeslib.hazelcast.storage;
+package org.myeslib.hazelcast.storage.string;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -31,7 +31,7 @@ import com.google.common.base.Function;
 import com.google.gson.Gson;
 
 @RunWith(MockitoJUnitRunner.class) 
-public class HzSnapshotReaderTest {
+public class HzSnapshotStringReaderTest {
 	
 	final Gson gson = new SampleDomainGsonFactory().create();
 	
@@ -47,7 +47,7 @@ public class HzSnapshotReaderTest {
 		
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
 		
-		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<UUID, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, new ArhFromStringFunction(gson), inventoryItemInstanceFactory);
+		HzSnapshotStringReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotStringReader<UUID, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, new ArhFromStringFunction(gson), inventoryItemInstanceFactory);
 		
 		when(inventoryItemInstanceFactory.apply(any(Void.class))).thenReturn(freshInstance);
 		when(eventsMap.get(id)).thenReturn(null);
@@ -88,7 +88,7 @@ public class HzSnapshotReaderTest {
 		when(lastSnapshotMap.get(id)).thenReturn(null);
 		when(inventoryItemInstanceFactory.apply(any(Void.class))).thenReturn(freshInstance);
 		
-		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<UUID, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, fromStringFunction, inventoryItemInstanceFactory);
+		HzSnapshotStringReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotStringReader<UUID, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, fromStringFunction, inventoryItemInstanceFactory);
 
 		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id);
 		
@@ -138,7 +138,7 @@ public class HzSnapshotReaderTest {
 		when(lastSnapshotMap.get(id)).thenReturn(snapshotInstance);
 		when(transactionHistoryWithOneUnitOfWork.getEventsAfterUntil(firstVersion, versionNotYetOnLastSnapshot)).thenReturn(events);
 	
-		HzSnapshotReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotReader<UUID, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, fromStringFunction, inventoryItemInstanceFactory);
+		HzSnapshotStringReader<UUID, InventoryItemAggregateRoot> st = new HzSnapshotStringReader<UUID, InventoryItemAggregateRoot>(eventsMap, lastSnapshotMap, fromStringFunction, inventoryItemInstanceFactory);
 		
 		Snapshot<InventoryItemAggregateRoot> resultingSnapshot = st.get(id);
 		
