@@ -20,9 +20,9 @@ public class HazelcastConfigFactory {
 		
 		//config.setUserContext(userContext);
 		
-//		for (SerializerConfig sc : serializers) {
-//			config.getSerializationConfig().addSerializerConfig(sc); 
-//		}
+		for (SerializerConfig sc : serializers) {
+			config.getSerializationConfig().addSerializerConfig(sc); 
+		}
 	}
 
 }
