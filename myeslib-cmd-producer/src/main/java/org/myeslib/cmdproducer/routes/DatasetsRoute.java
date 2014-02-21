@@ -33,12 +33,12 @@ public class DatasetsRoute extends RouteBuilder {
 		 from("dataset:increaseCommandDataset?initialDelay=20000")
 		 	.routeId("dataset:increaseCommandsDataset")
 		 	.process(new MarshalProcessor())
-		 	.to("jetty://http://localhost:8080/inventory-item-command");
+		    .to(targetEndpoint);
 
 		 from("dataset:decreaseCommandDataset?initialDelay=30000")
 		 	.routeId("dataset:decreaseCommandsDataset")
 		 	.process(new MarshalProcessor())
-		 	.to("jetty://http://localhost:8080/inventory-item-command");
+		 	.to(targetEndpoint);
 
 	}
 

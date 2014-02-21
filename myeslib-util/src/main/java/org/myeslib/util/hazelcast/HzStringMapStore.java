@@ -26,6 +26,7 @@ import org.skife.jdbi.v2.util.StringMapper;
 
 import com.hazelcast.core.MapStore;
 
+@Deprecated
 @Slf4j
 public class HzStringMapStore implements MapStore<UUID, String>{
 

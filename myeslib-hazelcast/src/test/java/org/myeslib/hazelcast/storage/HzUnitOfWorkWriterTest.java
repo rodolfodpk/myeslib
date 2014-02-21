@@ -24,11 +24,7 @@ import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
-import org.myeslib.example.SampleDomainGsonFactory;
-import org.myeslib.util.gson.ArhFromStringFunction;
-import org.myeslib.util.gson.ArhToStringFunction;
 
-import com.google.gson.Gson;
 import com.hazelcast.core.IMap;
 
 @RunWith(MockitoJUnitRunner.class) 

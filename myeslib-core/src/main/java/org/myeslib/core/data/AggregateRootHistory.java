@@ -58,7 +58,7 @@ public class AggregateRootHistory implements Serializable {
 	}
 
 	public UnitOfWork getLastUnitOfWork() {
-		return unitsOfWork.get(unitsOfWork.size());
+		return unitsOfWork.get(unitsOfWork.size()-1);
 	}
 
 }

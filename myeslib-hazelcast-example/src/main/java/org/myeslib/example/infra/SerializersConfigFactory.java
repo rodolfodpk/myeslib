@@ -29,7 +29,7 @@ public class SerializersConfigFactory {
 
 	private final Gson gson;
 
-	final List<Class<?>> classes = Arrays.asList(AggregateRootHistory.class, UnitOfWork.class, Snapshot.class,
+	final List<Class<?>> classes = Arrays.asList(AggregateRootHistory.class, UnitOfWork.class, 
 			AggregateRoot.class,
 			InventoryItemAggregateRoot.class,
 			CreateInventoryItem.class, InventoryItemCreated.class, 

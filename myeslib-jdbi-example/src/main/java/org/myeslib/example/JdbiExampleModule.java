@@ -2,8 +2,6 @@ package org.myeslib.example;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Singleton;
 import javax.sql.DataSource;
@@ -12,13 +10,13 @@ import org.h2.jdbcx.JdbcConnectionPool;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.function.CommandHandlerInvoker;
+import org.myeslib.core.function.MultiMethodCommandHandlerInvoker;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemInstanceFactory;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.infra.HazelcastData;
 import org.myeslib.example.routes.JdbiConsumeEventsRoute;
-import org.myeslib.jdbi.function.JdbiCommandHandlerInvoker;
 import org.myeslib.jdbi.storage.JdbiSnapshotReader;
 import org.myeslib.util.camel.ReceiveCommandsAsJsonRoute;
 import org.myeslib.util.gson.UowFromStringFunction;
@@ -61,6 +59,24 @@ public class JdbiExampleModule extends AbstractModule {
 	
 	@Provides
 	@Singleton
+	public Gson gson() {
+		return new SampleDomainGsonFactory().create();
+	}
+
+	@Provides
+	@Singleton
+	public Function<UnitOfWork, String> toStringFunction(Gson gson) {
+		return new UowToStringFunction(gson);
+	}
+
+	@Provides
+	@Singleton
+	public Function<String, UnitOfWork> fromStringFunction(Gson gson) {
+		return new UowFromStringFunction(gson);
+	}
+	
+	@Provides
+	@Singleton
 	@Named("InventoryItem")
 	public String inventoryTableName() {
 		return "inventory_item" ;
@@ -76,27 +92,14 @@ public class JdbiExampleModule extends AbstractModule {
 	
 	@Provides
 	@Singleton
-	public Gson gson() {
-		return new SampleDomainGsonFactory().create();
+	public AggregateRootHistoryReaderDao<UUID> arReader(ArTablesMetadata metadata, DBI dbi, Function<String, UnitOfWork> fromStringFunction) {
+		return new JdbiAggregateRootHistoryReaderDao(metadata, dbi, fromStringFunction);
 	}
-
-	@Provides
-	@Singleton
-	public ConcurrentMap<String, Object> userContext() {
-		ConcurrentMap<String, Object> userContext = new ConcurrentHashMap<>();
-		return userContext;
-	}
-
+	
 	@Provides
 	@Singleton
 	public HazelcastInstance hazelcastInstance(Config config) {
 		return Hazelcast.newHazelcastInstance(config);
-	}
-
-	@Provides
-	@Singleton
-	public HzCamelComponent create(HazelcastInstance hazelcastInstance){
-		return new HzCamelComponent(hazelcastInstance);
 	}
 
 	@Provides
@@ -114,30 +117,11 @@ public class JdbiExampleModule extends AbstractModule {
 		return String.format("hz:seda:%s", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name());
 		// return "log:org.myeslib.example?level=INFO&groupSize=1000";
 	}
-	
-	
-	@Provides
-	@Singleton
-	public Function<UnitOfWork, String> toStringFunction(Gson gson) {
-		return new UowToStringFunction(gson);
-	}
-
-	@Provides
-	@Singleton
-	public Function<String, UnitOfWork> fromStringFunction(Gson gson) {
-		return new UowFromStringFunction(gson);
-	}
 
 	@Provides
 	@Singleton
 	public Map<UUID, Snapshot<InventoryItemAggregateRoot>> inventoryItemMap(HazelcastInstance hazelcastInstance) {
 		return hazelcastInstance.getMap(HazelcastData.INVENTORY_ITEM_LAST_SNAPSHOT.name());
-	}
-		
-	@Provides
-	@Singleton
-	public AggregateRootHistoryReaderDao<UUID> arReader(ArTablesMetadata metadata, DBI dbi, Function<String, UnitOfWork> fromStringFunction) {
-		return new JdbiAggregateRootHistoryReaderDao(metadata, dbi, fromStringFunction);
 	}
 	
 	@Provides
@@ -158,7 +142,7 @@ public class JdbiExampleModule extends AbstractModule {
 	@Provides
 	@Singleton
 	public CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> invoker() {
-		return new JdbiCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
+		return new MultiMethodCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
 	}
 	
 	@Provides
@@ -174,6 +158,7 @@ public class JdbiExampleModule extends AbstractModule {
 	@Override
 	protected void configure() {
 
+		bind(HzCamelComponent.class);
 		bind(JdbiConsumeEventsRoute.class);
 		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class).asEagerSingleton();
 

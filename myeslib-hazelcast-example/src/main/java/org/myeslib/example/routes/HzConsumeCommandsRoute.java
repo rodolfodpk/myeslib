@@ -21,7 +21,6 @@ import org.myeslib.example.HzExampleModule.ServiceJustForTest;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
-import org.myeslib.hazelcast.function.HzCommandHandlerInvoker;
 import org.myeslib.hazelcast.storage.HzUnitOfWorkWriter;
 
 import com.google.inject.name.Named;
@@ -32,6 +31,7 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
 	final HzUnitOfWorkWriter<UUID> hzUnitOfWorkWriter ;
+	final CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker;
 	final IMap<UUID, AggregateRootHistory> inventoryItemMap ;
 	final String originUri;
 	final String destinationUri;
@@ -39,11 +39,13 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 	@Inject
 	public HzConsumeCommandsRoute(SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
 			HzUnitOfWorkWriter<UUID> hzUnitOfWorkWriter,
+			CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker,
 			IMap<UUID, AggregateRootHistory> inventoryItemMap, 
 			@Named("originUri") String originUri,
 			@Named("eventsDestinationUri") String destinationUri) {
 		this.snapshotReader = snapshotReader;
 		this.hzUnitOfWorkWriter = hzUnitOfWorkWriter;
+		this.cmdHandlerInvoker = cmdHandlerInvoker;
 		this.inventoryItemMap = inventoryItemMap;
 		this.originUri = originUri;
 		this.destinationUri = destinationUri;
@@ -104,11 +106,10 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 					log.debug("locked{} {}", id, Thread.currentThread());
 				}
 				
-				CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker = new HzCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(hzUnitOfWorkWriter);
-				
 				UnitOfWork uow = null;
 				try {
 					uow = cmdHandlerInvoker.invoke(id, command, commandHandler);
+					hzUnitOfWorkWriter.insert(id, uow);
 					log.debug("commited transaction {} {}", id, Thread.currentThread());
 				} catch (Throwable t) {
 					log.error("how to rollback transaction? {} {}", id, Thread.currentThread());

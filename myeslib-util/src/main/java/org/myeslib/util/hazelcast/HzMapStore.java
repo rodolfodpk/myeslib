@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
@@ -15,6 +17,7 @@ import org.myeslib.util.jdbi.AggregateRootHistoryWriterDao;
 import com.google.inject.Inject;
 import com.hazelcast.core.MapStore;
 
+@Slf4j
 public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 
 	private final AggregateRootHistoryWriterDao<UUID> writer;
@@ -28,11 +31,13 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 
 	@Override
 	public AggregateRootHistory load(UUID key) {
+		log.info("load {}", key);
 		return reader.get(key);
 	}
 
 	@Override
 	public Map<UUID, AggregateRootHistory> loadAll(Collection<UUID> keys) {
+		log.info("load all");
 		Map<UUID, AggregateRootHistory> result = new HashMap<>();
 		for (UUID id : keys) {
 			result.put(id, reader.get(id));
@@ -43,6 +48,7 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 	@Override
 	public Set<UUID> loadAllKeys() {
 		// TODO check is possible to avoid this initial load
+		log.info("load all keys -- empty");
 		Set<UUID> keys = new HashSet<>();
 		return keys;
 	}
@@ -50,12 +56,16 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 	@Override
 	public void store(UUID key, AggregateRootHistory value) {
 		// To set timestamp from db onto it ?
+		log.info("store {} {}", key, value);
 		UnitOfWork uow = value.getLastUnitOfWork();
+		log.info("store uow {}", uow);
 		writer.insert(key, uow);
+		log.info("done ?");
 	}
 
 	@Override
 	public void storeAll(Map<UUID, AggregateRootHistory> map) {
+		log.info("store all");
 		for (Map.Entry<UUID, AggregateRootHistory> entry : map.entrySet()) {
 			store(entry.getKey(), entry.getValue());
 		}

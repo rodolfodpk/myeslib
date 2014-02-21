@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.hazelcast.core.IMap;
 
+@Deprecated
 @Slf4j
 public class HzUnitOfWorkStringWriter<K> implements UnitOfWorkWriter<K>{
 

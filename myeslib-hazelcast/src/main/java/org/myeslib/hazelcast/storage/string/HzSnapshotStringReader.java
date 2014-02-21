@@ -16,6 +16,7 @@ import org.myeslib.core.storage.SnapshotReader;
 
 import com.google.common.base.Function;
 
+@Deprecated
 public class HzSnapshotStringReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
 
 	private final Map<K, String> eventsMap ;

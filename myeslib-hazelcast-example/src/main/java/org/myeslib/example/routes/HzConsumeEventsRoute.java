@@ -31,7 +31,7 @@ public class HzConsumeEventsRoute extends RouteBuilder {
 
       fromF("hz:seda:%s?transacted=true&concurrentConsumers=10", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name())
         .routeId("seda:eventsQueue")
-        //.log("received ${body}")
+        .log("received ${body}")
         .process(new Processor() {
 			@Override
 			public void process(Exchange e) throws Exception {

@@ -1,39 +1,32 @@
-package org.myeslib.hazelcast.function;
+package org.myeslib.core.function;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.function.CommandHandlerInvoker;
+import org.myeslib.core.function.MultiMethodCommandHandlerInvoker;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.DecreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.example.SampleDomain.InventoryItemCreated;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
-import org.myeslib.hazelcast.storage.HzUnitOfWorkWriter;
 
 import com.google.common.base.Function;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HzCommandHandlerInvokerTest {
+public class MultiMethodCommandHandlerInvokerTest {
 
-	@Mock
-	HzUnitOfWorkWriter<UUID> writer ;
-	
 	Function<UUID, String> generateDescription = new Function<UUID, String>() {
 		@Override
 		public String apply(UUID id) {
@@ -57,20 +50,18 @@ public class HzCommandHandlerInvokerTest {
 			}
 		})
 		;
-		
+
 		command.setService(service);
+		
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 
-		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = 
-				new HzCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>(writer);
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new MultiMethodCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
 		
 		InventoryItemCreated expectedEvent = new InventoryItemCreated(id, generateDescription.apply(id))	;
 			
 		UnitOfWork uow = tcp.invoke(id, command, commandHandler);
-		
-		verify(writer).insert(id, uow);	
 		
 		InventoryItemCreated resultingEvent = (InventoryItemCreated) uow.getEvents().get(0);
 		
@@ -85,17 +76,14 @@ public class HzCommandHandlerInvokerTest {
 		Long version = 0L;
 		CreateInventoryItem command = new CreateInventoryItem(id, version, null);
 	
-		command.setService(null);
-		
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 	
-		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new HzCommandHandlerInvoker<>(writer);
-		
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new MultiMethodCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
+
 		try {
 			tcp.invoke(id, command, commandHandler);
 		} catch (Throwable t) {
-			verify(writer, times(0)).insert(any(UUID.class), any(UnitOfWork.class));	
 			throw t;
 		}
 
@@ -113,12 +101,11 @@ public class HzCommandHandlerInvokerTest {
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
 	
-		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new HzCommandHandlerInvoker<>(writer);
-		
+		CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> tcp = new MultiMethodCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
+
 		try {
 			tcp.invoke(id, command, commandHandler);
 		} catch (Throwable t) {
-			verify(writer, times(0)).insert(any(UUID.class), any(UnitOfWork.class));	
 			throw t;
 		}
 

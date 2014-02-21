@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.camel.component.hazelcast.HazelcastComponent;
 
+import com.google.inject.Inject;
 import com.hazelcast.core.HazelcastInstance;
 
 @Slf4j
@@ -11,6 +12,7 @@ public class HzCamelComponent extends HazelcastComponent {
 	
 	protected HazelcastInstance hz ;
 	
+	@Inject
 	public HzCamelComponent(HazelcastInstance hazelcastInstance) {
 		this.hz = hazelcastInstance;
 		this.setHazelcastInstance(hazelcastInstance);
