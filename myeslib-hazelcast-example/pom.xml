@@ -37,10 +37,6 @@
 			<artifactId>camel-gson</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-disruptor</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 		</dependency>
@@ -80,7 +76,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.myeslib.example.HzExample</mainClass>
+							<mainClass>org.myeslib.example.hazelcast.HzExample</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -99,7 +95,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>org.myeslib.example.HzExample</mainClass>
+									<mainClass>org.myeslib.example.hazelcast.HzExample</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

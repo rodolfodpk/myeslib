@@ -114,6 +114,8 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 		
 		JdbiAggregateRootHistoryWriterDao store = new JdbiAggregateRootHistoryWriterDao(h, metadata, toStringFunction);
 			
+		store.insert(id, existingUow);
+		
 		store.insert(id, newUow);
 
 		AggregateRootHistory fromDb = reader.get(id);

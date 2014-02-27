@@ -14,7 +14,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.myeslib.example.JdbiExample</mainClass>
+              <mainClass>org.myeslib.example.jdbi.JdbiExample</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -31,7 +31,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>org.myeslib.example.JdbiExample</mainClass>
+                  <mainClass>org.myeslib.example.jdbi.JdbiExample</mainClass>
                 </transformer>
               </transformers>
             </configuration>

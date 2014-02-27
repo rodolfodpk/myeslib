@@ -38,9 +38,13 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-gson</artifactId>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.camel</groupId> -->
+		<!-- <artifactId>camel-jsonpath</artifactId> -->
+		<!-- </dependency> -->
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jsonpath</artifactId>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>

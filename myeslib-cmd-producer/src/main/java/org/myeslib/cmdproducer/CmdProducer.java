@@ -27,7 +27,7 @@ public class CmdProducer {
 	final SimpleRegistry registry;
 	final CamelContext context;
 
-	public final static int HOW_MANY_AGGREGATES = 1000;
+	public final static int HOW_MANY_AGGREGATES = 100;
 	public final static List<UUID> ids = ids();
 	
 	public static void main(String[] args) throws Exception {

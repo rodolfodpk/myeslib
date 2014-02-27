@@ -15,6 +15,7 @@
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<build.date>${maven.build.timestamp}</build.date>
 		<java.version>1.7</java.version>
+		<camel.version>2.13-SNAPSHOT</camel.version>
 	</properties>
 
 	<repositories>
@@ -29,14 +30,14 @@
 	</repositories>
 
 	<modules>
-		<module>myeslib-3rd-party</module>
 		<module>myeslib-core</module>
-		<module>myeslib-util</module>
-		<module>myeslib-hazelcast</module>
-		<module>myeslib-hazelcast-example</module>
 		<module>myeslib-jdbi</module>
+		<module>myeslib-hazelcast</module>
 		<module>myeslib-jdbi-example</module>
+		<module>myeslib-hazelcast-example</module>
 		<module>myeslib-cmd-producer</module>
+		<module>myeslib-3rd-party</module>
+		<module>myeslib-util</module>
 	</modules>
 
 	<dependencyManagement>
@@ -47,17 +48,10 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>myeslib-core</artifactId>
 				<version>${project.version}</version>
-				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-util</artifactId>
-				<version>${project.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-3rd-party</artifactId>
+				<artifactId>myeslib-jdbi</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -67,17 +61,12 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-hazelcast-example</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-jdbi</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
 				<artifactId>myeslib-jdbi-example</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>myeslib-hazelcast-example</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -85,7 +74,17 @@
 				<artifactId>myeslib-cmd-producer</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>myeslib-3rd-party</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>myeslib-util</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 			<!-- Others -->
 			<dependency>
 				<groupId>org.projectlombok</groupId>
@@ -105,32 +104,32 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-core</artifactId>
-				<version>2.13-SNAPSHOT</version>
+				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-jetty</artifactId>
-				<version>2.13-SNAPSHOT</version>
+				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-gson</artifactId>
-				<version>2.13-SNAPSHOT</version>
+				<version>${camel.version}</version>
 			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.camel</groupId> -->
+			<!-- <artifactId>camel-jsonpath</artifactId> -->
+			<!-- <version>${camel.version}</version> -->
+			<!-- </dependency> -->
 			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-jsonpath</artifactId>
-				<version>2.13-SNAPSHOT</version>
+				<groupId>com.jayway.jsonpath</groupId>
+				<artifactId>json-path</artifactId>
+				<version>0.9.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-hazelcast</artifactId>
-				<version>2.13-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-disruptor</artifactId>
-				<version>2.13-SNAPSHOT</version>
+				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>
@@ -167,7 +166,7 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-test</artifactId>
-				<version>2.13-SNAPSHOT</version>
+				<version>${camel.version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

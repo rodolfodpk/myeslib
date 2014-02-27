@@ -1,8 +1,5 @@
 package org.myeslib.example.routes;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -20,24 +17,27 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.storage.SnapshotReader;
-import org.myeslib.example.HzExampleModule;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
-import org.myeslib.example.infra.HazelcastData;
+import org.myeslib.example.hazelcast.infra.HazelcastData;
+import org.myeslib.example.hazelcast.modules.CamelModule;
+import org.myeslib.example.hazelcast.modules.DatabaseModule;
+import org.myeslib.example.hazelcast.modules.HazelcastModule;
+import org.myeslib.example.hazelcast.modules.InventoryItemModule;
+import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
+import org.myeslib.util.h2.ArhCreateTablesHelper;
 import org.myeslib.util.hazelcast.HzCamelComponent;
+import org.myeslib.util.jdbi.ArTablesMetadata;
 import org.myeslib.util.jdbi.ClobToStringMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 
-import com.google.gson.Gson;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -69,8 +69,17 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	@Inject
 	SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader; 
 	
+	@Inject 
+	DBI dbi;
+	
+	@Inject
+	ArTablesMetadata metadata;
+	  
 	@BeforeClass public static void staticSetUp() throws Exception {
-		injector = Guice.createInjector(Modules.override(new HzExampleModule()).with(new TestModule()));
+		
+		injector =  Guice.createInjector(Modules.override(new CamelModule()).with(new TestModule()), 
+				new DatabaseModule(), new HazelcastModule(), new InventoryItemModule());
+		
 	}
 
 	public static class TestModule implements Module {
@@ -78,14 +87,13 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 		public void configure(Binder binder) {
 			binder.bindConstant().annotatedWith(Names.named("originUri")).to("direct:handle-inventory-item-command");
 			binder.bindConstant().annotatedWith(Names.named("eventsDestinationUri")).to("mock:result");
-			binder.bind(ItemDescriptionGeneratorService.class)
-				.toInstance(Mockito.mock(ItemDescriptionGeneratorService.class));
 		}
 	}
 
 	@Before public void setUp() throws Exception {
 		injector.injectMembers(this);
 		super.setUp();
+		new ArhCreateTablesHelper(metadata, dbi).createTables();
 	}
 
 	@Override
@@ -97,8 +105,6 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	
 	@Test
 	public void test() {
-		
-		when(service.generate(any(UUID.class))).thenReturn("an inventory item description from mock");
 		
 		CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID(), 0L, null);
 		command1.setService(service);

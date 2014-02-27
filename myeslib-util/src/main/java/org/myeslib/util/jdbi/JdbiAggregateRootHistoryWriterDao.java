@@ -35,7 +35,7 @@ public class JdbiAggregateRootHistoryWriterDao implements AggregateRootHistoryWr
 	@Override
 	public void insert(final UUID id, final UnitOfWork uow) {
 
-	String sql = String.format("insert into %s (id, uow_data, version) values (:id, :uow_data, :version)", tables.getUnitOfWorkTable());
+	    String sql = String.format("insert into %s (id, uow_data, version) values (:id, :uow_data, :version)", tables.getUnitOfWorkTable());
 		
 		log.debug(sql);
 		

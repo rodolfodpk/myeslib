@@ -84,7 +84,7 @@ public class SampleDomain {
 	@AllArgsConstructor
 	public static class CreateInventoryItem implements Command {
 		@NonNull UUID id;
-		Long version;
+		Long version = 0L;
 		transient ItemDescriptionGeneratorService service; 
 	}
 	
