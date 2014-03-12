@@ -59,12 +59,12 @@ There are 2 packages within module 3rd-party with (intact) code from :
 
 http://gsd.di.uminho.pt/members/jop/mm4j -> multimethods magic (thanks José Orlando)
 
-https://code.google.com/p/google-gson -> since I did not found RuntimeTypeAdapter classes within gson-2.2.4 jar
+https://code.google.com/p/google-gson -> since I did not found RuntimeTypeAdapter classes within gson-2.2.4
 Some references
 ===============
 [Building an Event Store based on a relational database](http://cqrs.wordpress.com/documents/building-event-storage/)
 
-[Optimistic Locking with Oracle](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0CCgQFjAA&url=http%3A%2F%2Fwww.orafaq.com%2Fpapers%2Flocking.pdf&ei=rusgU7fgI8aqkAfU0oHQCw&usg=AFQjCNHwIQtdeFyDPmKRd-LYChUtLf0XFw&sig2=aQD6hQbsKKP0yow7677ZtA&bvm=bv.62922401,d.eW0)
+[Optimistic Locking with Oracle - pdf](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0CCgQFjAA&url=http%3A%2F%2Fwww.orafaq.com%2Fpapers%2Flocking.pdf&ei=rusgU7fgI8aqkAfU0oHQCw&usg=AFQjCNHwIQtdeFyDPmKRd-LYChUtLf0XFw&sig2=aQD6hQbsKKP0yow7677ZtA&bvm=bv.62922401,d.eW0)
 
 [Transaction Isolation Levels in Oracle](http://www.oracle.com/technetwork/issue-archive/2005/05-nov/o65asktom-082389.html)
 
