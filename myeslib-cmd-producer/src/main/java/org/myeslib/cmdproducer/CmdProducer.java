@@ -26,26 +26,23 @@ public class CmdProducer {
     final Main main;
 	final SimpleRegistry registry;
 	final CamelContext context;
+	static int howManyAggregates;
 
-	public final static int HOW_MANY_AGGREGATES = 100;
-	public final static List<UUID> ids = ids();
+	final List<UUID> ids = new Vector<>();
 	
 	public static void main(String[] args) throws Exception {
-
-		log.info("starting...");
-		
+		howManyAggregates = args.length ==0 ? 1000 : new Integer(args[0]);
+		log.info("starting with howManyAggregates = {}", howManyAggregates);
 		Injector injector = Guice.createInjector(new CmdProducerModule());
 	    CmdProducer example = injector.getInstance(CmdProducer.class);
 		example.main.run();
 		
 	}
 	
-	public static List<UUID> ids() {
-		Vector<UUID> ids = new Vector<>();
-		for (int i=0; i< HOW_MANY_AGGREGATES; i++){
+	public void populate() {
+		for (int i=0; i< howManyAggregates; i++){
 			ids.add(UUID.randomUUID());
 		}
-		return ids;
 	}
 	
 	@Inject
@@ -56,9 +53,11 @@ public class CmdProducer {
 		registry = new SimpleRegistry();
 		context = new DefaultCamelContext(registry);
 		
-		registry.put("createCommandDataset", new CreateCommandDataSet(ids, HOW_MANY_AGGREGATES));
-		registry.put("increaseCommandDataset", new IncreaseCommandDataSet(ids, HOW_MANY_AGGREGATES));
-		registry.put("decreaseCommandDataset", new DecreaseCommandDataSet(ids, HOW_MANY_AGGREGATES));
+		populate();
+		
+		registry.put("createCommandDataset", new CreateCommandDataSet(ids, howManyAggregates));
+		registry.put("increaseCommandDataset", new IncreaseCommandDataSet(ids, howManyAggregates));
+		registry.put("decreaseCommandDataset", new DecreaseCommandDataSet(ids, howManyAggregates));
 
 		context.addRoutes(datasetRoute);
 		

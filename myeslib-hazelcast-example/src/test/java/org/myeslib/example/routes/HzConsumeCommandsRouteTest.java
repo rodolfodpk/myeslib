@@ -30,7 +30,6 @@ import org.myeslib.example.hazelcast.modules.DatabaseModule;
 import org.myeslib.example.hazelcast.modules.HazelcastModule;
 import org.myeslib.example.hazelcast.modules.InventoryItemModule;
 import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
-import org.myeslib.util.h2.ArhCreateTablesHelper;
 import org.myeslib.util.hazelcast.HzCamelComponent;
 import org.myeslib.util.jdbi.ArTablesMetadata;
 import org.myeslib.util.jdbi.ClobToStringMapper;
@@ -45,6 +44,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
+import com.googlecode.flyway.core.Flyway;
 
 @Slf4j
 public class HzConsumeCommandsRouteTest extends CamelTestSupport {
@@ -93,7 +93,9 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	@Before public void setUp() throws Exception {
 		injector.injectMembers(this);
 		super.setUp();
-		new ArhCreateTablesHelper(metadata, dbi).createTables();
+		Flyway flyway = new Flyway();
+        flyway.setDataSource(ds);
+        flyway.migrate();
 	}
 
 	@Override

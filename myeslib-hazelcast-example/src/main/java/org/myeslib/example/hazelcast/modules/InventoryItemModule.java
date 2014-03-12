@@ -59,15 +59,9 @@ public class InventoryItemModule extends AbstractModule {
 	
 	@Provides
 	@Singleton
-	@Named("inventory_item_table")
-	public String inventoryTableName() {
+	@Named("aggregateRootName")
+	public String aggregateRootName() {
 		return "inventory_item" ;
-	}
-	
-	@Provides
-	@Singleton
-	public ArTablesMetadata metadata(DBI dbi, @Named("inventory_item_table") String tableName) {
-		return new ArTablesMetadata(tableName);
 	}
 	
 	@Provides
@@ -119,12 +113,12 @@ public class InventoryItemModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		
+		bind(ArTablesMetadata.class).asEagerSingleton();
 		bind(InventoryItemMapConfigFactory.class).asEagerSingleton();;
 		bind(InventoryItemSerializersConfigFactory.class).asEagerSingleton();;
 		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class).asEagerSingleton();;
 		
 	}
-	
 	
 	public static class ServiceJustForTest implements ItemDescriptionGeneratorService {
 		@Override

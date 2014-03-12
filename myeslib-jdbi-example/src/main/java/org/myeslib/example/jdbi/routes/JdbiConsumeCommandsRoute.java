@@ -58,7 +58,7 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 
 		from(originUri) 	
 		     .routeId("handle-inventory-item-command")
-		     .log("received from http ${body}")
+		     //.log("received from http ${body}")
 	      	 .setHeader("id", simple("${body.getId()}"))
 	         .process(new ItemInventoryProcessor()) 
 	      	  ;
@@ -80,7 +80,7 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 			final Handle handle = dbi.open() ;
 			handle.getConnection().setAutoCommit(false);
 			handle.begin();
-			handle.setTransactionIsolation(TransactionIsolationLevel.SERIALIZABLE);
+			handle.setTransactionIsolation(TransactionIsolationLevel.READ_COMMITTED);
 			
 			Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id); 
 			if (!command.getVersion().equals(snapshot.getVersion())) {

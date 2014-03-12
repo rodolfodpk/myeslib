@@ -17,18 +17,17 @@ import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.example.SampleDomainGsonFactory;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
-import org.myeslib.util.h2.ArhCreateTablesHelper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.exceptions.UnableToExecuteStatementException;
 
 import com.google.common.base.Function;
 import com.google.gson.Gson;
+import com.googlecode.flyway.core.Flyway;
 
 
 public class JdbiAggregateRootHistoryWriterDaoTest {
 
-	static String tableName ;
 	static JdbcConnectionPool pool ;
 	static DBI dbi ;
 	static Gson gson ;
@@ -38,15 +37,16 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 	
 	@BeforeClass
 	public static void setup() {
-		tableName = "table4Test";
 		pool = JdbcConnectionPool.create("jdbc:h2:mem:test;MODE=Oracle", "scott", "tiger");
 		dbi = new DBI(pool);
 		gson = new SampleDomainGsonFactory().create();
-		metadata = new ArTablesMetadata(tableName);
+		metadata = new ArTablesMetadata("inventory_item");
 		toStringFunction = new UowToStringFunction(gson);
 		reader = new JdbiAggregateRootHistoryReaderDao(metadata, dbi, new UowFromStringFunction(gson));
-		// create tables
-		new ArhCreateTablesHelper(metadata, dbi).createTables();
+		Flyway flyway = new Flyway();
+        flyway.setDataSource(pool);
+        //flyway.setLocations("../myeslib-database/src/main/resources/db/h2");
+        flyway.migrate();
 	}
 
 	

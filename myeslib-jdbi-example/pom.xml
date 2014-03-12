@@ -23,6 +23,10 @@
 			<groupId>org.myeslib</groupId>
 			<artifactId>myeslib-jdbi</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.myeslib</groupId>
+			<artifactId>myeslib-database</artifactId>
+		</dependency>		
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -44,12 +48,20 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc7</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>com.oracle</groupId> -->
-		<!-- <artifactId>ojdbc7</artifactId> -->
-		<!-- </dependency> -->
-
+		<!-- Test -->
+		<dependency>
+			<groupId>com.googlecode.flyway</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test</artifactId>

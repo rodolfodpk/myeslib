@@ -1,3 +1,6 @@
+dependency-reduced-pom.xml
+export-db-env-oracle.sh
+
 *.class
 
 # Package Files #

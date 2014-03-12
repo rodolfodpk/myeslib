@@ -15,7 +15,6 @@ import org.myeslib.example.hazelcast.modules.InventoryItemModule;
 import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
 import org.myeslib.example.hazelcast.routes.HzConsumeEventsRoute;
 import org.myeslib.example.util.camel.ReceiveCommandsAsJsonRoute;
-import org.myeslib.util.h2.ArhCreateTablesHelper;
 import org.myeslib.util.hazelcast.HzCamelComponent;
 import org.myeslib.util.jdbi.ArTablesMetadata;
 import org.skife.jdbi.v2.DBI;
@@ -52,8 +51,6 @@ public class HzExample {
 		this.main.enableHangupSupport();
 		this.registry = new SimpleRegistry();
 		this.context = new DefaultCamelContext(registry);
-		
-		new ArhCreateTablesHelper(metadata, dbi).createTables();
 		
 		context.addComponent("hz", justAnotherHazelcastComponent);
 		context.addRoutes(receiveCommandsRoute);

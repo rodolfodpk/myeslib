@@ -8,14 +8,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.main.Main;
+import org.myeslib.example.jdbi.modules.CamelModule;
 import org.myeslib.example.jdbi.modules.DatabaseModule;
 import org.myeslib.example.jdbi.modules.HazelcastModule;
 import org.myeslib.example.jdbi.modules.InventoryItemModule;
-import org.myeslib.example.jdbi.modules.CamelModule;
 import org.myeslib.example.jdbi.routes.JdbiConsumeCommandsRoute;
 import org.myeslib.example.jdbi.routes.JdbiConsumeEventsRoute;
 import org.myeslib.example.util.camel.ReceiveCommandsAsJsonRoute;
-import org.myeslib.util.h2.ArhCreateTablesHelper;
 import org.myeslib.util.hazelcast.HzCamelComponent;
 import org.myeslib.util.jdbi.ArTablesMetadata;
 import org.skife.jdbi.v2.DBI;
@@ -48,7 +47,7 @@ public class JdbiExample {
 				ArTablesMetadata metadata,
 				DBI dbi) throws Exception  {
 		
-		new ArhCreateTablesHelper(metadata, dbi).createTables();
+		//new ArhCreateTablesHelper(metadata, dbi).createTables();
 		
 		main = new Main() ;
 		main.enableHangupSupport();
@@ -64,6 +63,7 @@ public class JdbiExample {
 		main.getCamelContexts().add(context);
 		main.setDuration(-1);
 		main.start();
+		
 		
 	}
 

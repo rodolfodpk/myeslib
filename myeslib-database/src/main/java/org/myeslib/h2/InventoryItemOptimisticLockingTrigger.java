@@ -1,4 +1,4 @@
-package org.myeslib.util.h2;
+package org.myeslib.h2;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -13,10 +13,10 @@ import org.skife.jdbi.v2.tweak.ConnectionFactory;
 import org.skife.jdbi.v2.util.BigDecimalMapper;
 
 @Slf4j
-public class ArhBeforeInsertTrigger implements Trigger {
+public class InventoryItemOptimisticLockingTrigger implements Trigger {
 
-	String targetTable;        // per convention this has the preffix _uow
-	String aggregateRootTable; // and the companion aggregate root table has the preffix _ar
+	String targetTable;        // per convention this has the suffix _uow
+	String aggregateRootTable; // and the companion aggregate root table has the suffix _ar
 
 	@Override
 	public void init(Connection conn, String schemaName, String triggerName,
