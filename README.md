@@ -12,7 +12,7 @@ Getting Started
 cd myeslib
 mvn clean install
 ```
-Before running it, you can optionally you can customize database settings on export-db-env-h2.sh: 
+Before running it, you can optionally customize database settings on export-db-env-h2.sh: 
 ```
 #!/bin/sh
 DB_DATASOURCE_CLASS_NAME=org.h2.jdbcx.JdbcDataSource
