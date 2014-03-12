@@ -13,7 +13,7 @@ https://github.com/gregoryyoung/m-r
 
 Getting Started
 ===============
-
+```
 cd myeslib
 
 mvn clean install
@@ -21,13 +21,13 @@ mvn clean install
 cd myeslib-hazelcast-example
 
 java -jar target/myeslib-hazelcast-example-0.0.1-SNAPSHOT.jar
-
+```
 then in other console
-
+```
 cd myeslib-cmd-producer
 
 java -jar target/myeslib-cmd-producer-0.0.1-SNAPSHOT.jar
-
+```
 and the same as above for jdbi-example
 
 Notes
