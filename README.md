@@ -42,7 +42,7 @@ java -jar target/myeslib-hazelcast-example-0.0.1-SNAPSHOT.jar
 ```
 this service will receive commands as JSON on http://localhost:8080/inventory-item-command.
 There is another implementation (simpler since it uses Hazelcast just for cache) on myeslib-jdbi-example.
-Finally, start bellow script in other console in order to create and send commands to the above endpoint.
+Finally, start this in other console in order to create and send commands to the above endpoint:
 ```
 cd myeslib-cmd-producer
 java -jar target/myeslib-cmd-producer-0.0.1-SNAPSHOT.jar
