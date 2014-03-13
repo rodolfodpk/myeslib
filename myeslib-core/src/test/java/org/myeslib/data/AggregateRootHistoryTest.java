@@ -16,8 +16,8 @@ import org.myeslib.core.Command;
 import org.myeslib.core.Event;
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.UnitOfWork;
-import org.myeslib.example.SampleDomain.IncreaseInventory;
-import org.myeslib.example.SampleDomain.InventoryIncreased;
+import org.myeslib.data.test.CommandJustForTest;
+import org.myeslib.data.test.EventJustForTest;
 
 @RunWith(MockitoJUnitRunner.class) 
 public class AggregateRootHistoryTest {
@@ -53,8 +53,8 @@ public class AggregateRootHistoryTest {
 	public void firstTransaction() {
 		UUID id = UUID.randomUUID();
 		AggregateRootHistory transactions = new AggregateRootHistory();
-		Command command = new IncreaseInventory(id, 1, 0L);
-		Event event1 = new InventoryIncreased(id, 1);
+		Command command = new CommandJustForTest(id, 0L);
+		Event event1 = new EventJustForTest(id, 1);
 		transactions.add(UnitOfWork.create(command, Arrays.asList(event1)));
 
 		assertThat(transactions.getUnitsOfWork().size(), is(1));
@@ -70,9 +70,9 @@ public class AggregateRootHistoryTest {
 		AggregateRootHistory transactions = new AggregateRootHistory();
 		
 		UUID id = UUID.randomUUID();
-		Command command = new IncreaseInventory(id, 2, 0l);
-		Event event1 = new InventoryIncreased(id, 1);
-		Event event2 = new InventoryIncreased(id, 1);	
+		Command command = new CommandJustForTest(id, 0l);
+		Event event1 = new EventJustForTest(id, 1);
+		Event event2 = new EventJustForTest(id, 1);	
 		
 		transactions.add(UnitOfWork.create(command, Arrays.asList(event1, event2)));
 		
@@ -91,7 +91,7 @@ public class AggregateRootHistoryTest {
 		
 		UUID id = UUID.randomUUID();
 		AggregateRootHistory transactions = new AggregateRootHistory();
-		Command command = new IncreaseInventory(id, 2, 1L);
+		Command command = new CommandJustForTest(id, 1L);
 		Event event1 = (Event) null;
 		transactions.add(UnitOfWork.create(command, Arrays.asList(event1)));
 

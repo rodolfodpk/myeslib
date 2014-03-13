@@ -10,16 +10,15 @@ import java.util.UUID;
 import org.junit.Test;
 import org.myeslib.core.Event;
 import org.myeslib.core.data.UnitOfWork;
-import org.myeslib.example.SampleDomain.CreateInventoryItem;
-import org.myeslib.example.SampleDomain.IncreaseInventory;
-import org.myeslib.example.SampleDomain.InventoryIncreased;
+import org.myeslib.data.test.CommandJustForTest;
+import org.myeslib.data.test.EventJustForTest;
 
 public class UnitOfWorkTest {
 
 	@Test
 	public void versionShouldBeCommandVersionPlusOne() {
-		List<Event> events = Arrays.asList((Event) new InventoryIncreased(UUID.randomUUID(), 1));
-		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), 0L, null);
+		List<Event> events = Arrays.asList((Event) new EventJustForTest(UUID.randomUUID(), 1));
+		CommandJustForTest command = new CommandJustForTest(UUID.randomUUID(), 0L);
 		UnitOfWork uow = UnitOfWork.create(command, events);
 		assertThat(uow.getCommandVersion(), is(0L));
 		assertThat(uow.getVersion(), is(1L));
@@ -29,7 +28,7 @@ public class UnitOfWorkTest {
 	@Test(expected=NullPointerException.class)
 	public void nullEvent() {
 		List<Event> events = Arrays.asList((Event) null);
-		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), 1, 1L);
+		CommandJustForTest command = new CommandJustForTest(UUID.randomUUID(), 1L);
 		UnitOfWork uow = new UnitOfWork(command, 1L, events, System.currentTimeMillis());
 	}
 }
