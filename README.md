@@ -37,16 +37,16 @@ mvn clean compile flyway:migrate -Dflyway.locations=db/oracle
 ```
 after this your database should be ready. Now:
 ```
-cd ../myeslib-inventory-hazelcast
-java -jar target/myeslib-inventory-hazelcast-0.0.1-SNAPSHOT.jar
+cd ../myeslib-inventory-jdbi
+java -jar target/myeslib-inventory-jdbi-0.0.1-SNAPSHOT.jar
 ```
-this service will receive commands as JSON on http://localhost:8080/inventory-item-command.
-There is another implementation (simpler since it uses Hazelcast just for cache) on myeslib-inventory-jdbi.
-Finally, in order to create and send commands to the above endpoint, start this in other console:
+this service will receive commands as JSON on http://localhost:8080/inventory-item-command. This service uses
+Hazelcast just as a cache. There is another implementation using a Hazelcast distributed map backed by a MapStore implementation (org.myeslib.util.hazelcast.HzMapStore) to store AggregateRootHistory instances. This map is configureed to be write-through. Beside this, myeslib-inventory-hazelcast also uses a Hazelcast queue to store UnitOfWork instances. It still needs some work since you will see some errors when testing it with thousands commands. Finally, in order to create and send commands to the above endpoint, start this in other console:
 ```
 cd myeslib-inventory-cmd-producer
-java -jar target/myeslib-inventory-cmd-producer-0.0.1-SNAPSHOT.jar
+java -jar target/myeslib-inventory-cmd-producer-0.0.1-SNAPSHOT.jar 100
 ```
+Notice the first argument is the number of commands to produce. There are 3 kind of commands: CreateCommand, IncreaseCommand and DecreaseCommand. So if you define 100 commands like the example above, actually 300 commands will be sent. 
 Notes
 =====
 Your IDE must support [Project Lombok](http://projectlombok.org/)
