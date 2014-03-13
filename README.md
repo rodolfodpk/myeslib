@@ -5,9 +5,9 @@ It was inspired by: [Don’t publish Domain Events, return them!](http://www.jay
 
 and off course, also by: [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 
-Getting Started
-===============
-
+Running the Inventory example
+=============================
+First of all, build it:
 ```
 cd myeslib
 mvn clean install
