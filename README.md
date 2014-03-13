@@ -51,7 +51,7 @@ Notes
 =====
 Your IDE must support [Project Lombok](http://projectlombok.org/)
 
-Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml to use [http://www.h2database.com/](H2 database) instead.
+Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml to use [http://www.h2database.com](H2 database) instead.
 
 Disclaimer
 ==========
