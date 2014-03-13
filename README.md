@@ -1,7 +1,7 @@
 myeslib
 =======
 
-It was inspired by: [This blog post](http://www.jayway.com/2013/06/20/dont-publish-domain-events-return-them/)
+It was inspired by: [Don’t publish Domain Events, return them!](http://www.jayway.com/2013/06/20/dont-publish-domain-events-return-them/)
 
 and off course, also by: [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 
