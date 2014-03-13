@@ -1,9 +1,9 @@
 myeslib
 =======
 
-It was inspired by: http://www.jayway.com/2013/06/20/dont-publish-domain-events-return-them/
+It was inspired by: [This blog post](http://www.jayway.com/2013/06/20/dont-publish-domain-events-return-them/)
 
-and off course: https://github.com/gregoryyoung/m-r
+and off course, also by: [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 
 Getting Started
 ===============
@@ -25,7 +25,7 @@ export DB_URL
 export DB_USER
 export DB_PASSWORD
 ```
-then export the db variables and call http://flywaydb.org/ to initialize the target database:
+then export the db variables and call [Flyway](http://flywaydb.org/) to initialize the target database:
 ```
 source ./export-db-env-oracle.sh
 cd myeslib-database
@@ -49,17 +49,17 @@ java -jar target/myeslib-cmd-producer-0.0.1-SNAPSHOT.jar
 ```
 Notes
 =====
-Your IDE must support http://projectlombok.org/
+Your IDE must support [Project Lombok](http://projectlombok.org/)
 
-Your maven repository must contain Oracle jdbc (or you can simply remove references to it in pom.xml if want H2 instead)
+Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml if want H2 instead
 
 Disclaimer
 ==========
 There are 2 packages within module 3rd-party with (intact) code from :
 
-http://gsd.di.uminho.pt/members/jop/mm4j -> multimethods magic (thanks José Orlando)
+[mm4j - Simple multi-methods for Java](http://gsd.di.uminho.pt/members/jop/mm4j)
 
-https://code.google.com/p/google-gson -> since I did not found RuntimeTypeAdapter classes within gson-2.2.4
+[google-gson](https://code.google.com/p/google-gson) Since I did not found RuntimeTypeAdapter classes within gson-2.2.4.jar
 Some references
 ===============
 [Building an Event Store based on a relational database](http://cqrs.wordpress.com/documents/building-event-storage/)
