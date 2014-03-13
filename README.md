@@ -28,7 +28,7 @@ export DB_PASSWORD
 then export the db variables and call [Flyway](http://flywaydb.org/) to initialize the target database (H2):
 ```
 source ./export-db-env-oracle.sh
-cd myeslib-database
+cd myeslib-inventory-database
 mvn clean compile flyway:migrate -Dflyway.locations=db/h2
 ```
 just in case, there is a script for Oracle too:
@@ -37,15 +37,15 @@ mvn clean compile flyway:migrate -Dflyway.locations=db/oracle
 ```
 after this your database should be ready. Now:
 ```
-cd ../myeslib-hazelcast-example
-java -jar target/myeslib-hazelcast-example-0.0.1-SNAPSHOT.jar
+cd ../myeslib-inventory-hazelcast
+java -jar target/myeslib-inventory-hazelcast-0.0.1-SNAPSHOT.jar
 ```
 this service will receive commands as JSON on http://localhost:8080/inventory-item-command.
 There is another implementation (simpler since it uses Hazelcast just for cache) on myeslib-jdbi-example.
 Finally, in order to create and send commands to the above endpoint, start this in other console:
 ```
 cd myeslib-cmd-producer
-java -jar target/myeslib-cmd-producer-0.0.1-SNAPSHOT.jar
+java -jar target/myeslib-inventory-cmd-producer-0.0.1-SNAPSHOT.jar
 ```
 Notes
 =====
