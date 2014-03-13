@@ -25,13 +25,13 @@ export DB_URL
 export DB_USER
 export DB_PASSWORD
 ```
-then export the db variables and call [Flyway](http://flywaydb.org/) to initialize the target database:
+then export the db variables and call [Flyway](http://flywaydb.org/) to initialize the target database (H2):
 ```
 source ./export-db-env-oracle.sh
 cd myeslib-database
 mvn clean compile flyway:migrate -Dflyway.locations=db/h2
 ```
-there is a script for Oracle too:
+just in case, there is a script for Oracle too:
 ```
 mvn clean compile flyway:migrate -Dflyway.locations=db/oracle
 ```
@@ -42,7 +42,7 @@ java -jar target/myeslib-hazelcast-example-0.0.1-SNAPSHOT.jar
 ```
 this service will receive commands as JSON on http://localhost:8080/inventory-item-command.
 There is another implementation (simpler since it uses Hazelcast just for cache) on myeslib-jdbi-example.
-Finally, start this in other console in order to create and send commands to the above endpoint:
+Finally, in order to create and send commands to the above endpoint, start this in other console:
 ```
 cd myeslib-cmd-producer
 java -jar target/myeslib-cmd-producer-0.0.1-SNAPSHOT.jar
@@ -51,7 +51,7 @@ Notes
 =====
 Your IDE must support [Project Lombok](http://projectlombok.org/)
 
-Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml if want H2 instead
+Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml to use [http://www.h2database.com/](H2 database) instead.
 
 Disclaimer
 ==========
