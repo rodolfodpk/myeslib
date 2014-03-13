@@ -44,7 +44,7 @@ this service will receive commands as JSON on http://localhost:8080/inventory-it
 There is another implementation (simpler since it uses Hazelcast just for cache) on myeslib-inventory-jdbi.
 Finally, in order to create and send commands to the above endpoint, start this in other console:
 ```
-cd myeslib-cmd-producer
+cd myeslib-inventory-cmd-producer
 java -jar target/myeslib-inventory-cmd-producer-0.0.1-SNAPSHOT.jar
 ```
 Notes
