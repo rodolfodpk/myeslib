@@ -5,6 +5,10 @@ It was inspired by: [Don’t publish Domain Events, return them!](http://www.jay
 
 and off course, also by: [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 
+Whats really matters
+====================
+* <a href="inventory-aggregate-root/src/main/java/org/myeslib/example/SampleDomain.java">The Inventory Item AggregateRoot</a>
+
 Running the Inventory example
 =============================
 First of all, build it:
@@ -43,7 +47,7 @@ java -jar target/inventory-jdbi-0.0.1-SNAPSHOT.jar 10 100 10 100 50
 The parameters are: jettyMinThreads, jettyMaxThreads, dbPoolMinThreads, dbPoolMaxThreads and eventsQueueConsumers.
 This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 
 
-There is another implementation: inventory-hazelcast. Its more tied to Hazelcast since it uses a distributed map backed by a MapStore implementation (org.myeslib.util.hazelcast.HzMapStore) to store AggregateRootHistory instances. This map is configureed as write-through. It also uses a Hazelcast queue to store UnitOfWork instances.
+There is another implementation: inventory-hazelcast. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store AggregateRootHistory instances. This map is configureed as write-through. It also uses a Hazelcast queue to store UnitOfWork instances.
 
 Finally, in order to create and send commands to the above endpoint, start this in other console:
 ```
