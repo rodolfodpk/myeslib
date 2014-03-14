@@ -18,17 +18,17 @@ import com.google.common.base.Function;
 
 public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotReader<K, A> {
 
-	private final Map<K, AggregateRootHistory> eventsMap ;
+	private final Map<K, AggregateRootHistory> aggregateRootHistoryMap ;
 	private final Map<K, Snapshot<A>> lastSnapshotMap ; 
 	private final Function<Void, A> newInstanceFactory ;
     
 	@Inject
-	public HzSnapshotReader(Map<K, AggregateRootHistory> eventsMap,
+	public HzSnapshotReader(Map<K, AggregateRootHistory> aggregateRootHistoryMap,
 			Map<K, Snapshot<A>> lastSnapshotMap,
 			Function<Void, A> newInstanceFactory) {
-		checkNotNull(eventsMap);
+		checkNotNull(aggregateRootHistoryMap);
 		checkNotNull(lastSnapshotMap);
-		this.eventsMap = eventsMap;
+		this.aggregateRootHistoryMap = aggregateRootHistoryMap;
 		this.lastSnapshotMap = lastSnapshotMap;
 		this.newInstanceFactory = newInstanceFactory;
 	}
@@ -57,8 +57,8 @@ public class HzSnapshotReader<K, A extends AggregateRoot> implements SnapshotRea
 	}
 
 	private AggregateRootHistory getEventsOrEmptyIfNull(final K id) {
-		final AggregateRootHistory arh = eventsMap.get(id);
-		return arh == null ? new AggregateRootHistory() : arh;
+		final AggregateRootHistory events = aggregateRootHistoryMap.get(id);
+		return events == null ? new AggregateRootHistory() : events;
 	}
 	
 	private Snapshot<A> applyAllEventsOnFreshInstance(final AggregateRootHistory transactionHistory, 

@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.myeslib.core.data.UnitOfWork;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.tweak.HandleCallback;
+import org.skife.jdbi.v2.TransactionCallback;
+import org.skife.jdbi.v2.TransactionIsolationLevel;
+import org.skife.jdbi.v2.TransactionStatus;
 
 import com.google.common.base.Function;
 import com.google.inject.Inject;
@@ -38,23 +40,24 @@ public class JdbiAggregateRootHistoryAutoCommitWriterDao implements AggregateRoo
 
 	    final String sql = String.format("insert into %s (id, uow_data, version) values (:id, :uow_data, :version)", tables.getUnitOfWorkTable());
 		
-		log.info(sql);
+		log.debug(sql);
 		
 		final String asString = toStringFunction.apply(uow);
 		
-		dbi.withHandle(new HandleCallback<Void>() {
+		dbi.inTransaction(TransactionIsolationLevel.READ_COMMITTED, new TransactionCallback<Integer>() {
 			@Override
-			public Void withHandle(Handle handle) throws Exception {
-				handle.createStatement(sql)
+			public Integer inTransaction(Handle conn, TransactionStatus status)
+					throws Exception {
+				conn.createStatement(sql)
 				.bind("id", id.toString())
 				.bind("uow_data", asString)
 			    .bind("version", uow.getVersion())
 			    .execute();
 				return null;
 			}
-		});
+		}) ;
 		
-		log.info("wrote uow");
+		log.debug("wrote uow");
 	}
 
 }

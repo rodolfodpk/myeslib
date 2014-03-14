@@ -33,16 +33,15 @@
 		<module>myeslib-core</module>
 		<module>myeslib-jdbi</module>
 		<module>myeslib-hazelcast</module>
-
-		<module>myeslib-inventory</module>
-		<module>myeslib-inventory-jdbi</module>
-		<module>myeslib-inventory-hazelcast</module>
-		<module>myeslib-inventory-cmd-producer</module>
-		<module>myeslib-inventory-database</module>
-		<module>myeslib-inventory-util</module>
-				
-		<module>myeslib-3rd-party</module>
 		<module>myeslib-util</module>
+		<module>myeslib-3rd-party</module>
+		
+		<module>inventory-aggregate-root</module>
+		<module>inventory-jdbi</module>
+		<module>inventory-hazelcast</module>
+		<module>inventory-cmd-producer</module>
+		<module>inventory-database</module>
+		<module>inventory-util</module>
 
 	</modules>
 
@@ -68,50 +67,50 @@
 				<version>${project.version}</version>
 			</dependency>
 
-			<!-- Inventory example -->
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-inventory</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-inventory-jdbi</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-inventory-hazelcast</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-inventory-cmd-producer</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-inventory-database</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-inventory-util</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-						
 			<!-- Utility -->
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>myeslib-3rd-party</artifactId>
-				<version>${project.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>myeslib-util</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>myeslib-3rd-party</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+						
+			<!-- Inventory example -->
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>inventory-aggregate-root</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>inventory-jdbi</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>inventory-hazelcast</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>inventory-cmd-producer</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>inventory-database</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>inventory-util</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+						
 			<!-- Others -->
 			<dependency>
 				<groupId>org.projectlombok</groupId>

@@ -39,6 +39,8 @@ public class JdbiAggregateRootHistoryWriterDao implements AggregateRootHistoryWr
 		
 		log.debug(sql);
 		
+		log.info("writing {}", id);
+		
 		String asString = toStringFunction.apply(uow);
 		
 		handle.createStatement(sql)

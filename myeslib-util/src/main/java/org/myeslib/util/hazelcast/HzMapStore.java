@@ -37,7 +37,7 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 
 	@Override
 	public Map<UUID, AggregateRootHistory> loadAll(Collection<UUID> keys) {
-		log.info("load all");
+		log.debug("load all");
 		Map<UUID, AggregateRootHistory> result = new HashMap<>();
 		for (UUID id : keys) {
 			result.put(id, reader.get(id));
@@ -48,7 +48,7 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 	@Override
 	public Set<UUID> loadAllKeys() {
 		// TODO check is possible to avoid this initial load
-		log.info("load all keys -- empty");
+		log.debug("load all keys -- empty");
 		Set<UUID> keys = new HashSet<>();
 		return keys;
 	}
@@ -56,16 +56,16 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 	@Override
 	public void store(UUID key, AggregateRootHistory value) {
 		// To set timestamp from db onto it ?
-		log.info("store {} {}", key, value);
+		// log.info("store {} {}", key, value);
+		log.info("storing {}", key);
 		UnitOfWork uow = value.getLastUnitOfWork();
-		log.info("store uow {}", uow);
+		log.debug("store uow {}", uow);
 		writer.insert(key, uow);
-		log.info("done ?");
 	}
 
 	@Override
 	public void storeAll(Map<UUID, AggregateRootHistory> map) {
-		log.info("store all");
+		log.debug("store all");
 		for (Map.Entry<UUID, AggregateRootHistory> entry : map.entrySet()) {
 			store(entry.getKey(), entry.getValue());
 		}

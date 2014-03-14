@@ -33,12 +33,13 @@ public class HzUnitOfWorkWriter<K> implements UnitOfWorkWriter<K>{
 		checkNotNull(uow);
 		final AggregateRootHistory history = getHistoryFor(id);
 		if (!history.getLastVersion().equals(uow.getCommandVersion())){
-			throw new ConcurrentModificationException(String.format("version %s does not match the expected %s", 
+			throw new ConcurrentModificationException(String.format("version %s does not match the expected %s ****", 
 																	history.getLastVersion().toString(), 
 																	uow.getCommandVersion().toString())
 													 );
 														
 		} 
+		log.info("will set {}", id);
 		history.add(uow);
 		pastTransactionsMap.set(id, history); // hazelcast optimization --> set instead of put since is void
 	}

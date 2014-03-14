@@ -27,7 +27,7 @@
 		<!-- Own lib just for test-->
 		<dependency>
 			<groupId>org.myeslib</groupId>
-			<artifactId>myeslib-inventory</artifactId>
+			<artifactId>inventory-aggregate-root</artifactId>
 			<scope>test</scope>
 		</dependency>
 				

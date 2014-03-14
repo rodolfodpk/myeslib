@@ -116,7 +116,7 @@ public class HzUnitOfWorkWriterTest {
 	public void withConcurrencyException() {
 		
 		UUID id = UUID.randomUUID();
-		Command command = new IncreaseInventory(id, 1, 0L);
+		Command command = new IncreaseInventory(id, 1, 1L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
 		UnitOfWork t = UnitOfWork.create(command, events);
