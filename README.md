@@ -5,7 +5,7 @@ It was inspired by: [Don’t publish Domain Events, return them!](http://www.jay
 and off course, also by: [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 
 #### What really matters
-* <a href="inventory-aggregate-root/src/main/java/org/myeslib/example/SampleDomain.java">The Inventory Item AggregateRoot</a>
+* <a href="inventory-aggregate-root/src/main/java/org/myeslib/example/SampleDomain.java">The Inventory Sample Domain</a>
 
 #### Running the Inventory example
 First of all, build it:
@@ -50,7 +50,7 @@ The parameters are, respectively:
 
 This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 
 
-There is another implementation: **inventory-hazelcast**. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/AggregateRootHistory.java">AggregateRootHistory/</a> instances. This map is configureed as write-through. It also uses a Hazelcast queue to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork/</a> instances. This Hazelcast implementation has an aditional parameter: 
+There is another implementation: **inventory-hazelcast**. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/AggregateRootHistory.java">AggregateRootHistory</a> instances. This map is configureed as write-through. It also uses a Hazelcast queue to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork</a> instances. This Hazelcast implementation has an aditional parameter: 
 
 * eventsQueueConsumers (default =50)
 
@@ -70,7 +70,7 @@ There are 3 datasets. Each dataset will send just one type of command:
 * DecreaseCommand
 
 
-So the idea is to send comands in this order correct order (create, increase and decrease), while having a delay between each dataset in order to avoid ConcurrentModificationExceptions. 
+So the idea is to send comands in correct order (create, increase and decrease), while having a delay between each dataset in order to avoid ConcurrentModificationExceptions. 
 #### Notes
 * Your IDE must support [Project Lombok](http://projectlombok.org/)
 * Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml to use [H2 database](http://www.h2database.com) instead.
