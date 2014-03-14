@@ -50,7 +50,7 @@ Finally, in order to create and send commands to the above endpoint, start this 
 cd inventory-cmd-producer
 java -jar target/inventory-cmd-producer-0.0.1-SNAPSHOT.jar 100 60000 30000
 ```
-The parameters are: datasetSize (how many aggregateRoot instances), delayBetweenDatasets (in milliseconds) and initialDelay. There are 3 kind of commands: CreateCommand, IncreaseCommand and DecreaseCommand. So if you define 100 commands like the example above, actually 300 commands will be sent with 60 seconds of delay between each command dataset and an initial delay of 30 seconds. 
+The parameters are: datasetSize (how many aggregateRoot instances), delayBetweenDatasets (in milliseconds) and initialDelay. There are 3 datasets. Each dataset will send just one type of command: CreateCommand, IncreaseCommand or DecreaseCommand. So the idea is to send comands in this order correct order (create, increase and decrease), while having a delay between each dataset in order to avoid ConcurrentModificationExceptions. 
 Notes
 =====
 Your IDE must support [Project Lombok](http://projectlombok.org/)
