@@ -38,15 +38,19 @@ mvn clean compile flyway:migrate -Dflyway.locations=db/oracle
 after this your database should be ready. Now:
 ```
 cd ../myeslib-inventory-jdbi
-java -jar target/myeslib-inventory-jdbi-0.0.1-SNAPSHOT.jar
+java -jar target/myeslib-inventory-jdbi-0.0.1-SNAPSHOT.jar 10 100 10 100 50
 ```
-this service will receive commands as JSON on http://localhost:8080/inventory-item-command. This service uses
-Hazelcast just as a cache. There is another implementation using a Hazelcast distributed map backed by a MapStore implementation (org.myeslib.util.hazelcast.HzMapStore) to store AggregateRootHistory instances. This map is configureed to be write-through. Beside this, myeslib-inventory-hazelcast also uses a Hazelcast queue to store UnitOfWork instances. It still needs some work since you will see some errors when testing it with thousands commands. Finally, in order to create and send commands to the above endpoint, start this in other console:
+The parameters are: jettyMinThreads, jettyMaxThreads, dbPoolMinThreads, dbPoolMaxThreads and eventsQueueConsumers
+These values (10 100 10 100 50) are default for these parameters. This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 
+
+There is another implementation using a Hazelcast distributed map backed by a MapStore implementation (org.myeslib.util.hazelcast.HzMapStore) to store AggregateRootHistory instances. This map is configureed to be write-through. Beside this, myeslib-inventory-hazelcast also uses a Hazelcast queue to store UnitOfWork instances.
+
+Finally, in order to create and send commands to the above endpoint, start this in other console:
 ```
 cd myeslib-inventory-cmd-producer
-java -jar target/myeslib-inventory-cmd-producer-0.0.1-SNAPSHOT.jar 100
+java -jar target/myeslib-inventory-cmd-producer-0.0.1-SNAPSHOT.jar 100 60000 30000
 ```
-Notice the first argument is the number of commands to produce. There are 3 kind of commands: CreateCommand, IncreaseCommand and DecreaseCommand. So if you define 100 commands like the example above, actually 300 commands will be sent. 
+The parameters are: datasetSize (how many aggregateRoot instances), delayBetweenDatasets (in milliseconds) and initialDelay. There are 3 kind of commands: CreateCommand, IncreaseCommand and DecreaseCommand. So if you define 100 commands like the example above, actually 300 commands will be sent with 60 seconds of delay between each command dataset and an initial delay of 60 seconds. 
 Notes
 =====
 Your IDE must support [Project Lombok](http://projectlombok.org/)
