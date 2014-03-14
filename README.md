@@ -57,9 +57,8 @@ java -jar target/inventory-cmd-producer-0.0.1-SNAPSHOT.jar 100 60000 30000
 The parameters are: datasetSize (how many aggregateRoot instances), delayBetweenDatasets (in milliseconds) and initialDelay. There are 3 datasets. Each dataset will send just one type of command: CreateCommand, IncreaseCommand or DecreaseCommand. So the idea is to send comands in this order correct order (create, increase and decrease), while having a delay between each dataset in order to avoid ConcurrentModificationExceptions. 
 Notes
 =====
-Your IDE must support [Project Lombok](http://projectlombok.org/)
-
-Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml to use [http://www.h2database.com](H2 database) instead.
+* Your IDE must support [Project Lombok](http://projectlombok.org/)
+* Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml to use [H2 database](http://www.h2database.com) instead.
 
 Some references
 ===============
