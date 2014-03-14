@@ -42,12 +42,18 @@ mvn clean compile flyway:migrate -Dflyway.locations=db/oracle
 after this your database should be ready. Now:
 ```
 cd ../inventory-jdbi
-java -jar target/inventory-jdbi-0.0.1-SNAPSHOT.jar 10 100 10 100 50
+java -jar target/inventory-jdbi-0.0.1-SNAPSHOT.jar 10 100 10 100
 ```
-The parameters are: jettyMinThreads, jettyMaxThreads, dbPoolMinThreads, dbPoolMaxThreads and eventsQueueConsumers.
+The parameters are: 
+* jettyMinThreads 
+* jettyMaxThreads 
+* dbPoolMinThreads 
+* dbPoolMaxThreads
 This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 
 
-There is another implementation: inventory-hazelcast. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store AggregateRootHistory instances. This map is configureed as write-through. It also uses a Hazelcast queue to store UnitOfWork instances.
+There is another implementation: inventory-hazelcast. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store AggregateRootHistory instances. This map is configureed as write-through. It also uses a Hazelcast queue to store UnitOfWork instances. This Hazelcast implementation has an aditional parameter: 
+
+* eventsQueueConsumers (default =50)
 
 Finally, in order to create and send commands to the above endpoint, start this in other console:
 ```
