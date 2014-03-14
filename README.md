@@ -50,7 +50,7 @@ Finally, in order to create and send commands to the above endpoint, start this 
 cd myeslib-inventory-cmd-producer
 java -jar target/myeslib-inventory-cmd-producer-0.0.1-SNAPSHOT.jar 100 60000 30000
 ```
-The parameters are: datasetSize (how many aggregateRoot instances), delayBetweenDatasets (in milliseconds) and initialDelay. There are 3 kind of commands: CreateCommand, IncreaseCommand and DecreaseCommand. So if you define 100 commands like the example above, actually 300 commands will be sent with 60 seconds of delay between each command dataset and an initial delay of 60 seconds. 
+The parameters are: datasetSize (how many aggregateRoot instances), delayBetweenDatasets (in milliseconds) and initialDelay. There are 3 kind of commands: CreateCommand, IncreaseCommand and DecreaseCommand. So if you define 100 commands like the example above, actually 300 commands will be sent with 60 seconds of delay between each command dataset and an initial delay of 30 seconds. 
 Notes
 =====
 Your IDE must support [Project Lombok](http://projectlombok.org/)
