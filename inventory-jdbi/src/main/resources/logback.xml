@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration scan="true" scanPeriod="30 seconds">
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<!-- <pattern>%d{HH:mm:ss.SSS} %-5level %thread %logger{36} - %msg%n</pattern> -->
+			<pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!--Basic file appender -->
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %class - %msg%n</pattern>
+		</layout>
+		<File>target/inventory-jdbi.log</File>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="FILE" /> 
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>
