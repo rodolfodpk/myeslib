@@ -61,18 +61,15 @@ Your IDE must support [Project Lombok](http://projectlombok.org/)
 
 Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml to use [http://www.h2database.com](H2 database) instead.
 
+Some references
+===============
+* [Building an Event Store based on a relational database](http://cqrs.wordpress.com/documents/building-event-storage/)
+* [Optimistic Locking with Oracle - pdf](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0CCgQFjAA&url=http%3A%2F%2Fwww.orafaq.com%2Fpapers%2Flocking.pdf&ei=rusgU7fgI8aqkAfU0oHQCw&usg=AFQjCNHwIQtdeFyDPmKRd-LYChUtLf0XFw&sig2=aQD6hQbsKKP0yow7677ZtA&bvm=bv.62922401,d.eW0)
+* [Transaction Isolation Levels in Oracle](http://www.oracle.com/technetwork/issue-archive/2005/05-nov/o65asktom-082389.html)
+
 Disclaimer
 ==========
 There are 2 packages within module 3rd-party with (intact) code from :
 
-[mm4j - Simple multi-methods for Java](http://gsd.di.uminho.pt/members/jop/mm4j)
-
-[google-gson](https://code.google.com/p/google-gson) Since I did not found RuntimeTypeAdapter classes within gson-2.2.4.jar
-Some references
-===============
-[Building an Event Store based on a relational database](http://cqrs.wordpress.com/documents/building-event-storage/)
-
-[Optimistic Locking with Oracle - pdf](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0CCgQFjAA&url=http%3A%2F%2Fwww.orafaq.com%2Fpapers%2Flocking.pdf&ei=rusgU7fgI8aqkAfU0oHQCw&usg=AFQjCNHwIQtdeFyDPmKRd-LYChUtLf0XFw&sig2=aQD6hQbsKKP0yow7677ZtA&bvm=bv.62922401,d.eW0)
-
-[Transaction Isolation Levels in Oracle](http://www.oracle.com/technetwork/issue-archive/2005/05-nov/o65asktom-082389.html)
-
+* [mm4j - Simple multi-methods for Java](http://gsd.di.uminho.pt/members/jop/mm4j)
+* [google-gson](https://code.google.com/p/google-gson) Since I did not found RuntimeTypeAdapter classes within gson-2.2.4.jar
