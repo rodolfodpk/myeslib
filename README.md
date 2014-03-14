@@ -4,7 +4,7 @@ It was inspired by: [Don’t publish Domain Events, return them!](http://www.jay
 
 and off course, also by: [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 
-#### Whats really matters
+#### What really matters
 * <a href="inventory-aggregate-root/src/main/java/org/myeslib/example/SampleDomain.java">The Inventory Item AggregateRoot</a>
 
 #### Running the Inventory example
