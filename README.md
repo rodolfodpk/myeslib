@@ -1,16 +1,14 @@
-myeslib
-=======
+
+#### myeslib
 
 It was inspired by: [Don’t publish Domain Events, return them!](http://www.jayway.com/2013/06/20/dont-publish-domain-events-return-them/)
 
 and off course, also by: [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 
-Whats really matters
-====================
+#### Whats really matters
 * <a href="inventory-aggregate-root/src/main/java/org/myeslib/example/SampleDomain.java">The Inventory Item AggregateRoot</a>
 
-Running the Inventory example
-=============================
+#### Running the Inventory example
 First of all, build it:
 ```
 cd myeslib
@@ -44,14 +42,16 @@ after this your database should be ready. Now:
 cd ../inventory-jdbi
 java -jar target/inventory-jdbi-0.0.1-SNAPSHOT.jar 10 100 10 100
 ```
-The parameters are: 
+The parameters are, respectively: 
 * jettyMinThreads 
 * jettyMaxThreads 
 * dbPoolMinThreads 
 * dbPoolMaxThreads
+
+
 This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 
 
-There is another implementation: inventory-hazelcast. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store AggregateRootHistory instances. This map is configureed as write-through. It also uses a Hazelcast queue to store UnitOfWork instances. This Hazelcast implementation has an aditional parameter: 
+There is another implementation: **inventory-hazelcast**. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/AggregateRootHistory.java">AggregateRootHistory/</a> instances. This map is configureed as write-through. It also uses a Hazelcast queue to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork/</a> instances. This Hazelcast implementation has an aditional parameter: 
 
 * eventsQueueConsumers (default =50)
 
@@ -60,7 +60,18 @@ Finally, in order to create and send commands to the above endpoint, start this 
 cd inventory-cmd-producer
 java -jar target/inventory-cmd-producer-0.0.1-SNAPSHOT.jar 100 60000 30000
 ```
-The parameters are: datasetSize (how many aggregateRoot instances), delayBetweenDatasets (in milliseconds) and initialDelay. There are 3 datasets. Each dataset will send just one type of command: CreateCommand, IncreaseCommand or DecreaseCommand. So the idea is to send comands in this order correct order (create, increase and decrease), while having a delay between each dataset in order to avoid ConcurrentModificationExceptions. 
+The parameters are: 
+* datasetSize (how many aggregateRoot instances)
+* delayBetweenDatasets (in milliseconds) 
+* initialDelay
+ 
+There are 3 datasets. Each dataset will send just one type of command: 
+* CreateCommand 
+* IncreaseCommand 
+* DecreaseCommand
+
+
+So the idea is to send comands in this order correct order (create, increase and decrease), while having a delay between each dataset in order to avoid ConcurrentModificationExceptions. 
 Notes
 =====
 * Your IDE must support [Project Lombok](http://projectlombok.org/)
