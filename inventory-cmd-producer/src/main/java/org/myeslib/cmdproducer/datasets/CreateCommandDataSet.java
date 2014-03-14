@@ -20,7 +20,6 @@ public class CreateCommandDataSet extends DataSetSupport {
 	protected Object createMessageBody(long messageIndex) {
 		UUID id = ids.get((int) messageIndex);
 		CreateInventoryItem command = new CreateInventoryItem(id, 0L, null);
-		// command.setService(new ServiceJustForTest()); // doen't work since this service is transient and command will be stored within queue
 		return command;
 	}
 	

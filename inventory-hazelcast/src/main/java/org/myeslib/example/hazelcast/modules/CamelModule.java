@@ -1,7 +1,13 @@
 package org.myeslib.example.hazelcast.modules;
 
+import java.util.UUID;
+
 import javax.inject.Singleton;
 
+import lombok.AllArgsConstructor;
+
+import org.myeslib.core.storage.SnapshotReader;
+import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.hazelcast.infra.HazelcastData;
 import org.myeslib.example.hazelcast.routes.HzConsumeEventsRoute;
 import org.myeslib.util.example.ReceiveCommandsAsJsonRoute;
@@ -11,14 +17,18 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 
+@AllArgsConstructor
 public class CamelModule extends AbstractModule {
+	
+	int jettyMinThreads;
+	int jettyMaxThreads;
+	int eventsQueueConsumers;
 	
 	@Provides
 	@Singleton
 	@Named("originUri")
 	public String originUri() {
 		return "direct:processCommand";
-		//return "hz:seda:inventory-item-command?transacted=true&concurrentConsumers=10";
 	}
 
 	@Provides
@@ -28,16 +38,22 @@ public class CamelModule extends AbstractModule {
 		return String.format("hz:seda:%s", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name());
 	}
 
-
 	@Provides
 	@Singleton
 	public ReceiveCommandsAsJsonRoute receiveCommandsRoute(@Named("originUri") String originUri, Gson gson) {
-		return new ReceiveCommandsAsJsonRoute("jetty:http://localhost:8080/inventory-item-command?minThreads=10&maxThreads=100", originUri, gson);
+		String url = String.format("jetty:http://localhost:8080/inventory-item-command?minThreads=%d&maxThreads=%d", jettyMinThreads, jettyMaxThreads);
+		return new ReceiveCommandsAsJsonRoute(url, originUri, gson);
+	}
+	
+	
+	@Provides
+	@Singleton
+	public HzConsumeEventsRoute hzConsumeEventsRoute(SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader) {
+		return new HzConsumeEventsRoute(eventsQueueConsumers, snapshotReader);
 	}
 	
 	@Override
 	protected void configure() {
-		bind(HzConsumeEventsRoute.class);
 	}
 }
 

@@ -29,11 +29,30 @@ public class JdbiExample {
 	final SimpleRegistry registry;
 	final CamelContext context;
 
+	static int jettyMinThreads;
+	static int jettyMaxThreads;
+	static int dbPoolMinThreads;
+	static int dbPoolMaxThreads;
+
 	public static void main(String[] args) throws Exception {
 
 		log.info("starting...");
 		
-		Injector injector = Guice.createInjector(new CamelModule(), new DatabaseModule(), new HazelcastModule(), new InventoryItemModule());
+		jettyMinThreads = args.length ==0 ? 10 : new Integer(args[0]);  
+		jettyMaxThreads = args.length <=1 ? 100 : new Integer(args[1]);  
+		dbPoolMinThreads = args.length <=2 ? 10 : new Integer(args[2]);  
+		dbPoolMaxThreads = args.length <=3 ? 100 : new Integer(args[3]);  
+		
+		log.info("jettyMinThreads = {}", jettyMinThreads);
+		log.info("jettyMaxThreads = {}", jettyMaxThreads);
+		log.info("dbPoolMinThreads = {}", dbPoolMinThreads);
+		log.info("dbPoolMaxThreads = {}", dbPoolMaxThreads);
+		
+		Injector injector = Guice.createInjector(new CamelModule(jettyMinThreads, jettyMaxThreads), 
+				                                 new DatabaseModule(dbPoolMinThreads, dbPoolMaxThreads), 
+				                                 new HazelcastModule(), 
+				                                 new InventoryItemModule());
+		
 	    JdbiExample example = injector.getInstance(JdbiExample.class);
 		example.main.run();
 		

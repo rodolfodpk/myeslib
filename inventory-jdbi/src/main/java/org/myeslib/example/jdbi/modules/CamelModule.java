@@ -2,6 +2,8 @@ package org.myeslib.example.jdbi.modules;
 
 import javax.inject.Singleton;
 
+import lombok.AllArgsConstructor;
+
 import org.myeslib.example.jdbi.routes.JdbiConsumeEventsRoute;
 import org.myeslib.util.example.ReceiveCommandsAsJsonRoute;
 import org.myeslib.util.hazelcast.HzJobLocker;
@@ -12,7 +14,11 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.hazelcast.core.HazelcastInstance;
 
+@AllArgsConstructor
 public class CamelModule extends AbstractModule {
+	
+	int jettyMinThreads;
+	int jettyMaxThreads;
 
 	@Provides
 	@Singleton
@@ -24,7 +30,8 @@ public class CamelModule extends AbstractModule {
 	@Provides
 	@Singleton
 	public ReceiveCommandsAsJsonRoute receiveCommandsRoute(@Named("originUri") String originUri, Gson gson) {
-		return new ReceiveCommandsAsJsonRoute("jetty:http://localhost:8080/inventory-item-command?minThreads=10&maxThreads=100", originUri, gson);
+		String url = String.format("jetty:http://localhost:8080/inventory-item-command?minThreads=%d&maxThreads=%d", jettyMinThreads, jettyMaxThreads);
+		return new ReceiveCommandsAsJsonRoute(url, originUri, gson);
 	}
 	
 	@Provides

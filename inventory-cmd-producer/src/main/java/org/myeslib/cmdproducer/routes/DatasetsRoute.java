@@ -2,6 +2,8 @@ package org.myeslib.cmdproducer.routes;
 
 import java.lang.reflect.Type;
 
+import lombok.AllArgsConstructor;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -9,36 +11,30 @@ import org.myeslib.core.Command;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.inject.Inject;
 
+@AllArgsConstructor
 public class DatasetsRoute extends RouteBuilder {
-	
-	@Inject
-	public DatasetsRoute(Gson gson, String targetEndpoint) {
-		this.gson = gson;
-		this.targetEndpoint = targetEndpoint;
-	} 
 
 	final Gson gson;
 	final String targetEndpoint;
 	final Type commandType = new TypeToken<Command>() {}.getType();
-	
+
+	final int delayBetweenDatasets;
+	final int initialDelay;
+
 	public void configure() throws Exception {
 
-		 from("dataset:createCommandDataset?initialDelay=10000")
-		 	.routeId("dataset:createCommandsDataset")
-		 	.process(new MarshalProcessor())
-	        .to(targetEndpoint);
+		fromF("dataset:createCommandDataset?initialDelay=%d", initialDelay)
+				.routeId("dataset:createCommandsDataset")
+				.process(new MarshalProcessor()).to(targetEndpoint);
 
-		 from("dataset:increaseCommandDataset?initialDelay=20000")
-		 	.routeId("dataset:increaseCommandsDataset")
-		 	.process(new MarshalProcessor())
-		    .to(targetEndpoint);
+		fromF("dataset:increaseCommandDataset?initialDelay=%d", initialDelay + delayBetweenDatasets)
+				.routeId("dataset:increaseCommandsDataset")
+				.process(new MarshalProcessor()).to(targetEndpoint);
 
-		 from("dataset:decreaseCommandDataset?initialDelay=30000")
-		 	.routeId("dataset:decreaseCommandsDataset")
-		 	.process(new MarshalProcessor())
-		 	.to(targetEndpoint);
+		fromF("dataset:decreaseCommandDataset?initialDelay=%d", initialDelay + (delayBetweenDatasets *2))
+				.routeId("dataset:decreaseCommandsDataset")
+				.process(new MarshalProcessor()).to(targetEndpoint);
 
 	}
 
@@ -53,4 +49,3 @@ public class DatasetsRoute extends RouteBuilder {
 		}
 	}
 }
-

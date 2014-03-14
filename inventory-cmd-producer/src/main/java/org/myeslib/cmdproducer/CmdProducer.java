@@ -26,21 +26,31 @@ public class CmdProducer {
     final Main main;
 	final SimpleRegistry registry;
 	final CamelContext context;
-	static int howManyAggregates;
-
+	
+	static int datasetSize;
+	static int delayBetweenDatasets;
+	static int initialDelay;
+	
 	final List<UUID> ids = new Vector<>();
 	
 	public static void main(String[] args) throws Exception {
-		howManyAggregates = args.length ==0 ? 1000 : new Integer(args[0]);
-		log.info("starting with howManyAggregates = {}", howManyAggregates);
-		Injector injector = Guice.createInjector(new CmdProducerModule());
+		
+		datasetSize = args.length ==0 ? 1000 : new Integer(args[0]);  // default = 1000 aggregates
+		delayBetweenDatasets = args.length <=1 ? 60000 : new Integer(args[1]); // default = 60 seconds
+		initialDelay = args.length <=2 ? 30000 : new Integer(args[2]); // default = 30 seconds
+			
+		log.info("datasetSize = {}", datasetSize);
+		log.info("delayBetweenDatasets = {}", delayBetweenDatasets);
+		log.info("initialDelay = {}, delayBetweenDatasets={}", initialDelay);
+		
+		Injector injector = Guice.createInjector(new CmdProducerModule(delayBetweenDatasets, initialDelay));
 	    CmdProducer example = injector.getInstance(CmdProducer.class);
 		example.main.run();
 		
 	}
 	
 	public void populate() {
-		for (int i=0; i< howManyAggregates; i++){
+		for (int i=0; i< datasetSize; i++){
 			ids.add(UUID.randomUUID());
 		}
 	}
@@ -55,9 +65,9 @@ public class CmdProducer {
 		
 		populate();
 		
-		registry.put("createCommandDataset", new CreateCommandDataSet(ids, howManyAggregates));
-		registry.put("increaseCommandDataset", new IncreaseCommandDataSet(ids, howManyAggregates));
-		registry.put("decreaseCommandDataset", new DecreaseCommandDataSet(ids, howManyAggregates));
+		registry.put("createCommandDataset", new CreateCommandDataSet(ids, datasetSize));
+		registry.put("increaseCommandDataset", new IncreaseCommandDataSet(ids, datasetSize));
+		registry.put("decreaseCommandDataset", new DecreaseCommandDataSet(ids, datasetSize));
 
 		context.addRoutes(datasetRoute);
 		

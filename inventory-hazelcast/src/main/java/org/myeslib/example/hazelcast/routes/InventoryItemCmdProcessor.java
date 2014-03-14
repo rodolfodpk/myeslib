@@ -1,5 +1,6 @@
 package org.myeslib.example.hazelcast.routes;
 
+import java.util.ConcurrentModificationException;
 import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,9 +49,7 @@ public class InventoryItemCmdProcessor  implements Processor {
 		Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id); 
 		if (!command.getVersion().equals(snapshot.getVersion())) {
 			String msg = String.format("** (%s) cmd version (%s) does not match snapshot version (%s)", id, command.getVersion(), snapshot.getVersion());
-			// throw new ConcurrentModificationException(msg);
-			log.error(msg);
-			return ;
+			throw new ConcurrentModificationException(msg);
 		}
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(snapshot.getAggregateInstance());

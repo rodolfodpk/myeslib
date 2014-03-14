@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 
+import lombok.AllArgsConstructor;
+
 import org.skife.jdbi.v2.DBI;
 
 import com.google.inject.AbstractModule;
@@ -12,8 +14,12 @@ import com.google.inject.Provides;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+@AllArgsConstructor
 public class DatabaseModule extends AbstractModule {
 	
+	int dbPoolMinThreads;
+	int dbPoolMaxThreads;
+
 	@Provides
 	@Singleton
 	public DataSource datasource() throws SQLException {
@@ -23,8 +29,8 @@ public class DatabaseModule extends AbstractModule {
 		config.addDataSourceProperty("URL", System.getenv("DB_URL"));
 		config.addDataSourceProperty("user", System.getenv("DB_USER"));
 		config.addDataSourceProperty("password", System.getenv("DB_PASSWORD"));
-		config.setMaximumPoolSize(100);
-		config.setMinimumPoolSize(10);
+		config.setMinimumPoolSize(dbPoolMinThreads);
+		config.setMaximumPoolSize(dbPoolMaxThreads);
 		config.setConnectionInitSql("select 1 + 1 from dual"); // oracle dialect
 		config.setUseInstrumentation(true);
 		config.setJdbc4ConnectionTest(true);
@@ -41,7 +47,6 @@ public class DatabaseModule extends AbstractModule {
 	protected void configure() {
 		
 	}
-	
 	
 }
 

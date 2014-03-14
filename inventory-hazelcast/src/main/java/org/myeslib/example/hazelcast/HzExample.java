@@ -16,8 +16,6 @@ import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
 import org.myeslib.example.hazelcast.routes.HzConsumeEventsRoute;
 import org.myeslib.util.example.ReceiveCommandsAsJsonRoute;
 import org.myeslib.util.hazelcast.HzCamelComponent;
-import org.myeslib.util.jdbi.ArTablesMetadata;
-import org.skife.jdbi.v2.DBI;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -29,11 +27,32 @@ public class HzExample {
 	final SimpleRegistry registry;
 	final CamelContext context;
 	
+	static int jettyMinThreads;
+	static int jettyMaxThreads;
+	static int dbPoolMinThreads;
+	static int dbPoolMaxThreads;
+	static int eventsQueueConsumers;
+	
 	public static void main(String[] args) throws Exception {
 
 		log.info("starting...");
 		
-		Injector injector = Guice.createInjector(new CamelModule(), new DatabaseModule(), new HazelcastModule(), new InventoryItemModule());
+		jettyMinThreads = args.length ==0 ? 10 : new Integer(args[0]);  
+		jettyMaxThreads = args.length <=1 ? 100 : new Integer(args[1]);  
+		dbPoolMinThreads = args.length <=2 ? 10 : new Integer(args[2]);  
+		dbPoolMaxThreads = args.length <=3 ? 100 : new Integer(args[3]);  
+		eventsQueueConsumers = args.length <=4 ? 50 : new Integer(args[4]);  
+		
+		log.info("jettyMinThreads = {}", jettyMinThreads);
+		log.info("jettyMaxThreads = {}", jettyMaxThreads);
+		log.info("dbPoolMinThreads = {}", dbPoolMinThreads);
+		log.info("dbPoolMaxThreads = {}", dbPoolMaxThreads);
+		log.info("eventsQueueConsumers = {}", eventsQueueConsumers);
+
+		Injector injector = Guice.createInjector(new CamelModule(jettyMinThreads, jettyMaxThreads, eventsQueueConsumers),
+												 new DatabaseModule(dbPoolMinThreads, dbPoolMaxThreads), 
+												 new HazelcastModule(), 
+												 new InventoryItemModule());
 	    HzExample example = injector.getInstance(HzExample.class);
 		example.main.run();
 		
@@ -43,9 +62,8 @@ public class HzExample {
 	HzExample(HzCamelComponent justAnotherHazelcastComponent, 
 			  ReceiveCommandsAsJsonRoute receiveCommandsRoute, 
 			  HzConsumeCommandsRoute consumeCommandsRoute, 
-			  HzConsumeEventsRoute consumeEventsRoute,
-			  DBI dbi,
-			  ArTablesMetadata metadata) throws Exception  {
+			  HzConsumeEventsRoute consumeEventsRoute
+			) throws Exception  {
 		
 		this.main = new Main() ;
 		this.main.enableHangupSupport();

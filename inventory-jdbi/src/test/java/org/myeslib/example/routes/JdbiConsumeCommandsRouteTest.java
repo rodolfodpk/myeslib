@@ -78,8 +78,8 @@ public class JdbiConsumeCommandsRouteTest extends CamelTestSupport {
 	AggregateRootHistoryReaderDao<UUID> historyReader;
 	
 	@BeforeClass public static void staticSetUp() throws Exception {
-		injector = Guice.createInjector(new CamelModule(), new HazelcastModule(), 
-				Modules.override(new DatabaseModule(), new InventoryItemModule()).with(new TestModule()));
+		injector = Guice.createInjector(new CamelModule(1, 1), new HazelcastModule(), 
+				Modules.override(new DatabaseModule(1, 1 ), new InventoryItemModule()).with(new TestModule()));
 	}
 
 	public static class TestModule implements Module {

@@ -2,6 +2,8 @@ package org.myeslib.example.hazelcast.routes;
 
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -12,22 +14,16 @@ import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.hazelcast.infra.HazelcastData;
 
-import com.google.inject.Inject;
-
+@AllArgsConstructor
 public class HzConsumeEventsRoute extends RouteBuilder {
 
+	final int eventsQueueConsumers;
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
-	
-	@Inject
-	public HzConsumeEventsRoute(
-			SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader) {
-		this.snapshotReader = snapshotReader;
-	}
 
 	@Override
 	public void configure() throws Exception {
 
-      fromF("hz:seda:%s?transacted=true&concurrentConsumers=200", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name())
+      fromF("hz:seda:%s?transacted=true&concurrentConsumers=%d", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name(), eventsQueueConsumers)
         .routeId("seda:eventsQueue")
         //.log("received ${body}")
         .process(new Processor() {
