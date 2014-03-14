@@ -1,9 +1,5 @@
 #### Context
-The idea is to try a flavour of CQRS introduced in [Don’t publish Domain Events, return them!](http://www.jayway.com/2013/06/20/dont-publish-domain-events-return-them/) Basically, instead of having the  [CommandHandler](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/CommandHandlers.cs) with void methods, it will actually return an instance of <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork</a> with both the original command and the events produced. This UnitOfWork will be persisted into an Event Store backed by a relational database. [Tasks based UIs](http://cqrs.wordpress.com/documents/task-based-ui) are out of the initial scope, although the communication between producer and consumer is HTTP based.  
-
-What really matters
-* <a href="inventory-aggregate-root/src/main/java/org/myeslib/example/SampleDomain.java">The Inventory Sample Domain</a>
-
+The idea is to try a flavour of CQRS introduced in [Don’t publish Domain Events, return them!](http://www.jayway.com/2013/06/20/dont-publish-domain-events-return-them/) Basically, instead of having the  [CommandHandler](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/CommandHandlers.cs) with void methods, each method will actually return an instance of <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork</a> with both the original command and the events produced. This UnitOfWork will be persisted into a fairly effective (and simple) Event Store backed by a relational database. [Tasks based UIs](http://cqrs.wordpress.com/documents/task-based-ui) are out of the initial scope, although the communication between producer and consumer services is HTTP based. 
 #### Running the Inventory example
 First of all, build it:
 ```
