@@ -28,7 +28,7 @@ export DB_PASSWORD
 then export the db variables and call [Flyway](http://flywaydb.org/) to initialize the target database (H2):
 ```
 source ./export-db-env-oracle.sh
-cd myeslib-inventory-database
+cd inventory-database
 mvn clean compile flyway:migrate -Dflyway.locations=db/h2
 ```
 just in case, there is a script for Oracle too:
@@ -37,18 +37,18 @@ mvn clean compile flyway:migrate -Dflyway.locations=db/oracle
 ```
 after this your database should be ready. Now:
 ```
-cd ../myeslib-inventory-jdbi
-java -jar target/myeslib-inventory-jdbi-0.0.1-SNAPSHOT.jar 10 100 10 100 50
+cd ../inventory-jdbi
+java -jar target/inventory-jdbi-0.0.1-SNAPSHOT.jar 10 100 10 100 50
 ```
-The parameters are: jettyMinThreads, jettyMaxThreads, dbPoolMinThreads, dbPoolMaxThreads and eventsQueueConsumers
-These values (10 100 10 100 50) are default for these parameters. This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 
+The parameters are: jettyMinThreads, jettyMaxThreads, dbPoolMinThreads, dbPoolMaxThreads and eventsQueueConsumers.
+This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 
 
-There is another implementation using a Hazelcast distributed map backed by a MapStore implementation (org.myeslib.util.hazelcast.HzMapStore) to store AggregateRootHistory instances. This map is configureed to be write-through. Beside this, myeslib-inventory-hazelcast also uses a Hazelcast queue to store UnitOfWork instances.
+There is another implementation: inventory-hazelcast. Its more tied to Hazelcast since it uses a distributed map backed by a MapStore implementation (org.myeslib.util.hazelcast.HzMapStore) to store AggregateRootHistory instances. This map is configureed as write-through. It also uses a Hazelcast queue to store UnitOfWork instances.
 
 Finally, in order to create and send commands to the above endpoint, start this in other console:
 ```
-cd myeslib-inventory-cmd-producer
-java -jar target/myeslib-inventory-cmd-producer-0.0.1-SNAPSHOT.jar 100 60000 30000
+cd inventory-cmd-producer
+java -jar target/inventory-cmd-producer-0.0.1-SNAPSHOT.jar 100 60000 30000
 ```
 The parameters are: datasetSize (how many aggregateRoot instances), delayBetweenDatasets (in milliseconds) and initialDelay. There are 3 kind of commands: CreateCommand, IncreaseCommand and DecreaseCommand. So if you define 100 commands like the example above, actually 300 commands will be sent with 60 seconds of delay between each command dataset and an initial delay of 30 seconds. 
 Notes
