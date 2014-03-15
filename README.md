@@ -21,7 +21,7 @@ export DB_PASSWORD
 ```
 then export the db variables and call [Flyway](http://flywaydb.org/) to initialize the target database (H2):
 ```
-source ./export-db-env-oracle.sh
+source ./export-db-env-h2.sh
 cd inventory-database
 mvn clean compile flyway:migrate -Dflyway.locations=db/h2
 ```
