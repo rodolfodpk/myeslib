@@ -16,8 +16,6 @@ import org.myeslib.example.jdbi.routes.JdbiConsumeCommandsRoute;
 import org.myeslib.example.jdbi.routes.JdbiConsumeEventsRoute;
 import org.myeslib.util.example.ReceiveCommandsAsJsonRoute;
 import org.myeslib.util.hazelcast.HzCamelComponent;
-import org.myeslib.util.jdbi.ArTablesMetadata;
-import org.skife.jdbi.v2.DBI;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -62,11 +60,7 @@ public class JdbiExample {
 	JdbiExample(HzCamelComponent justAnotherHazelcastComponent, 
 				ReceiveCommandsAsJsonRoute receiveCommandsRoute, 
 				JdbiConsumeCommandsRoute consumeCommandsRoute, 
-				JdbiConsumeEventsRoute consumeEventsRoute,
-				ArTablesMetadata metadata,
-				DBI dbi) throws Exception  {
-		
-		//new ArhCreateTablesHelper(metadata, dbi).createTables();
+				JdbiConsumeEventsRoute consumeEventsRoute) throws Exception  {
 		
 		main = new Main() ;
 		main.enableHangupSupport();

@@ -32,6 +32,7 @@ public class HzExample {
 	static int dbPoolMinThreads;
 	static int dbPoolMaxThreads;
 	static int eventsQueueConsumers;
+	static int writeDelaySeconds;
 	
 	public static void main(String[] args) throws Exception {
 
@@ -42,16 +43,18 @@ public class HzExample {
 		dbPoolMinThreads = args.length <=2 ? 10 : new Integer(args[2]);  
 		dbPoolMaxThreads = args.length <=3 ? 100 : new Integer(args[3]);  
 		eventsQueueConsumers = args.length <=4 ? 50 : new Integer(args[4]);  
+		writeDelaySeconds = args.length <=5 ? 0 : new Integer(args[5]) ;  
 		
 		log.info("jettyMinThreads = {}", jettyMinThreads);
 		log.info("jettyMaxThreads = {}", jettyMaxThreads);
 		log.info("dbPoolMinThreads = {}", dbPoolMinThreads);
 		log.info("dbPoolMaxThreads = {}", dbPoolMaxThreads);
 		log.info("eventsQueueConsumers = {}", eventsQueueConsumers);
-
+        log.info("writeDelaySeconds = {} ({})", writeDelaySeconds, writeDelaySeconds>0 ? "write-behind" : "write-through");
+        
 		Injector injector = Guice.createInjector(new CamelModule(jettyMinThreads, jettyMaxThreads, eventsQueueConsumers),
 												 new DatabaseModule(dbPoolMinThreads, dbPoolMaxThreads), 
-												 new HazelcastModule(), 
+												 new HazelcastModule(writeDelaySeconds), 
 												 new InventoryItemModule());
 	    HzExample example = injector.getInstance(HzExample.class);
 		example.main.run();

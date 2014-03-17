@@ -18,6 +18,8 @@ public class HazelcastConfigFactory {
 		
 		config.addMapConfig(inventoryMapConfig);
 		
+	    config.setProperty("hazelcast.shutdownhook.enabled", "false"); // to avoid conflit with camel
+
 		//config.setUserContext(userContext);
 		
 		for (SerializerConfig sc : serializers) {

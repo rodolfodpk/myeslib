@@ -14,6 +14,7 @@ import com.google.inject.Provides;
 @AllArgsConstructor
 public class CmdProducerModule extends AbstractModule {
 
+    int datasetSize;
 	int delayBetweenDatasets;
 	int initialDelay;
 
@@ -26,7 +27,7 @@ public class CmdProducerModule extends AbstractModule {
 	@Provides
 	@Singleton
 	public DatasetsRoute datasetRoute(Gson gson) {
-		return new DatasetsRoute(gson, "jetty://http://localhost:8080/inventory-item-command", delayBetweenDatasets, initialDelay);
+		return new DatasetsRoute(gson, "jetty://http://localhost:8080/inventory-item-command", datasetSize, delayBetweenDatasets, initialDelay);
 	}
 
 	@Override

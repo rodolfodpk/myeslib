@@ -17,6 +17,8 @@ public class HazelcastConfigFactory {
 		this.config = new Config();
 		
 		config.setUserContext(userContext);
+
+		config.setProperty("hazelcast.shutdownhook.enabled", "false"); // to avoid conflit with camel
 		
 	}
 

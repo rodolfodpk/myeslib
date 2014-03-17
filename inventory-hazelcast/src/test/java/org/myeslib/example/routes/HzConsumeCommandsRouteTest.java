@@ -81,7 +81,7 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	@BeforeClass public static void staticSetUp() throws Exception {
 		
 		injector =  Guice.createInjector(Modules.override(new CamelModule(1, 1, 1), new DatabaseModule(1, 1)).with(new TestModule()), 
-				 new HazelcastModule(), new InventoryItemModule());
+				 new HazelcastModule(0), new InventoryItemModule());
 		
 	}
 

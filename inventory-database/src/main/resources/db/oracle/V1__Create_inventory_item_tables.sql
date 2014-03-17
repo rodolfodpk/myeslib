@@ -53,7 +53,7 @@ BEGIN
   END;
   
   IF v_last_version = 0 AND :new.version <> 1 THEN
-    raise_application_error(-20001, 'Versão deve ser =1');
+    raise_application_error(-20001, '**** Version should be =1');
   END IF;
   
   IF v_last_version = 0 AND :new.version = 1 THEN
@@ -61,7 +61,7 @@ BEGIN
   END IF;
   
   IF v_last_version <> 0 AND :new.version <> v_last_version +1 THEN
-    raise_application_error(-20001, 'Próxima versão deve ser igual a ' || (v_last_version+1));
+    raise_application_error(-20001, '**** Next version should be = ' || (v_last_version+1));
   END IF;
   
   IF v_last_version <> 0 AND :new.version = v_last_version +1 THEN

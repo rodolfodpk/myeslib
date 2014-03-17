@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.toolbox.AggregationStrategies;
 import org.myeslib.core.Command;
 
 import com.google.gson.Gson;
@@ -19,6 +20,7 @@ public class DatasetsRoute extends RouteBuilder {
 	final String targetEndpoint;
 	final Type commandType = new TypeToken<Command>() {}.getType();
 
+	final int datasetSize;
 	final int delayBetweenDatasets;
 	final int initialDelay;
 
@@ -26,15 +28,34 @@ public class DatasetsRoute extends RouteBuilder {
 
 		fromF("dataset:createCommandDataset?initialDelay=%d", initialDelay)
 				.routeId("dataset:createCommandsDataset")
-				.process(new MarshalProcessor()).to(targetEndpoint);
+				.startupOrder(1).autoStartup(true)
+				.process(new MarshalProcessor()).to(targetEndpoint)
+                .aggregate(constant(0), AggregationStrategies.useLatest()).completionSize(datasetSize)
+    			    .log("finished")
+    			    .log("will start next dataset")
+    			    .to("controlbus:route?routeId=dataset:increaseCommandsDataset&action=start")
+				.end()
+    			;
 
-		fromF("dataset:increaseCommandDataset?initialDelay=%d", initialDelay + delayBetweenDatasets)
+		fromF("dataset:increaseCommandDataset?initialDelay=%d", delayBetweenDatasets)
 				.routeId("dataset:increaseCommandsDataset")
-				.process(new MarshalProcessor()).to(targetEndpoint);
+                .startupOrder(2).autoStartup(false)
+				.process(new MarshalProcessor()).to(targetEndpoint)
+				.aggregate(constant(0), AggregationStrategies.useLatest()).completionSize(datasetSize)
+                    .log("finished")
+                    .log("will start next dataset")
+                    .to("controlbus:route?routeId=dataset:decreaseCommandsDataset&action=start")
+                .end();
+				;
 
-		fromF("dataset:decreaseCommandDataset?initialDelay=%d", initialDelay + (delayBetweenDatasets *2))
-				.routeId("dataset:decreaseCommandsDataset")
-				.process(new MarshalProcessor()).to(targetEndpoint);
+		fromF("dataset:decreaseCommandDataset?initialDelay=%d", delayBetweenDatasets)
+		        .routeId("dataset:decreaseCommandsDataset")
+                .startupOrder(3).autoStartup(false)
+				.process(new MarshalProcessor()).to(targetEndpoint)
+                .aggregate(constant(0), AggregationStrategies.useLatest()).completionSize(datasetSize)
+                    .log("finished")
+                .end();
+		;
 
 	}
 

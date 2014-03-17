@@ -3,17 +3,20 @@ package org.myeslib.example.hazelcast.infra;
 import org.myeslib.util.hazelcast.HzMapStore;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MapStoreConfig;
 
 public class InventoryItemMapConfigFactory {
 	
-	final HzMapStore mapStore;
-	
-	@Inject
-	public InventoryItemMapConfigFactory(HzMapStore mapStore) {
-		this.mapStore = mapStore;
-	}
+    @Inject
+	public InventoryItemMapConfigFactory(HzMapStore mapStore, @Named("writeDelaySeconds") int writeDelaySeconds) {
+        this.mapStore = mapStore;
+        this.writeDelaySeconds = writeDelaySeconds;
+    }
+
+    final HzMapStore mapStore;
+	final int writeDelaySeconds;
 
 	public MapConfig create() {
 		
@@ -25,7 +28,8 @@ public class InventoryItemMapConfigFactory {
 
 		mapStoreConfig.setImplementation(mapStore);
 		mapStoreConfig.setEnabled(true);
-		mapStoreConfig.setWriteDelaySeconds(0);
+		mapStoreConfig.setWriteDelaySeconds(writeDelaySeconds); 
+		/* writeDelaySeconds > 0 means write-behind. TODO make sure this is consistent*/
 		mapConfig.setMapStoreConfig(mapStoreConfig);
 		
 		return mapConfig;

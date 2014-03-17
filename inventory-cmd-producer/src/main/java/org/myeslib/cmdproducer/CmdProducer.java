@@ -36,14 +36,14 @@ public class CmdProducer {
 	public static void main(String[] args) throws Exception {
 		
 		datasetSize = args.length ==0 ? 1000 : new Integer(args[0]);  // default = 1000 aggregates
-		delayBetweenDatasets = args.length <=1 ? 60000 : new Integer(args[1]); // default = 60 seconds
+		delayBetweenDatasets = args.length <=1 ? 30000 : new Integer(args[1]); // default = 30 seconds
 		initialDelay = args.length <=2 ? 30000 : new Integer(args[2]); // default = 30 seconds
 			
 		log.info("datasetSize = {}", datasetSize);
 		log.info("delayBetweenDatasets = {}", delayBetweenDatasets);
-		log.info("initialDelay = {}, delayBetweenDatasets={}", initialDelay);
+		log.info("initialDelay = {}", initialDelay);
 		
-		Injector injector = Guice.createInjector(new CmdProducerModule(delayBetweenDatasets, initialDelay));
+		Injector injector = Guice.createInjector(new CmdProducerModule(datasetSize, delayBetweenDatasets, initialDelay));
 	    CmdProducer example = injector.getInstance(CmdProducer.class);
 		example.main.run();
 		
