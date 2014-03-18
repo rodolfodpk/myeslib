@@ -58,7 +58,8 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 		// To set timestamp from db onto it ?
 		// log.info("store {} {}", key, value);
 		log.info("storing {}", key);
-		UnitOfWork uow = value.getLastUnitOfWork();
+        // TODO realized this can't work for write-behind since value may have be N uows to persist, not only the last 
+		UnitOfWork uow = value.getLastUnitOfWork(); 
 		log.debug("store uow {}", uow);
 		writer.insert(key, uow);
 	}
