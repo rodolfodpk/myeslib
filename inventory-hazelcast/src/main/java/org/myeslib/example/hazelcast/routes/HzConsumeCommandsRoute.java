@@ -37,8 +37,6 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 	      	 .wireTap(destinationUri)
 	      			.newExchangeBody(header("id"))
 	      	 .end()		
-//	         .setBody(header("id"))
-//	         .to(destinationUri)
 	         ;
        
 	     from("direct:dead-letter-channel")
