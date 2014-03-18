@@ -67,7 +67,7 @@ public class InventoryItemOptimisticLockingTrigger implements Trigger {
 
 	private void validateAndProceedOnUnitOfWorkTable(final String id, final BigDecimal newVersion, Handle h, BigDecimal lastVersion) throws SQLException {
 		if (newVersion.intValue() != lastVersion.intValue()+1) {
-			String msg = String.format("id {} new version ( %s ) does not match the last version +1 ( %s )", id, newVersion.toString(), lastVersion.toString());
+			String msg = String.format("id %s new version ( %s ) does not match the last version +1 ( %s )", id, newVersion.toString(), lastVersion.toString());
 			log.error(msg);
 			throw new SQLException(msg);
 		}			
@@ -84,7 +84,7 @@ public class InventoryItemOptimisticLockingTrigger implements Trigger {
 
 	private void validateAndProceedOnAggregateRootTable(final String id, final BigDecimal newVersion, Handle h) throws SQLException {
 		if (newVersion.intValue()!=1){
-			String msg = String.format("id {} new version ( %s ) should be =1 on first unit of work", id, newVersion.toString());
+			String msg = String.format("id %s new version ( %s ) should be =1 on first unit of work", id, newVersion.toString());
 			log.error(msg);
 			throw new SQLException(msg);
 		}

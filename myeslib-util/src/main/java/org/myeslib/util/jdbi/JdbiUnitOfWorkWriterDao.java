@@ -12,10 +12,10 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 @Slf4j
-public class JdbiAggregateRootHistoryWriterDao implements AggregateRootHistoryWriterDao<UUID>{
+public class JdbiUnitOfWorkWriterDao implements UnitOfWorkWriterDao<UUID>{
 	
 	@Inject
-	public JdbiAggregateRootHistoryWriterDao(@Assisted Handle handle,
+	public JdbiUnitOfWorkWriterDao(@Assisted Handle handle,
 			ArTablesMetadata tables,
 			Function<UnitOfWork, String> toStringFunction) {
 		
@@ -28,10 +28,10 @@ public class JdbiAggregateRootHistoryWriterDao implements AggregateRootHistoryWr
 	private final ArTablesMetadata tables;
 	private final Function<UnitOfWork, String> toStringFunction;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.myeslib.util.jdbi.AggregateRootHistoryWriterDao#insert(java.lang.Object, org.myeslib.core.data.UnitOfWork)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.myeslib.util.jdbi.UnitOfWorkWriterDao#insert(java.lang.Object, org.myeslib.core.data.UnitOfWork)
+     */
 	@Override
 	public void insert(final UUID id, final UnitOfWork uow) {
 

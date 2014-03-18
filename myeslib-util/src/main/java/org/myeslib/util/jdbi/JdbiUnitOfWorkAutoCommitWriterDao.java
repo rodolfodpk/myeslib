@@ -15,10 +15,10 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 @Slf4j
-public class JdbiAggregateRootHistoryAutoCommitWriterDao implements AggregateRootHistoryWriterDao<UUID>{
+public class JdbiUnitOfWorkAutoCommitWriterDao implements UnitOfWorkWriterDao<UUID>{
 	
 	@Inject
-	public JdbiAggregateRootHistoryAutoCommitWriterDao(DBI dbi,
+	public JdbiUnitOfWorkAutoCommitWriterDao(DBI dbi,
 			ArTablesMetadata tables,
 			Function<UnitOfWork, String> toStringFunction) {
 		
@@ -33,7 +33,7 @@ public class JdbiAggregateRootHistoryAutoCommitWriterDao implements AggregateRoo
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.util.jdbi.AggregateRootHistoryWriterDao#insert(java.lang.Object, org.myeslib.core.data.UnitOfWork)
+	 * @see org.myeslib.util.jdbi.UnitOfWorkWriterDao#insert(java.lang.Object, org.myeslib.core.data.UnitOfWork)
 	 */
 	@Override
 	public void insert(final UUID id, final UnitOfWork uow) {

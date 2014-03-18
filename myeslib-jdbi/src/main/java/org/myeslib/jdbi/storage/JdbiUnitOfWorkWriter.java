@@ -2,18 +2,18 @@ package org.myeslib.jdbi.storage;
 
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.storage.UnitOfWorkWriter;
-import org.myeslib.util.jdbi.AggregateRootHistoryWriterDao;
+import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
 
 import com.google.inject.Inject;
 
 public class JdbiUnitOfWorkWriter<K> implements UnitOfWorkWriter<K>{
 	
 	@Inject
-	public JdbiUnitOfWorkWriter(AggregateRootHistoryWriterDao<K> dao) {
+	public JdbiUnitOfWorkWriter(UnitOfWorkWriterDao<K> dao) {
 		this.dao = dao;
 	}
 
-	private final AggregateRootHistoryWriterDao<K> dao;
+	private final UnitOfWorkWriterDao<K> dao;
 	
 	/*
 	 * (non-Javadoc)

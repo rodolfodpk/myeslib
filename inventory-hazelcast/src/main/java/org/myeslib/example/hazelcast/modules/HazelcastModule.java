@@ -12,7 +12,7 @@ import org.myeslib.example.hazelcast.infra.InventoryItemSerializersConfigFactory
 import org.myeslib.util.hazelcast.HzCamelComponent;
 import org.myeslib.util.hazelcast.HzMapStore;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
-import org.myeslib.util.jdbi.AggregateRootHistoryWriterDao;
+import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -35,7 +35,7 @@ public class HazelcastModule extends AbstractModule {
     
     @Provides
 	@Singleton
-	public HzMapStore mapStore(AggregateRootHistoryReaderDao<UUID> reader, AggregateRootHistoryWriterDao<UUID> writer){
+	public HzMapStore mapStore(AggregateRootHistoryReaderDao<UUID> reader, UnitOfWorkWriterDao<UUID> writer){
 		return new HzMapStore(writer, reader);
 	}
     

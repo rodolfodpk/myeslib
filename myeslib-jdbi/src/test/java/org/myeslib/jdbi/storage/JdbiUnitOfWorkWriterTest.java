@@ -14,13 +14,13 @@ import org.myeslib.core.Event;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
-import org.myeslib.util.jdbi.AggregateRootHistoryWriterDao;
+import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
 
 @RunWith(MockitoJUnitRunner.class) 
 public class JdbiUnitOfWorkWriterTest {
 
 	@Mock
-	AggregateRootHistoryWriterDao<UUID> dao;
+	UnitOfWorkWriterDao<UUID> dao;
 	
 	@Test
 	public void insert() {

@@ -23,9 +23,9 @@ import org.myeslib.util.MultiMethodCommandHandlerInvoker;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
-import org.myeslib.util.jdbi.AggregateRootHistoryWriterDao;
+import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
 import org.myeslib.util.jdbi.ArTablesMetadata;
-import org.myeslib.util.jdbi.JdbiAggregateRootHistoryAutoCommitWriterDao;
+import org.myeslib.util.jdbi.JdbiUnitOfWorkAutoCommitWriterDao;
 import org.myeslib.util.jdbi.JdbiAggregateRootHistoryReaderDao;
 import org.skife.jdbi.v2.DBI;
 
@@ -72,8 +72,8 @@ public class InventoryItemModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public AggregateRootHistoryWriterDao<UUID> arWriter(ArTablesMetadata metadata, DBI dbi, Function<UnitOfWork, String> toStringFunction) {
-		return new JdbiAggregateRootHistoryAutoCommitWriterDao(dbi, metadata, toStringFunction);
+	public UnitOfWorkWriterDao<UUID> arWriter(ArTablesMetadata metadata, DBI dbi, Function<UnitOfWork, String> toStringFunction) {
+		return new JdbiUnitOfWorkAutoCommitWriterDao(dbi, metadata, toStringFunction);
 	}
 
 	@Provides
