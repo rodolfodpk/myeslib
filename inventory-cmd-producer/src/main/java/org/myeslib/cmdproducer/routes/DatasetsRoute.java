@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 @AllArgsConstructor
-public class DatasetsRoute extends RouteBuilder {
+public class DataSetsRoute extends RouteBuilder {
 
 	final Gson gson;
 	final String targetEndpoint;

@@ -17,5 +17,8 @@ build/
 .project
 .gradle
 
+.idea
+*.iml
+
 # Mac
 .DS_Store

@@ -98,7 +98,7 @@ public class HzSnapshotReaderTest {
 		
 		assertThat(resultingSnapshot.getVersion(), is(originalVersion));
 		
-		assertThat(resultingSnapshot.getAggregateInstance().getAvaliable(), is(2));
+		assertThat(resultingSnapshot.getAggregateInstance().getAvailable(), is(2));
 
 	}
 	
@@ -122,7 +122,7 @@ public class HzSnapshotReaderTest {
 		events.add((Event)new InventoryDecreased(id, 2));
 		
 		InventoryItemAggregateRoot aggregateInstance = new InventoryItemAggregateRoot();
-		aggregateInstance.setAvaliable(4);
+		aggregateInstance.setAvailable(4);
 		Snapshot<InventoryItemAggregateRoot> snapshotInstance = new Snapshot<>(aggregateInstance, firstVersion);
 
 		InventoryItemAggregateRoot freshInstance = new InventoryItemAggregateRoot();
@@ -147,7 +147,7 @@ public class HzSnapshotReaderTest {
 		
 		InventoryItemAggregateRoot fromSnapshot = resultingSnapshot.getAggregateInstance();
 
-		assertThat(fromSnapshot.getAvaliable(), is(2));
+		assertThat(fromSnapshot.getAvailable(), is(2));
 
 	}
 

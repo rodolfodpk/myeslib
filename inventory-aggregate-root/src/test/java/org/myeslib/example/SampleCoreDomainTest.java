@@ -113,7 +113,7 @@ public class SampleCoreDomainTest {
 		UUID id = UUID.randomUUID();
 		String desc = "item1";
 		
-		aggregateRoot.setAvaliable(0);
+		aggregateRoot.setAvailable(0);
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
@@ -137,7 +137,7 @@ public class SampleCoreDomainTest {
 		UUID id = UUID.randomUUID();
 		String desc = "item1";
 		
-		aggregateRoot.setAvaliable(2);
+		aggregateRoot.setAvailable(2);
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
@@ -157,7 +157,7 @@ public class SampleCoreDomainTest {
 		UUID id = UUID.randomUUID();
 		String desc = "item1";
 		
-		aggregateRoot.setAvaliable(4);
+		aggregateRoot.setAvailable(4);
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
@@ -188,7 +188,7 @@ public class SampleCoreDomainTest {
 		
 		assertThat(aggregateRoot.getId(), equalTo(id));
 		assertThat(aggregateRoot.getDescription(), equalTo(desc));
-		assertThat(aggregateRoot.getAvaliable(), equalTo(0));
+		assertThat(aggregateRoot.getAvailable(), equalTo(0));
 		
 	}
 	
@@ -200,7 +200,7 @@ public class SampleCoreDomainTest {
 		UUID id = UUID.randomUUID();
 		String desc = "item1";
 		
-		aggregateRoot.setAvaliable(0);
+		aggregateRoot.setAvailable(0);
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
@@ -208,7 +208,7 @@ public class SampleCoreDomainTest {
 		
 		aggregateRoot.on(event);
 		
-		assertThat(aggregateRoot.getAvaliable(), equalTo(2));
+		assertThat(aggregateRoot.getAvailable(), equalTo(2));
 		
 	}
 	
@@ -220,7 +220,7 @@ public class SampleCoreDomainTest {
 		UUID id = UUID.randomUUID();
 		String desc = "item1";
 		
-		aggregateRoot.setAvaliable(5);
+		aggregateRoot.setAvailable(5);
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
@@ -228,7 +228,7 @@ public class SampleCoreDomainTest {
 		
 		aggregateRoot.on(event);
 		
-		assertThat(aggregateRoot.getAvaliable(), equalTo(3));
+		assertThat(aggregateRoot.getAvailable(), equalTo(3));
 		
 	}
 	

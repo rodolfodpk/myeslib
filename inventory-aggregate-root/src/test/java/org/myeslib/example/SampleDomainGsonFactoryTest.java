@@ -44,8 +44,6 @@ public class SampleDomainGsonFactoryTest {
 		arh.add(uow2);
 		
 		String asString = gson.toJson(arh);
-		
-		System.out.println(asString);
 
 		AggregateRootHistory arhFromJson = gson.fromJson(asString, AggregateRootHistory.class);
 		
@@ -57,7 +55,7 @@ public class SampleDomainGsonFactoryTest {
 	public void snapshot() {
 		
 		InventoryItemAggregateRoot ar = new InventoryItemAggregateRoot();
-		ar.setAvaliable(1);
+		ar.setAvailable(1);
 		
 		Snapshot<InventoryItemAggregateRoot> s = new Snapshot<>(ar, 1L);
 		

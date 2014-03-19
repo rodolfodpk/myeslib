@@ -93,7 +93,7 @@ public class JdbiSnapshotReaderTest {
 		
 		InventoryItemAggregateRoot fromSnapshot = resultingSnapshot.getAggregateInstance();
 
-		assertThat(fromSnapshot.getAvaliable(), is(2));
+		assertThat(fromSnapshot.getAvailable(), is(2));
 
 	}
 	
@@ -110,7 +110,7 @@ public class JdbiSnapshotReaderTest {
 		List<Event> events = Arrays.asList((Event)new InventoryDecreased(id, 2));
 		
 		InventoryItemAggregateRoot aggregateInstance = new InventoryItemAggregateRoot();
-		aggregateInstance.setAvaliable(3);
+		aggregateInstance.setAvailable(3);
 		Snapshot<InventoryItemAggregateRoot> snapshotInstance = new Snapshot<>(aggregateInstance, firstVersion);
 	
 		when(transactionHistory.getLastVersion()).thenReturn(versionNotYetOnLastSnapshot);
@@ -135,7 +135,7 @@ public class JdbiSnapshotReaderTest {
 		
 		InventoryItemAggregateRoot fromSnapshot = resultingSnapshot.getAggregateInstance();
 
-		assertThat(fromSnapshot.getAvaliable(), is(1));
+		assertThat(fromSnapshot.getAvailable(), is(1));
 
 	}
 
