@@ -17,8 +17,8 @@ import com.zaxxer.hikari.HikariDataSource;
 @AllArgsConstructor
 public class DatabaseModule extends AbstractModule {
 	
-	int dbPoolMinThreads;
-	int dbPoolMaxThreads;
+	int dbPoolMinConnections;
+	int dbPoolMaxConnections;
 
 	@Provides
 	@Singleton
@@ -29,8 +29,8 @@ public class DatabaseModule extends AbstractModule {
 		config.addDataSourceProperty("URL", System.getenv("DB_URL"));
 		config.addDataSourceProperty("user", System.getenv("DB_USER"));
 		config.addDataSourceProperty("password", System.getenv("DB_PASSWORD"));
-		config.setMinimumPoolSize(dbPoolMinThreads);
-		config.setMaximumPoolSize(dbPoolMaxThreads);
+		config.setMinimumPoolSize(dbPoolMinConnections);
+		config.setMaximumPoolSize(dbPoolMaxConnections);
 		config.setConnectionInitSql("select 1 + 1 from dual"); // oracle dialect
 		config.setUseInstrumentation(true);
 		config.setJdbc4ConnectionTest(true);

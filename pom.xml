@@ -35,7 +35,7 @@
 		<module>myeslib-hazelcast</module>
 		<module>myeslib-util</module>
 		<module>myeslib-3rd-party</module>
-		
+
 		<module>inventory-aggregate-root</module>
 		<module>inventory-jdbi</module>
 		<module>inventory-hazelcast</module>
@@ -78,7 +78,7 @@
 				<artifactId>myeslib-3rd-party</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-						
+
 			<!-- Inventory example -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
@@ -110,7 +110,7 @@
 				<artifactId>inventory-util</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-						
+
 			<!-- Others -->
 			<dependency>
 				<groupId>org.projectlombok</groupId>
@@ -213,6 +213,12 @@
 				<version>4.11</version>
 				<scope>test</scope>
 			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.assertj</groupId> -->
+<!-- 				<artifactId>assertj-core</artifactId> -->
+<!-- 				<version>1.3.0</version> -->
+<!-- 				<scope>test</scope> -->
+<!-- 			</dependency> -->
 			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest-all</artifactId>

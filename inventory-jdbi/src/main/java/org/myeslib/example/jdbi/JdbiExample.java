@@ -29,8 +29,8 @@ public class JdbiExample {
 
 	static int jettyMinThreads;
 	static int jettyMaxThreads;
-	static int dbPoolMinThreads;
-	static int dbPoolMaxThreads;
+	static int dbPoolMinConnections;
+	static int dbPoolMaxConnections;
 
 	public static void main(String[] args) throws Exception {
 
@@ -38,16 +38,16 @@ public class JdbiExample {
 		
 		jettyMinThreads = args.length ==0 ? 10 : new Integer(args[0]);  
 		jettyMaxThreads = args.length <=1 ? 100 : new Integer(args[1]);  
-		dbPoolMinThreads = args.length <=2 ? 10 : new Integer(args[2]);  
-		dbPoolMaxThreads = args.length <=3 ? 100 : new Integer(args[3]);  
+		dbPoolMinConnections = args.length <=2 ? 10 : new Integer(args[2]);  
+		dbPoolMaxConnections = args.length <=3 ? 100 : new Integer(args[3]);  
 		
 		log.info("jettyMinThreads = {}", jettyMinThreads);
 		log.info("jettyMaxThreads = {}", jettyMaxThreads);
-		log.info("dbPoolMinThreads = {}", dbPoolMinThreads);
-		log.info("dbPoolMaxThreads = {}", dbPoolMaxThreads);
+		log.info("dbPoolMinConnections = {}", dbPoolMinConnections);
+		log.info("dbPoolMaxConnections = {}", dbPoolMaxConnections);
 		
 		Injector injector = Guice.createInjector(new CamelModule(jettyMinThreads, jettyMaxThreads), 
-				                                 new DatabaseModule(dbPoolMinThreads, dbPoolMaxThreads), 
+				                                 new DatabaseModule(dbPoolMinConnections, dbPoolMaxConnections), 
 				                                 new HazelcastModule(), 
 				                                 new InventoryItemModule());
 		

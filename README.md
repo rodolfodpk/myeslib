@@ -37,8 +37,8 @@ java -jar target/inventory-jdbi-0.0.1-SNAPSHOT.jar 10 100 10 100
 The parameters are, respectively: 
 * jettyMinThreads 
 * jettyMaxThreads 
-* dbPoolMinThreads 
-* dbPoolMaxThreads
+* dbPoolMinConnections 
+* dbPoolMaxConnections
 
 
 This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 

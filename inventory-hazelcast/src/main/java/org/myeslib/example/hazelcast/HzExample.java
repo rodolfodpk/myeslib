@@ -29,8 +29,8 @@ public class HzExample {
 	
 	static int jettyMinThreads;
 	static int jettyMaxThreads;
-	static int dbPoolMinThreads;
-	static int dbPoolMaxThreads;
+	static int dbPoolMinConnections;
+	static int dbPoolMaxConnections;
 	static int eventsQueueConsumers;
 	static int writeDelaySeconds;
 	
@@ -40,20 +40,20 @@ public class HzExample {
 		
 		jettyMinThreads = args.length ==0 ? 10 : new Integer(args[0]);  
 		jettyMaxThreads = args.length <=1 ? 100 : new Integer(args[1]);  
-		dbPoolMinThreads = args.length <=2 ? 10 : new Integer(args[2]);  
-		dbPoolMaxThreads = args.length <=3 ? 100 : new Integer(args[3]);  
+		dbPoolMinConnections = args.length <=2 ? 10 : new Integer(args[2]);  
+		dbPoolMaxConnections = args.length <=3 ? 100 : new Integer(args[3]);  
 		eventsQueueConsumers = args.length <=4 ? 50 : new Integer(args[4]);  
 		writeDelaySeconds = args.length <=5 ? 0 : new Integer(args[5]) ;  
 		
 		log.info("jettyMinThreads = {}", jettyMinThreads);
 		log.info("jettyMaxThreads = {}", jettyMaxThreads);
-		log.info("dbPoolMinThreads = {}", dbPoolMinThreads);
-		log.info("dbPoolMaxThreads = {}", dbPoolMaxThreads);
+		log.info("dbPoolMinConnections = {}", dbPoolMinConnections);
+		log.info("dbPoolMaxConnections = {}", dbPoolMaxConnections);
 		log.info("eventsQueueConsumers = {}", eventsQueueConsumers);
         log.info("writeDelaySeconds = {} ({})", writeDelaySeconds, writeDelaySeconds>0 ? "write-behind" : "write-through");
         
 		Injector injector = Guice.createInjector(new CamelModule(jettyMinThreads, jettyMaxThreads, eventsQueueConsumers),
-												 new DatabaseModule(dbPoolMinThreads, dbPoolMaxThreads), 
+												 new DatabaseModule(dbPoolMinConnections, dbPoolMaxConnections), 
 												 new HazelcastModule(writeDelaySeconds), 
 												 new InventoryItemModule());
 	    HzExample example = injector.getInstance(HzExample.class);
