@@ -15,7 +15,7 @@
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<build.date>${maven.build.timestamp}</build.date>
 		<java.version>1.7</java.version>
-		<camel.version>2.13-SNAPSHOT</camel.version>
+		<camel.version>2.13.0</camel.version>
 	</properties>
 
 	<repositories>
