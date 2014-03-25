@@ -31,13 +31,7 @@ public class HazelcastModule extends AbstractModule {
     public int writeDelaySeconds() {
         return writeDelaySeconds;
     }
-    
-    @Provides
-	@Singleton
-	public HzMapStore mapStore(AggregateRootHistoryReaderDao<UUID> reader, UnitOfWorkWriterDao<UUID> writer){
-		return new HzMapStore(writer, reader);
-	}
-    
+
 	@Provides
 	@Singleton
 	public Config config(InventoryItemMapConfigFactory mapConfigFactory, InventoryItemSerializersConfigFactory serializersFactory) {
@@ -52,7 +46,7 @@ public class HazelcastModule extends AbstractModule {
 	
 	@Override
 	protected void configure() {
-
+        bind(HzMapStore.class);
 	}
 
 }

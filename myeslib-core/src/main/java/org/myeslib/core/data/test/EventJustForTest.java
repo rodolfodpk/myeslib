@@ -1,4 +1,4 @@
-package org.myeslib.data.test;
+package org.myeslib.core.data.test;
 
 import java.util.UUID;
 

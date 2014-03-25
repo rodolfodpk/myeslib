@@ -1,4 +1,7 @@
-package org.myeslib.example.routes;
+package org.myeslib.example.jdbi.routes;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 
@@ -17,6 +20,8 @@ import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.core.storage.SnapshotReader;
@@ -24,17 +29,14 @@ import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
-import org.myeslib.example.hazelcast.infra.HazelcastData;
-import org.myeslib.example.hazelcast.modules.CamelModule;
-import org.myeslib.example.hazelcast.modules.DatabaseModule;
-import org.myeslib.example.hazelcast.modules.HazelcastModule;
-import org.myeslib.example.hazelcast.modules.InventoryItemModule;
-import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
+import org.myeslib.example.jdbi.modules.CamelModule;
+import org.myeslib.example.jdbi.modules.DatabaseModule;
+import org.myeslib.example.jdbi.modules.HazelcastModule;
+import org.myeslib.example.jdbi.modules.InventoryItemModule;
+import org.myeslib.example.jdbi.routes.JdbiConsumeCommandsRoute;
+import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
 import org.myeslib.util.jdbi.ArTablesMetadata;
-import org.myeslib.util.jdbi.ClobToStringMapper;
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.tweak.HandleCallback;
 
 import com.google.inject.Binder;
 import com.google.inject.Guice;
@@ -42,41 +44,41 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 import com.googlecode.flyway.core.Flyway;
 
 @Slf4j
-public class HzConsumeCommandsRouteTest extends CamelTestSupport {
+public class JdbiConsumeCommandsRouteTest extends CamelTestSupport {
 
 	private static Injector injector ;
 	
-	@Produce(uri = "direct:handle-inventory-item-command")
+	@Produce(uri = "direct:processCommand")
 	protected ProducerTemplate template;
-
-	@Inject
-	DataSource ds;
 	
 	@Inject
-	HzConsumeCommandsRoute consumeCommandsRoute; 
+	DataSource datasource;
+	
+	@Inject
+	DBI dbi;
+	
+	@Inject
+	ArTablesMetadata metadata;
+	
+	@Inject
+	JdbiConsumeCommandsRoute consumeCommandsRoute; 
 	
 	@Inject
 	ItemDescriptionGeneratorService service;
 	
 	@Inject
-	SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader; 
+	SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
 	
 	@Inject 
-	DBI dbi;
+	AggregateRootHistoryReaderDao<UUID> historyReader;
 	
-	@Inject
-	ArTablesMetadata metadata;
-	  
 	@BeforeClass public static void staticSetUp() throws Exception {
-		
-		injector =  Guice.createInjector(Modules.override(new CamelModule(1, 1, 1), new DatabaseModule(1, 1)).with(new TestModule()), 
-				 new HazelcastModule(0), new InventoryItemModule());
-		
+		injector = Guice.createInjector(new CamelModule(1, 1), new HazelcastModule(), 
+				Modules.override(new DatabaseModule(1, 1 ), new InventoryItemModule()).with(new TestModule()));
 	}
 
 	public static class TestModule implements Module {
@@ -88,8 +90,8 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 		}
 		@Override
 		public void configure(Binder binder) {
-			binder.bindConstant().annotatedWith(Names.named("originUri")).to("direct:handle-inventory-item-command");
-			binder.bindConstant().annotatedWith(Names.named("eventsDestinationUri")).to("mock:result");
+			binder.bind(ItemDescriptionGeneratorService.class)
+				.toInstance(Mockito.mock(ItemDescriptionGeneratorService.class));
 		}
 	}
 
@@ -97,7 +99,8 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 		injector.injectMembers(this);
 		super.setUp();
 		Flyway flyway = new Flyway();
-        flyway.setDataSource(ds);
+        flyway.setDataSource(datasource);
+        //flyway.setLocations("../myeslib-database/src/main/resources/db/h2");
         flyway.migrate();
 	}
 
@@ -110,18 +113,21 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	@Test
 	public void test() {
 		
-		CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID(), 0L, null);
-		command1.setService(service);
-		template.sendBody(command1);
+		when(service.generate(any(UUID.class))).thenReturn("an inventory item description from mock");
 		
-		IncreaseInventory command2 = new IncreaseInventory(command1.getId(), 2, 1L);
+		UUID id = UUID.randomUUID();
+		CreateInventoryItem command1 = new CreateInventoryItem(id, 0L, null);
+		command1.setService(service);;
+		template.sendBody(command1); 
+		
+		IncreaseInventory command2 = new IncreaseInventory(id, 2, 1L);
 		UnitOfWork uow = template.requestBody(command2, UnitOfWork.class);
 		
-//		String fromDatabaseAsJson = getAggregateRootHistoryAsJson(command1.getId().toString());
-//		AggregateRootHistory historyFromDatabase = injector.getInstance(Gson.class).fromJson(fromDatabaseAsJson, AggregateRootHistory.class);
-//		UnitOfWork lastUow = historyFromDatabase.getUnitsOfWork().get(historyFromDatabase.getUnitsOfWork().size()-1);
-//		
-//		assertEquals(uow, lastUow);
+		AggregateRootHistory historyFromDatabase = historyReader.get(id);
+		
+		UnitOfWork lastUow = historyFromDatabase.getUnitsOfWork().get(historyFromDatabase.getUnitsOfWork().size()-1);
+		
+		assertEquals(uow, lastUow);
 		
 		Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(command1.getId());
 		
@@ -140,19 +146,5 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	   return consumeCommandsRoute;
    }
 	
-	String getAggregateRootHistoryAsJson(final String id){
-		
-		DBI dbi = new DBI(ds);
-		
-		String clob = dbi.withHandle(new HandleCallback<String>() {
-			@Override
-			public String withHandle(Handle h) throws Exception {
-				return h.createQuery(String.format("select aggregate_root_data from %s where id = :id", HazelcastData.INVENTORY_ITEM_AGGREGATE_HISTORY.name()))
-						.bind("id", id)
-				 .map(ClobToStringMapper.FIRST).first();
-			}
-		});
-		
-		return clob;
-	}
+
 }

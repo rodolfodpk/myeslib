@@ -1,6 +1,7 @@
 package org.myeslib.example.hazelcast.infra;
 
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 import lombok.Getter;
 
@@ -20,7 +21,7 @@ public class HazelcastConfigFactory {
 		
 	    config.setProperty("hazelcast.shutdownhook.enabled", "false"); // to avoid conflit with camel
 
-		//config.setUserContext(userContext);
+        // config.setUserContext(userContext);
 		
 		for (SerializerConfig sc : serializers) {
 			config.getSerializationConfig().addSerializerConfig(sc); 

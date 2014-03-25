@@ -1,4 +1,4 @@
-package org.myeslib.data;
+package org.myeslib.core.data;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -9,9 +9,8 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.myeslib.core.Event;
-import org.myeslib.core.data.UnitOfWork;
-import org.myeslib.data.test.CommandJustForTest;
-import org.myeslib.data.test.EventJustForTest;
+import org.myeslib.core.data.test.CommandJustForTest;
+import org.myeslib.core.data.test.EventJustForTest;
 
 public class UnitOfWorkTest {
 

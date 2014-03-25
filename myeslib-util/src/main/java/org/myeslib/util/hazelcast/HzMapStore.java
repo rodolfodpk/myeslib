@@ -24,7 +24,7 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>, PostPro
 
 	private final UnitOfWorkWriterDao<UUID> writer;
 	private final AggregateRootHistoryReaderDao<UUID> reader;
-	
+
 	@Inject
 	public HzMapStore(UnitOfWorkWriterDao<UUID> writer, AggregateRootHistoryReaderDao<UUID> reader){
 		this.writer = writer;

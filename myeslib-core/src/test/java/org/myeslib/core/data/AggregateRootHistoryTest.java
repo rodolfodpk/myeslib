@@ -1,4 +1,4 @@
-package org.myeslib.data;
+package org.myeslib.core.data;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -17,10 +17,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.myeslib.core.Command;
 import org.myeslib.core.Event;
-import org.myeslib.core.data.AggregateRootHistory;
-import org.myeslib.core.data.UnitOfWork;
-import org.myeslib.data.test.CommandJustForTest;
-import org.myeslib.data.test.EventJustForTest;
+import org.myeslib.core.data.test.CommandJustForTest;
+import org.myeslib.core.data.test.EventJustForTest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AggregateRootHistoryTest {
