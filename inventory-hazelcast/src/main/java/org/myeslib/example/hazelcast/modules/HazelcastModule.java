@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.myeslib.example.hazelcast.infra.HazelcastConfigFactory;
 import org.myeslib.example.hazelcast.infra.InventoryItemMapConfigFactory;
 import org.myeslib.example.hazelcast.infra.InventoryItemSerializersConfigFactory;
-import org.myeslib.util.hazelcast.HzCamelComponent;
 import org.myeslib.util.hazelcast.HzMapStore;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
 import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
@@ -53,7 +52,7 @@ public class HazelcastModule extends AbstractModule {
 	
 	@Override
 	protected void configure() {
-		bind(HzCamelComponent.class);
+
 	}
 
 }

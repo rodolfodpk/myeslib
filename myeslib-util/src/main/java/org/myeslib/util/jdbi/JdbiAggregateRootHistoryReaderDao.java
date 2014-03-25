@@ -67,6 +67,7 @@ public class JdbiAggregateRootHistoryReaderDao implements AggregateRootHistoryRe
 					UnitOfWork uow = fromStringFunction.apply(r.uowData);
 					log.debug(uow.toString());
 					arh.add(uow);
+					arh.markAsPersisted(uow);
 				}
 			} else {
 				log.debug("found none unit of work for id {} on {}", id.toString(), tables.getUnitOfWorkTable());

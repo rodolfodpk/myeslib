@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import lombok.AllArgsConstructor;
 
 import org.myeslib.example.jdbi.routes.JdbiConsumeEventsRoute;
-import org.myeslib.util.example.ReceiveCommandsAsJsonRoute;
+import org.myeslib.example.jdbi.routes.ReceiveCommandsAsJsonRoute;
 import org.myeslib.util.hazelcast.HzJobLocker;
 
 import com.google.gson.Gson;

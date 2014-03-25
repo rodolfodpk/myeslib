@@ -64,8 +64,10 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 		JdbiUnitOfWorkWriterDao store = new JdbiUnitOfWorkWriterDao(h, metadata, toStringFunction);
 		
 		store.insert(id, newUow);
-		
-		AggregateRootHistory fromDb = reader.get(id);
+
+        toSave.markAsPersisted(newUow);
+
+        AggregateRootHistory fromDb = reader.get(id);
 		
 		assertEquals(toSave, fromDb);
 		

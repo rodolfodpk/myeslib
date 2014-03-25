@@ -14,11 +14,11 @@ import org.myeslib.example.jdbi.modules.HazelcastModule;
 import org.myeslib.example.jdbi.modules.InventoryItemModule;
 import org.myeslib.example.jdbi.routes.JdbiConsumeCommandsRoute;
 import org.myeslib.example.jdbi.routes.JdbiConsumeEventsRoute;
-import org.myeslib.util.example.ReceiveCommandsAsJsonRoute;
-import org.myeslib.util.hazelcast.HzCamelComponent;
+
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.myeslib.example.jdbi.routes.ReceiveCommandsAsJsonRoute;
 
 @Slf4j
 public class JdbiExample {
@@ -57,8 +57,7 @@ public class JdbiExample {
 	}
 		
 	@Inject
-	JdbiExample(HzCamelComponent justAnotherHazelcastComponent, 
-				ReceiveCommandsAsJsonRoute receiveCommandsRoute, 
+	JdbiExample(ReceiveCommandsAsJsonRoute receiveCommandsRoute,
 				JdbiConsumeCommandsRoute consumeCommandsRoute, 
 				JdbiConsumeEventsRoute consumeEventsRoute) throws Exception  {
 		
@@ -66,8 +65,7 @@ public class JdbiExample {
 		main.enableHangupSupport();
 		registry = new SimpleRegistry();
 		context = new DefaultCamelContext(registry);
-		
-		context.addComponent("hz", justAnotherHazelcastComponent);
+
 		context.addRoutes(receiveCommandsRoute);
 		context.addRoutes(consumeCommandsRoute);
 		context.addRoutes(consumeEventsRoute);

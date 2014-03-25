@@ -1,9 +1,11 @@
 package org.myeslib.example.hazelcast.modules;
 
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
 
 import javax.inject.Singleton;
 
+import com.hazelcast.core.IQueue;
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
@@ -87,6 +89,12 @@ public class InventoryItemModule extends AbstractModule {
 	public IMap<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap(HazelcastInstance hazelcastInstance) {
 		return hazelcastInstance.getMap(HazelcastData.INVENTORY_ITEM_LAST_SNAPSHOT.name());
 	}
+
+    @Provides
+    @Singleton
+    public IQueue<UUID> eventsQueue(HazelcastInstance hazelcastInstance) {
+        return hazelcastInstance.getQueue(HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name());
+    }
 
 	@Provides
 	@Singleton

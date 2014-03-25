@@ -2,6 +2,8 @@ package org.myeslib.example.hazelcast;
 
 import javax.inject.Inject;
 
+import com.hazelcast.core.HazelcastInstance;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.camel.CamelContext;
@@ -14,11 +16,11 @@ import org.myeslib.example.hazelcast.modules.HazelcastModule;
 import org.myeslib.example.hazelcast.modules.InventoryItemModule;
 import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
 import org.myeslib.example.hazelcast.routes.HzConsumeEventsRoute;
-import org.myeslib.util.example.ReceiveCommandsAsJsonRoute;
-import org.myeslib.util.hazelcast.HzCamelComponent;
+
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.myeslib.example.hazelcast.routes.ReceiveCommandsAsJsonRoute;
 
 @Slf4j
 public class HzExample {
@@ -62,18 +64,17 @@ public class HzExample {
 	}
 	
 	@Inject
-	HzExample(HzCamelComponent justAnotherHazelcastComponent, 
-			  ReceiveCommandsAsJsonRoute receiveCommandsRoute, 
-			  HzConsumeCommandsRoute consumeCommandsRoute, 
+	HzExample(final HazelcastInstance hazelcastInstance,
+              ReceiveCommandsAsJsonRoute receiveCommandsRoute,
+			  HzConsumeCommandsRoute consumeCommandsRoute,
 			  HzConsumeEventsRoute consumeEventsRoute
 			) throws Exception  {
 		
 		this.main = new Main() ;
-		this.main.enableHangupSupport();
+		// this.main.enableHangupSupport();
 		this.registry = new SimpleRegistry();
 		this.context = new DefaultCamelContext(registry);
-		
-		context.addComponent("hz", justAnotherHazelcastComponent);
+
 		context.addRoutes(receiveCommandsRoute);
 		context.addRoutes(consumeCommandsRoute);
 		context.addRoutes(consumeEventsRoute);
@@ -81,8 +82,26 @@ public class HzExample {
 		main.getCamelContexts().clear();
 		main.getCamelContexts().add(context);
 		main.setDuration(-1);
-		main.start();
-		
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                System.exit(-1);
+                log.warn("stopping Camel...");
+                try {
+                    context.stop();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                } finally {
+                    log.warn("stopping Hazelcast...");
+                    hazelcastInstance.shutdown();
+                }
+            }
+        });
+
+        main.start();
+
+        log.info("started...");
+
 	}
 
 }

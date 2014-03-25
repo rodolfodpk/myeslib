@@ -48,10 +48,16 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-gson</artifactId>
 		</dependency>
+        <!--
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-hazelcast</artifactId>
 		</dependency>
+		-->
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>

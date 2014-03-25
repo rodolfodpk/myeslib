@@ -2,26 +2,31 @@ package org.myeslib.example.hazelcast.routes;
 
 import javax.inject.Inject;
 
+import com.hazelcast.core.IQueue;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 import com.google.inject.name.Named;
 
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+
 public class HzConsumeCommandsRoute extends RouteBuilder {
 
 	final String originUri;
-	final String destinationUri;
 	final InventoryItemCmdProcessor inventoryItemCmdProcessor;
-
+    final IQueue<UUID> eventsQueue;
 
 	@Inject
 	public HzConsumeCommandsRoute(
 			@Named("originUri") String originUri,
-			@Named("eventsDestinationUri") String destinationUri,
-			InventoryItemCmdProcessor inventoryItemCmdProcessor) {
+			InventoryItemCmdProcessor inventoryItemCmdProcessor,
+            IQueue<UUID> eventsQueue) {
 
 		this.originUri = originUri;
-		this.destinationUri = destinationUri;
 		this.inventoryItemCmdProcessor = inventoryItemCmdProcessor;
+        this.eventsQueue = eventsQueue;
 	}
 	
 	@Override
@@ -34,11 +39,21 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 			 .routeId("handle-inventory-item-command")
 			 .setHeader("id", simple("${body.getId()}"))	    
 	         .process(inventoryItemCmdProcessor) 
-	      	 .wireTap(destinationUri)
+	      	 .wireTap("direct:enqueueId")
 	      			.newExchangeBody(header("id"))
 	      	 .end()		
 	         ;
-       
+
+         from("direct:enqueueId")
+            .routeId("enqueueId")
+            .process(new Processor() {
+                @Override
+                public void process(Exchange e) throws Exception {
+                    eventsQueue.put(body().evaluate(e, UUID.class));
+                }
+            })
+            ;
+
 	     from("direct:dead-letter-channel")
 	      	.routeId("direct:dead-letter-channel")
 	         .log("error !!");

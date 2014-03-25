@@ -1,21 +1,26 @@
 package org.myeslib.example.hazelcast.modules;
 
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
 
 import javax.inject.Singleton;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+import com.hazelcast.core.IQueue;
 import lombok.AllArgsConstructor;
 
+import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.hazelcast.infra.HazelcastData;
 import org.myeslib.example.hazelcast.routes.HzConsumeEventsRoute;
-import org.myeslib.util.example.ReceiveCommandsAsJsonRoute;
 
 import com.google.gson.Gson;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
+import org.myeslib.example.hazelcast.routes.ReceiveCommandsAsJsonRoute;
 
 @AllArgsConstructor
 public class CamelModule extends AbstractModule {
@@ -48,8 +53,11 @@ public class CamelModule extends AbstractModule {
 	
 	@Provides
 	@Singleton
-	public HzConsumeEventsRoute hzConsumeEventsRoute(SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader) {
-		return new HzConsumeEventsRoute(eventsQueueConsumers, snapshotReader);
+	public HzConsumeEventsRoute hzConsumeEventsRoute(HazelcastInstance hazelcastInstance,
+                                                     SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
+                                                     IMap<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap,
+                                                     IQueue<UUID> eventsQueue) {
+		return new HzConsumeEventsRoute(eventsQueueConsumers, snapshotReader, lastSnapshotMap, eventsQueue, hazelcastInstance);
 	}
 	
 	@Override

@@ -3,6 +3,7 @@ package org.myeslib.util.hazelcast;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -16,9 +17,10 @@ import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
 
 import com.google.inject.Inject;
 import com.hazelcast.core.MapStore;
+import com.hazelcast.core.PostProcessingMapStore;
 
 @Slf4j
-public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
+public class HzMapStore implements MapStore<UUID, AggregateRootHistory>, PostProcessingMapStore{
 
 	private final UnitOfWorkWriterDao<UUID> writer;
 	private final AggregateRootHistoryReaderDao<UUID> reader;
@@ -47,7 +49,7 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 
 	@Override
 	public Set<UUID> loadAllKeys() {
-		// TODO check is possible to avoid this initial load
+		// TODO check if is possible to avoid this initial load
 		log.debug("load all keys -- empty");
 		Set<UUID> keys = new HashSet<>();
 		return keys;
@@ -56,12 +58,12 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>{
 	@Override
 	public void store(UUID key, AggregateRootHistory value) {
 		// To set timestamp from db onto it ?
-		// log.info("store {} {}", key, value);
-		log.info("storing {}", key);
-        // TODO realized this can't work for write-behind since value may have be N uows to persist, not only the last 
-		UnitOfWork uow = value.getLastUnitOfWork(); 
-		log.debug("store uow {}", uow);
-		writer.insert(key, uow);
+		List<UnitOfWork> pending = value.getPendingOfPersistence();
+		for (UnitOfWork uow : pending){
+	        log.info("storing id {}, version {}", key, uow.getVersion());
+	        writer.insert(key, uow);
+	        value.markAsPersisted(uow);
+		}
 	}
 
 	@Override

@@ -2,8 +2,6 @@ package org.myeslib.example.jdbi.modules;
 
 import javax.inject.Singleton;
 
-import org.myeslib.util.hazelcast.HzCamelComponent;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.hazelcast.config.Config;
@@ -20,7 +18,7 @@ public class HazelcastModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(HzCamelComponent.class);
+
 	}
 	
 }

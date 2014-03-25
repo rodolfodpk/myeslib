@@ -22,14 +22,14 @@ public class InventoryItemMapConfigFactory {
 		
 		MapConfig mapConfig = new MapConfig();
 		mapConfig.setName(HazelcastData.INVENTORY_ITEM_AGGREGATE_HISTORY.name());
-		mapConfig.setInMemoryFormat(MapConfig.InMemoryFormat.OBJECT);
+		mapConfig.setInMemoryFormat(MapConfig.DEFAULT_IN_MEMORY_FORMAT);
 		
 		MapStoreConfig mapStoreConfig = new MapStoreConfig();
 
 		mapStoreConfig.setImplementation(mapStore);
 		mapStoreConfig.setEnabled(true);
 		mapStoreConfig.setWriteDelaySeconds(writeDelaySeconds); 
-		/* writeDelaySeconds > 0 means write-behind. TODO make sure this is consistent*/
+		/* writeDelaySeconds > 0 means write-behind. */
 		mapConfig.setMapStoreConfig(mapStoreConfig);
 		
 		return mapConfig;

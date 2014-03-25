@@ -2,17 +2,17 @@ package org.myeslib.example.jdbi.routes;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.hazelcast.HazelcastConstants;
+
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
-import org.myeslib.example.jdbi.infra.HazelcastData;
 import org.myeslib.util.hazelcast.HzJobLocker;
 import org.myeslib.util.jdbi.ArTablesMetadata;
 import org.skife.jdbi.v2.DBI;
@@ -36,14 +36,17 @@ public class JdbiConsumeEventsRoute extends RouteBuilder {
 	final DBI dbi;
 	final ArTablesMetadata tablesMetadata;
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
+    final Map<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap;
 
 	@Inject
 	public JdbiConsumeEventsRoute(HzJobLocker jobLocker, DBI dbi, ArTablesMetadata tablesMetadata, 
-								  SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader) {
+								  SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
+                                  Map<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap) {
 		this.jobLocker = jobLocker;
 		this.dbi = dbi;
 		this.tablesMetadata = tablesMetadata;
 		this.snapshotReader = snapshotReader;
+        this.lastSnapshotMap = lastSnapshotMap;
 	}
 
 	@Override
@@ -99,10 +102,15 @@ public class JdbiConsumeEventsRoute extends RouteBuilder {
       from("direct:reflect-last-snapshot")
          .routeId("direct:reflect-last-snapshot")
          //.log("updating the last snapshot map")
- 	 	 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION))
- 	 	 .setHeader(HazelcastConstants.OBJECT_ID, header(INVENTORY_ITEM_ID))
- 	 	 .toF("hz:%s%s", HazelcastConstants.MAP_PREFIX, HazelcastData.INVENTORY_ITEM_LAST_SNAPSHOT.name());
-      
+         .process(new Processor() {
+             @Override
+             public void process(Exchange e) throws Exception {
+                Snapshot<InventoryItemAggregateRoot> snapshot = e.getIn().getBody(Snapshot.class);
+                lastSnapshotMap.put(header(INVENTORY_ITEM_ID).evaluate(e, UUID.class), snapshot);
+             }
+         })
+      ;
+
       from("direct:reflect-query-model")
       	.routeId("direct:reflect-query-model")
       	//.log("updating the query model on database")

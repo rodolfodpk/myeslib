@@ -8,11 +8,9 @@ import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -32,7 +30,6 @@ import org.myeslib.example.hazelcast.modules.DatabaseModule;
 import org.myeslib.example.hazelcast.modules.HazelcastModule;
 import org.myeslib.example.hazelcast.modules.InventoryItemModule;
 import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
-import org.myeslib.util.hazelcast.HzCamelComponent;
 import org.myeslib.util.jdbi.ArTablesMetadata;
 import org.myeslib.util.jdbi.ClobToStringMapper;
 import org.skife.jdbi.v2.DBI;
@@ -56,10 +53,7 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	
 	@Produce(uri = "direct:handle-inventory-item-command")
 	protected ProducerTemplate template;
-	
-	@EndpointInject(uri = "mock:result")
-	protected MockEndpoint resultEndpoint;
-	
+
 	@Inject
 	DataSource ds;
 	
@@ -110,7 +104,6 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	@Override
 	public CamelContext createCamelContext() {
 		CamelContext c = new DefaultCamelContext();
-		c.addComponent("hz", injector.getInstance(HzCamelComponent.class));
 		return c;
 	}
 	

@@ -16,17 +16,18 @@
 		<build.date>${maven.build.timestamp}</build.date>
 		<java.version>1.7</java.version>
 		<camel.version>2.13.0</camel.version>
+        <hazelcast.version>3.2</hazelcast.version>
 	</properties>
 
 	<repositories>
-		<repository>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>maven-snapshots</id>
-			<name>Maven Snapshots Repository</name>
-			<url>https://repository.apache.org/content/repositories/snapshots</url>
-		</repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>bintray</name>
+            <url>http://jcenter.bintray.com</url>
+        </repository>
 	</repositories>
 
 	<modules>
@@ -41,7 +42,6 @@
 		<module>inventory-hazelcast</module>
 		<module>inventory-cmd-producer</module>
 		<module>inventory-database</module>
-		<module>inventory-util</module>
 
 	</modules>
 
@@ -105,11 +105,7 @@
 				<artifactId>inventory-database</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>inventory-util</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+
 
 			<!-- Others -->
 			<dependency>
@@ -152,11 +148,18 @@
 				<artifactId>json-path</artifactId>
 				<version>0.9.1</version>
 			</dependency>
+            <!--
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-hazelcast</artifactId>
 				<version>${camel.version}</version>
 			</dependency>
+			-->
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>${hazelcast.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>

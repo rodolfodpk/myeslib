@@ -19,7 +19,7 @@ export DB_URL
 export DB_USER
 export DB_PASSWORD
 ```
-then export the db variables and call [Flyway](http://flywaydb.org/) to initialize the target database (H2):
+then export the db variables and call [Flyway](http://flywaydb.org/) to initialize the target database ([H2 database](http://www.h2database.com)):
 ```
 source ./export-db-env-h2.sh
 cd inventory-database

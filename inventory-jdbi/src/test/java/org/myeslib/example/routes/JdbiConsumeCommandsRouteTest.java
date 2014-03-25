@@ -34,7 +34,6 @@ import org.myeslib.example.jdbi.modules.DatabaseModule;
 import org.myeslib.example.jdbi.modules.HazelcastModule;
 import org.myeslib.example.jdbi.modules.InventoryItemModule;
 import org.myeslib.example.jdbi.routes.JdbiConsumeCommandsRoute;
-import org.myeslib.util.hazelcast.HzCamelComponent;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
 import org.myeslib.util.jdbi.ArTablesMetadata;
 import org.skife.jdbi.v2.DBI;
@@ -108,7 +107,6 @@ public class JdbiConsumeCommandsRouteTest extends CamelTestSupport {
 	@Override
 	public CamelContext createCamelContext() {
 		CamelContext c = new DefaultCamelContext();
-		c.addComponent("hz", injector.getInstance(HzCamelComponent.class));
 		return c;
 	}
 	
