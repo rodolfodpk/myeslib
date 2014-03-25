@@ -71,7 +71,7 @@ public class HzExample {
 			) throws Exception  {
 		
 		this.main = new Main() ;
-		// this.main.enableHangupSupport();
+		this.main.enableHangupSupport();
 		this.registry = new SimpleRegistry();
 		this.context = new DefaultCamelContext(registry);
 
@@ -83,9 +83,8 @@ public class HzExample {
 		main.getCamelContexts().add(context);
 		main.setDuration(-1);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+ /*       Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                System.exit(-1);
                 log.warn("stopping Camel...");
                 try {
                     context.stop();
@@ -96,7 +95,7 @@ public class HzExample {
                     hazelcastInstance.shutdown();
                 }
             }
-        });
+        });*/
 
         main.start();
 
