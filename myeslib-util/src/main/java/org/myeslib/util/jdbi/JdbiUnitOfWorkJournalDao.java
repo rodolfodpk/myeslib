@@ -33,7 +33,7 @@ public class JdbiUnitOfWorkJournalDao implements UnitOfWorkJournalDao<UUID> {
      * @see org.myeslib.util.jdbi.UnitOfWorkJournalDao#append(java.lang.Object, org.myeslib.core.data.UnitOfWork)
      */
 	@Override
-	public void insert(final UUID id, final UnitOfWork uow) {
+	public void append(final UUID id, final UnitOfWork uow) {
 
 	    String sql = String.format("insert into %s (id, uow_data, version) values (:id, :uow_data, :version)", tables.getUnitOfWorkTable());
 		

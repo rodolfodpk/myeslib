@@ -61,7 +61,7 @@ public class HzMapStore implements MapStore<UUID, AggregateRootHistory>, PostPro
 		List<UnitOfWork> pending = value.getPendingOfPersistence();
 		for (UnitOfWork uow : pending){
 	        log.info("storing id {}, version {}", key, uow.getVersion());
-	        writer.insert(key, uow);
+	        writer.append(key, uow);
 	        value.markAsPersisted(uow);
 		}
 	}

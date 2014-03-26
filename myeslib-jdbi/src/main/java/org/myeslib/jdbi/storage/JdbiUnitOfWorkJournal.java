@@ -21,7 +21,7 @@ public class JdbiUnitOfWorkJournal<K> implements UnitOfWorkJournal<K> {
 	 */
 	public void append(final K id, final UnitOfWork uow) {
 		
-		dao.insert(id, uow);
+		dao.append(id, uow);
 		
 	}
 		

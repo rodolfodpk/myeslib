@@ -36,7 +36,7 @@ public class JdbiUnitOfWorkJournalTest {
 
 		writer.append(id, uow1);
 		
-		verify(dao).insert(id, uow1);
+		verify(dao).append(id, uow1);
 		
 	}
 

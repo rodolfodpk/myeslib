@@ -63,7 +63,7 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 		
 		JdbiUnitOfWorkJournalDao store = new JdbiUnitOfWorkJournalDao(h, metadata, toStringFunction);
 		
-		store.insert(id, newUow);
+		store.append(id, newUow);
 
         toSave.markAsPersisted(newUow);
 
@@ -87,7 +87,7 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 		try {
 			h.begin();
 			JdbiUnitOfWorkJournalDao store = new JdbiUnitOfWorkJournalDao(h, metadata, toStringFunction);
-			store.insert(id, newUow);
+			store.append(id, newUow);
 			h.rollback();
 
 		} finally {
@@ -116,9 +116,9 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 		
 		JdbiUnitOfWorkJournalDao store = new JdbiUnitOfWorkJournalDao(h, metadata, toStringFunction);
 			
-		store.insert(id, existingUow);
+		store.append(id, existingUow);
 		
-		store.insert(id, newUow);
+		store.append(id, newUow);
 
 		AggregateRootHistory fromDb = reader.get(id);
 		
@@ -142,11 +142,11 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 		
 		JdbiUnitOfWorkJournalDao store = new JdbiUnitOfWorkJournalDao(h, metadata, toStringFunction);
 
-		store.insert(id, existingUow);
+		store.append(id, existingUow);
 		
 		UnitOfWork newUow = UnitOfWork.create(new DecreaseInventory(id, 1, 0L), Arrays.asList(new InventoryDecreased(id, 1)));
 		
-		store.insert(id, newUow);
+		store.append(id, newUow);
 		
 	}
 

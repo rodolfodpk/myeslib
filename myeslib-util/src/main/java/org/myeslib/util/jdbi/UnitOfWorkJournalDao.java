@@ -4,6 +4,6 @@ import org.myeslib.core.data.UnitOfWork;
 
 public interface UnitOfWorkJournalDao<K> {
 
-	void insert(K id, UnitOfWork uow);
+	void append(K id, UnitOfWork uow);
 	
 }
