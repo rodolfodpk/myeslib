@@ -151,7 +151,7 @@ public class HzStringMapStore implements MapStore<UUID, String>{
 				
 				int inserts = 0, updates = 0;
 				boolean hasInsert = false, hasUpdate = false;
-				PreparedBatch pbInsert = h.prepareBatch(String.format("insert into %s (id, aggregate_root_data) values (:id, :aggregate_root_data)", tableName));
+				PreparedBatch pbInsert = h.prepareBatch(String.format("append into %s (id, aggregate_root_data) values (:id, :aggregate_root_data)", tableName));
 				PreparedBatch pbUpdate = h.prepareBatch(String.format("update %s set aggregate_root_data = :aggregate_root_data where id = :id", tableName));
 				
 				for (Entry<UUID, String> entry : id_value_pairs.entrySet()){

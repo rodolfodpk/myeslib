@@ -1,7 +1,6 @@
 package org.myeslib.example.hazelcast.modules;
 
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
 
 import javax.inject.Singleton;
 
@@ -18,9 +17,9 @@ import org.myeslib.example.SampleDomainGsonFactory;
 import org.myeslib.example.hazelcast.infra.HazelcastData;
 import org.myeslib.example.hazelcast.infra.InventoryItemMapConfigFactory;
 import org.myeslib.example.hazelcast.infra.InventoryItemSerializersConfigFactory;
-import org.myeslib.example.hazelcast.routes.InventoryItemCmdProcessor;
+import org.myeslib.example.hazelcast.routes.HzInventoryItemCmdProcessor;
 import org.myeslib.hazelcast.storage.HzSnapshotReader;
-import org.myeslib.hazelcast.storage.HzUnitOfWorkWriter;
+import org.myeslib.hazelcast.storage.HzUnitOfWorkJournal;
 import org.myeslib.util.MultiMethodCommandHandlerInvoker;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
@@ -98,8 +97,8 @@ public class InventoryItemModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public HzUnitOfWorkWriter<UUID> hzUnitOfWorkWriter(IMap<UUID, AggregateRootHistory> inventoryItemMap) {
-		return new HzUnitOfWorkWriter<>(inventoryItemMap);
+	public HzUnitOfWorkJournal<UUID> hzUnitOfWorkWriter(IMap<UUID, AggregateRootHistory> inventoryItemMap) {
+		return new HzUnitOfWorkJournal<>(inventoryItemMap);
 	}
 	
 	@Provides
@@ -125,7 +124,7 @@ public class InventoryItemModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		
-		bind(InventoryItemCmdProcessor.class).asEagerSingleton();
+		bind(HzInventoryItemCmdProcessor.class).asEagerSingleton();
 		bind(ArTablesMetadata.class).asEagerSingleton();
 		bind(InventoryItemMapConfigFactory.class).asEagerSingleton();;
 		bind(InventoryItemSerializersConfigFactory.class).asEagerSingleton();;

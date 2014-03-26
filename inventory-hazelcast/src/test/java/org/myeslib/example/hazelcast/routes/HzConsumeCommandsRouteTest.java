@@ -120,48 +120,23 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 		template.sendBody(command1);
 		
 		IncreaseInventory command2 = new IncreaseInventory(command1.getId(), 2, 1L);
-		UnitOfWork uow = template.requestBody(command2, UnitOfWork.class);
+		template.requestBody(command2, UnitOfWork.class);
 
         AggregateRootHistory fromDb = dao.get(id);
-
-        log.info("fromdb.persisted= {}", fromDb.getPersisted().size());
-        log.info("fromdb.pending= {}", fromDb.getPendingOfPersistence().size());
-
         AggregateRootHistory fromMap = inventoryItemMap.get(id);
-
-        log.info("frommap.persisted= {}", fromMap.getPersisted().size());
-        log.info("frommap.pending= {}", fromMap.getPendingOfPersistence().size());
 
         assertEquals(fromMap, fromDb);
 		
 		Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(command1.getId());
 		
 		assertTrue(snapshot.getAggregateInstance().getAvailable() == 2);
-		
-//		log.info("value on aggregateRootMap: {}", aggregateMapFactory.get(HazelcastMaps.INVENTORY_ITEM_AGGREGATE_HISTORY.name()).get(command1.getId()));
-//		log.info("value on table: \n{}", getAggregateRootHistoryAsJson(command1.getId().toString()));
-//		log.info("value on snapshotMap: {}", snapshotMapFactory.get(HazelcastMaps.INVENTORY_ITEM_LAST_SNAPSHOT.name()).get(command1.getId()));
-//		
+        assertTrue(snapshot.getVersion().equals(2L));
+
 	}
 	
    @Override
     protected RouteBuilder createRouteBuilder() {
 	   return consumeCommandsRoute;
    }
-	
-	String getAggregateRootHistoryAsJson(final String id){
-		
-		DBI dbi = new DBI(ds);
-		
-		String clob = dbi.withHandle(new HandleCallback<String>() {
-			@Override
-			public String withHandle(Handle h) throws Exception {
-				return h.createQuery(String.format("select aggregate_root_data from %s where id = :id", HazelcastData.INVENTORY_ITEM_AGGREGATE_HISTORY.name()))
-						.bind("id", id)
-				 .map(ClobToStringMapper.FIRST).first();
-			}
-		});
-		
-		return clob;
-	}
+
 }

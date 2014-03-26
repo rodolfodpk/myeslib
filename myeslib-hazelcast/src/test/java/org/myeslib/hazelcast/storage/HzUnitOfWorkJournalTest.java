@@ -28,7 +28,7 @@ import org.myeslib.example.SampleDomain.InventoryIncreased;
 import com.hazelcast.core.IMap;
 
 @RunWith(MockitoJUnitRunner.class) 
-public class HzUnitOfWorkWriterTest {
+public class HzUnitOfWorkJournalTest {
 	
 	@Mock
 	IMap<UUID, AggregateRootHistory> mapWithUuidKey;
@@ -47,8 +47,8 @@ public class HzUnitOfWorkWriterTest {
 		// first get on map will returns null, second will returns toStore 
 		when(mapWithUuidKey.get(id)).thenReturn(null, toStore);
 		
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(mapWithUuidKey);
-		store.insert(id, t);
+		HzUnitOfWorkJournal<UUID> store = new HzUnitOfWorkJournal<>(mapWithUuidKey);
+		store.append(id, t);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
 		ArgumentCaptor<AggregateRootHistory> argumentValue = ArgumentCaptor.forClass(AggregateRootHistory.class);
@@ -80,10 +80,10 @@ public class HzUnitOfWorkWriterTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(toStore);
 		
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(mapWithUuidKey);
+		HzUnitOfWorkJournal<UUID> store = new HzUnitOfWorkJournal<>(mapWithUuidKey);
 		Command command2 = new IncreaseInventory(id, 1, 1L);
 		UnitOfWork t2 = UnitOfWork.create(command2, events);
-		store.insert(id, t2);
+		store.append(id, t2);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
 		ArgumentCaptor<AggregateRootHistory> argumentValue = ArgumentCaptor.forClass(AggregateRootHistory.class);
@@ -125,9 +125,9 @@ public class HzUnitOfWorkWriterTest {
 		
 		when(mapWithUuidKey.get(id)).thenReturn(toStore);
 
-		HzUnitOfWorkWriter<UUID> store = new HzUnitOfWorkWriter<>(mapWithUuidKey);
+		HzUnitOfWorkJournal<UUID> store = new HzUnitOfWorkJournal<>(mapWithUuidKey);
 		UnitOfWork t2 = UnitOfWork.create(command, events);
-		store.insert(id, t2);
+		store.append(id, t2);
 
 	}
 	

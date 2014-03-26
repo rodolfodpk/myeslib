@@ -15,13 +15,13 @@ import java.util.concurrent.BlockingQueue;
 public class HzConsumeCommandsRoute extends RouteBuilder {
 
 	final String originUri;
-	final InventoryItemCmdProcessor inventoryItemCmdProcessor;
+	final HzInventoryItemCmdProcessor inventoryItemCmdProcessor;
     final IQueue<UUID> eventsQueue;
 
 	@Inject
 	public HzConsumeCommandsRoute(
 			@Named("originUri") String originUri,
-			InventoryItemCmdProcessor inventoryItemCmdProcessor,
+			HzInventoryItemCmdProcessor inventoryItemCmdProcessor,
             IQueue<UUID> eventsQueue) {
 
 		this.originUri = originUri;

@@ -17,7 +17,7 @@ import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.example.jdbi.modules.InventoryItemModule.AggregateRootHistoryWriterDaoFactory;
 import org.myeslib.example.jdbi.modules.InventoryItemModule.ServiceJustForTest;
-import org.myeslib.jdbi.storage.JdbiUnitOfWorkWriter;
+import org.myeslib.jdbi.storage.JdbiUnitOfWorkJournal;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
@@ -70,9 +70,9 @@ public class InventoryItemCmdProcessor implements Processor {
         try {
 
             UnitOfWork uow = cmdHandlerInvoker.invoke(id, command, commandHandler);
-            JdbiUnitOfWorkWriter<UUID> uowWriter = new JdbiUnitOfWorkWriter<>(
+            JdbiUnitOfWorkJournal<UUID> uowWriter = new JdbiUnitOfWorkJournal<>(
                     aggregateRootHistoryWriterDaoFactory.create(handle));
-            uowWriter.insert(id, uow);
+            uowWriter.append(id, uow);
             e.getOut().setHeader("id", id);
             e.getOut().setBody(uow);
             handle.commit();

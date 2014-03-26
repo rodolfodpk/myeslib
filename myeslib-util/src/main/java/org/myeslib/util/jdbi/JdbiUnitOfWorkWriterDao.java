@@ -30,7 +30,7 @@ public class JdbiUnitOfWorkWriterDao implements UnitOfWorkWriterDao<UUID>{
 	
     /*
      * (non-Javadoc)
-     * @see org.myeslib.util.jdbi.UnitOfWorkWriterDao#insert(java.lang.Object, org.myeslib.core.data.UnitOfWork)
+     * @see org.myeslib.util.jdbi.UnitOfWorkWriterDao#append(java.lang.Object, org.myeslib.core.data.UnitOfWork)
      */
 	@Override
 	public void insert(final UUID id, final UnitOfWork uow) {

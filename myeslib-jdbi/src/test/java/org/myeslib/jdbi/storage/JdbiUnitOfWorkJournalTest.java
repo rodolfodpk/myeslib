@@ -17,7 +17,7 @@ import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
 
 @RunWith(MockitoJUnitRunner.class) 
-public class JdbiUnitOfWorkWriterTest {
+public class JdbiUnitOfWorkJournalTest {
 
 	@Mock
 	UnitOfWorkWriterDao<UUID> dao;
@@ -25,7 +25,7 @@ public class JdbiUnitOfWorkWriterTest {
 	@Test
 	public void insert() {
 		
-		JdbiUnitOfWorkWriter<UUID> writer = new JdbiUnitOfWorkWriter<>(dao);
+		JdbiUnitOfWorkJournal<UUID> writer = new JdbiUnitOfWorkJournal<>(dao);
 
 	    UUID id = UUID.randomUUID();
 		
@@ -34,7 +34,7 @@ public class JdbiUnitOfWorkWriterTest {
 		Event event12 = new InventoryIncreased(id, 1);	
 		UnitOfWork uow1 = UnitOfWork.create(command1, Arrays.asList(event11, event12));
 
-		writer.insert(id, uow1);
+		writer.append(id, uow1);
 		
 		verify(dao).insert(id, uow1);
 		

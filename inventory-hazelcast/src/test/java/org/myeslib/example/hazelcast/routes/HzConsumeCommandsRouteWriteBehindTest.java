@@ -146,6 +146,7 @@ public class HzConsumeCommandsRouteWriteBehindTest extends CamelTestSupport {
         Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(command1.getId());
 
         assertTrue(snapshot.getAggregateInstance().getAvailable() == 2);
+        assertTrue(snapshot.getVersion().equals(2L));
 
         log.info("result value after sending the command: {}", uow);
 

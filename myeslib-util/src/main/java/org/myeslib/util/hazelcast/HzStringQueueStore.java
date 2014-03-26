@@ -129,7 +129,7 @@ public class HzStringQueueStore implements QueueStore<String> {
 			@Override
 			public Integer inTransaction(Handle h, TransactionStatus ts)
 					throws Exception {
-				PreparedBatch pb = h.prepareBatch(String.format("insert into %s (id, value) values (:id, :value)", tableName));
+				PreparedBatch pb = h.prepareBatch(String.format("append into %s (id, value) values (:id, :value)", tableName));
 				for (Map.Entry<Long, String> entry : items.entrySet()){
 					log.info("store " + entry.getKey() + ", value = " + entry.getValue());
 					pb.add().bind("id", entry.getKey()).bind("value", entry.getValue());

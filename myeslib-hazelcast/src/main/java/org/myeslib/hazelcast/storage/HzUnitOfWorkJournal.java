@@ -8,27 +8,27 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.UnitOfWork;
-import org.myeslib.core.storage.UnitOfWorkWriter;
+import org.myeslib.core.storage.UnitOfWorkJournal;
 
 import com.google.inject.Inject;
 import com.hazelcast.core.IMap;
 
 @Slf4j
-public class HzUnitOfWorkWriter<K> implements UnitOfWorkWriter<K>{
+public class HzUnitOfWorkJournal<K> implements UnitOfWorkJournal<K> {
 
 	private final IMap<K, AggregateRootHistory> pastTransactionsMap ;
 	
 	@Inject
-	public HzUnitOfWorkWriter(IMap<K, AggregateRootHistory> pastTransactionsMap) {
+	public HzUnitOfWorkJournal(IMap<K, AggregateRootHistory> pastTransactionsMap) {
 		checkNotNull(pastTransactionsMap);
 		this.pastTransactionsMap = pastTransactionsMap;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.core.storage.UnitOfWorkWriter#insert(java.lang.Object, org.myeslib.core.data.UnitOfWork)
+	 * @see org.myeslib.core.storage.UnitOfWorkJournal#append(java.lang.Object, org.myeslib.core.data.UnitOfWork)
 	 */
-	public void insert(final K id, final UnitOfWork uow) {
+	public void append(final K id, final UnitOfWork uow) {
 		checkNotNull(id);
 		checkNotNull(uow);
 		final AggregateRootHistory history = getHistoryFor(id);

@@ -16,18 +16,18 @@ import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
-import org.myeslib.hazelcast.storage.HzUnitOfWorkWriter;
+import org.myeslib.hazelcast.storage.HzUnitOfWorkJournal;
 
 import com.google.inject.Inject;
 
 @Slf4j
-public class InventoryItemCmdProcessor  implements Processor {
+public class HzInventoryItemCmdProcessor  implements Processor {
 	
 	@Inject
-	public InventoryItemCmdProcessor(
+	public HzInventoryItemCmdProcessor(
 			SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
 			CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker,
-			HzUnitOfWorkWriter<UUID> hzUnitOfWorkWriter,
+			HzUnitOfWorkJournal<UUID> hzUnitOfWorkWriter,
 			ItemDescriptionGeneratorService service) {
 		this.snapshotReader = snapshotReader;
 		this.cmdHandlerInvoker = cmdHandlerInvoker;
@@ -37,7 +37,7 @@ public class InventoryItemCmdProcessor  implements Processor {
 
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
 	final CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker;
-	final HzUnitOfWorkWriter<UUID> hzUnitOfWorkWriter ;
+	final HzUnitOfWorkJournal<UUID> hzUnitOfWorkWriter ;
 	final ItemDescriptionGeneratorService service;
 
 	@Override
@@ -61,7 +61,7 @@ public class InventoryItemCmdProcessor  implements Processor {
 			}
 			
 			UnitOfWork uow = cmdHandlerInvoker.invoke(id, command, commandHandler);
-			hzUnitOfWorkWriter.insert(id, uow);
+			hzUnitOfWorkWriter.append(id, uow);
 			e.getOut().setHeader("id", id);
 			e.getOut().setBody(uow);
 			// log.debug("since this map is configured to be write through and there is a db trigger to control optimistic locking and concurrency, this is a commited transaction {} {}", id, Thread.currentThread());
