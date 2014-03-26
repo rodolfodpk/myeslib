@@ -61,7 +61,7 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 		
 		Handle h = dbi.open();
 		
-		JdbiUnitOfWorkWriterDao store = new JdbiUnitOfWorkWriterDao(h, metadata, toStringFunction);
+		JdbiUnitOfWorkJournalDao store = new JdbiUnitOfWorkJournalDao(h, metadata, toStringFunction);
 		
 		store.insert(id, newUow);
 
@@ -86,7 +86,7 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 		
 		try {
 			h.begin();
-			JdbiUnitOfWorkWriterDao store = new JdbiUnitOfWorkWriterDao(h, metadata, toStringFunction);
+			JdbiUnitOfWorkJournalDao store = new JdbiUnitOfWorkJournalDao(h, metadata, toStringFunction);
 			store.insert(id, newUow);
 			h.rollback();
 
@@ -114,7 +114,7 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 		
 		Handle h = dbi.open();
 		
-		JdbiUnitOfWorkWriterDao store = new JdbiUnitOfWorkWriterDao(h, metadata, toStringFunction);
+		JdbiUnitOfWorkJournalDao store = new JdbiUnitOfWorkJournalDao(h, metadata, toStringFunction);
 			
 		store.insert(id, existingUow);
 		
@@ -140,7 +140,7 @@ public class JdbiAggregateRootHistoryWriterDaoTest {
 
 		Handle h = dbi.open();
 		
-		JdbiUnitOfWorkWriterDao store = new JdbiUnitOfWorkWriterDao(h, metadata, toStringFunction);
+		JdbiUnitOfWorkJournalDao store = new JdbiUnitOfWorkJournalDao(h, metadata, toStringFunction);
 
 		store.insert(id, existingUow);
 		

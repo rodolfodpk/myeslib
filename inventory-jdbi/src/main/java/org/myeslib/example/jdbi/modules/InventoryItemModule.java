@@ -19,11 +19,8 @@ import org.myeslib.jdbi.storage.JdbiSnapshotReader;
 import org.myeslib.util.MultiMethodCommandHandlerInvoker;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
-import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
-import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
-import org.myeslib.util.jdbi.ArTablesMetadata;
-import org.myeslib.util.jdbi.JdbiAggregateRootHistoryReaderDao;
-import org.myeslib.util.jdbi.JdbiUnitOfWorkWriterDao;
+import org.myeslib.util.jdbi.*;
+import org.myeslib.util.jdbi.UnitOfWorkJournalDao;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
@@ -102,7 +99,7 @@ public class InventoryItemModule extends AbstractModule {
 	}
 	
 	public interface AggregateRootHistoryWriterDaoFactory {
-		JdbiUnitOfWorkWriterDao create(Handle handle);
+		JdbiUnitOfWorkJournalDao create(Handle handle);
 	}
 	
 	@Override
@@ -111,7 +108,7 @@ public class InventoryItemModule extends AbstractModule {
 		bind(InventoryItemCmdProcessor.class).asEagerSingleton();
 		
 		install(new FactoryModuleBuilder()
-        .implement(UnitOfWorkWriterDao.class, JdbiUnitOfWorkWriterDao.class)
+        .implement(UnitOfWorkJournalDao.class, JdbiUnitOfWorkJournalDao.class)
         .build(AggregateRootHistoryWriterDaoFactory.class)) ;
 
 		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class).asEagerSingleton();

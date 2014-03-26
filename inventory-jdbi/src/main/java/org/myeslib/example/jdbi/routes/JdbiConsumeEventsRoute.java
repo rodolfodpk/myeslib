@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;

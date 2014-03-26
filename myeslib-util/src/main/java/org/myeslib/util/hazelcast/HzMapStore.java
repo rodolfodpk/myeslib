@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.UnitOfWork;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
-import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
+import org.myeslib.util.jdbi.UnitOfWorkJournalDao;
 
 import com.google.inject.Inject;
 import com.hazelcast.core.MapStore;
@@ -22,11 +22,11 @@ import com.hazelcast.core.PostProcessingMapStore;
 @Slf4j
 public class HzMapStore implements MapStore<UUID, AggregateRootHistory>, PostProcessingMapStore{
 
-	private final UnitOfWorkWriterDao<UUID> writer;
+	private final UnitOfWorkJournalDao<UUID> writer;
 	private final AggregateRootHistoryReaderDao<UUID> reader;
 
 	@Inject
-	public HzMapStore(UnitOfWorkWriterDao<UUID> writer, AggregateRootHistoryReaderDao<UUID> reader){
+	public HzMapStore(UnitOfWorkJournalDao<UUID> writer, AggregateRootHistoryReaderDao<UUID> reader){
 		this.writer = writer;
 		this.reader = reader;
 	}

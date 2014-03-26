@@ -12,12 +12,12 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 @Slf4j
-public class JdbiUnitOfWorkWriterDao implements UnitOfWorkWriterDao<UUID>{
+public class JdbiUnitOfWorkJournalDao implements UnitOfWorkJournalDao<UUID> {
 	
 	@Inject
-	public JdbiUnitOfWorkWriterDao(@Assisted Handle handle,
-			ArTablesMetadata tables,
-			Function<UnitOfWork, String> toStringFunction) {
+	public JdbiUnitOfWorkJournalDao(@Assisted Handle handle,
+                                    ArTablesMetadata tables,
+                                    Function<UnitOfWork, String> toStringFunction) {
 		
 		this.handle = handle;
 		this.tables = tables;
@@ -30,7 +30,7 @@ public class JdbiUnitOfWorkWriterDao implements UnitOfWorkWriterDao<UUID>{
 	
     /*
      * (non-Javadoc)
-     * @see org.myeslib.util.jdbi.UnitOfWorkWriterDao#append(java.lang.Object, org.myeslib.core.data.UnitOfWork)
+     * @see org.myeslib.util.jdbi.UnitOfWorkJournalDao#append(java.lang.Object, org.myeslib.core.data.UnitOfWork)
      */
 	@Override
 	public void insert(final UUID id, final UnitOfWork uow) {

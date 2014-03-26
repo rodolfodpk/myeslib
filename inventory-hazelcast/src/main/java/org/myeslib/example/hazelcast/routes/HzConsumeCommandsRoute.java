@@ -1,16 +1,16 @@
 package org.myeslib.example.hazelcast.routes;
 
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
-import com.hazelcast.core.IQueue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 import com.google.inject.name.Named;
-
-import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
+import com.hazelcast.core.IQueue;
 
 public class HzConsumeCommandsRoute extends RouteBuilder {
 
@@ -49,7 +49,9 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
             .process(new Processor() {
                 @Override
                 public void process(Exchange e) throws Exception {
-                    eventsQueue.put(body().evaluate(e, UUID.class));
+                    if (!eventsQueue.offer(body().evaluate(e, UUID.class), 100, TimeUnit.MILLISECONDS)){
+                        log.error("error while enqueuing {}", body().evaluate(e, UUID.class));
+                    }
                 }
             })
             ;

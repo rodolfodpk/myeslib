@@ -1,7 +1,5 @@
 package org.myeslib.example.hazelcast.modules;
 
-import java.util.UUID;
-
 import javax.inject.Singleton;
 
 import lombok.AllArgsConstructor;
@@ -10,8 +8,6 @@ import org.myeslib.example.hazelcast.infra.HazelcastConfigFactory;
 import org.myeslib.example.hazelcast.infra.InventoryItemMapConfigFactory;
 import org.myeslib.example.hazelcast.infra.InventoryItemSerializersConfigFactory;
 import org.myeslib.util.hazelcast.HzMapStore;
-import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
-import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

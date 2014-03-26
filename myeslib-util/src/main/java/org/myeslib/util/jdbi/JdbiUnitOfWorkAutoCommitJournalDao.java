@@ -15,12 +15,12 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 @Slf4j
-public class JdbiUnitOfWorkAutoCommitWriterDao implements UnitOfWorkWriterDao<UUID>{
+public class JdbiUnitOfWorkAutoCommitJournalDao implements UnitOfWorkJournalDao<UUID> {
 	
 	@Inject
-	public JdbiUnitOfWorkAutoCommitWriterDao(DBI dbi,
-			ArTablesMetadata tables,
-			Function<UnitOfWork, String> toStringFunction) {
+	public JdbiUnitOfWorkAutoCommitJournalDao(DBI dbi,
+                                              ArTablesMetadata tables,
+                                              Function<UnitOfWork, String> toStringFunction) {
 		
 		this.dbi = dbi;
 		this.tables = tables;
@@ -33,7 +33,7 @@ public class JdbiUnitOfWorkAutoCommitWriterDao implements UnitOfWorkWriterDao<UU
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.myeslib.util.jdbi.UnitOfWorkWriterDao#append(java.lang.Object, org.myeslib.core.data.UnitOfWork)
+	 * @see org.myeslib.util.jdbi.UnitOfWorkJournalDao#append(java.lang.Object, org.myeslib.core.data.UnitOfWork)
 	 */
 	@Override
 	public void insert(final UUID id, final UnitOfWork uow) {

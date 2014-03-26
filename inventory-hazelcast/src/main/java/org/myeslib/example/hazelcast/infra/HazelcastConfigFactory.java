@@ -1,7 +1,6 @@
 package org.myeslib.example.hazelcast.infra;
 
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 import lombok.Getter;
 

@@ -2,8 +2,6 @@ package org.myeslib.example.hazelcast;
 
 import javax.inject.Inject;
 
-import com.hazelcast.core.HazelcastInstance;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.camel.CamelContext;
@@ -16,11 +14,11 @@ import org.myeslib.example.hazelcast.modules.HazelcastModule;
 import org.myeslib.example.hazelcast.modules.InventoryItemModule;
 import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
 import org.myeslib.example.hazelcast.routes.HzConsumeEventsRoute;
-
+import org.myeslib.example.hazelcast.routes.ReceiveCommandsAsJsonRoute;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.myeslib.example.hazelcast.routes.ReceiveCommandsAsJsonRoute;
+import com.hazelcast.core.HazelcastInstance;
 
 @Slf4j
 public class HzExample {

@@ -23,11 +23,8 @@ import org.myeslib.hazelcast.storage.HzUnitOfWorkJournal;
 import org.myeslib.util.MultiMethodCommandHandlerInvoker;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
-import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
-import org.myeslib.util.jdbi.UnitOfWorkWriterDao;
-import org.myeslib.util.jdbi.ArTablesMetadata;
-import org.myeslib.util.jdbi.JdbiUnitOfWorkAutoCommitWriterDao;
-import org.myeslib.util.jdbi.JdbiAggregateRootHistoryReaderDao;
+import org.myeslib.util.jdbi.*;
+import org.myeslib.util.jdbi.UnitOfWorkJournalDao;
 import org.skife.jdbi.v2.DBI;
 
 import com.google.common.base.Function;
@@ -73,8 +70,8 @@ public class InventoryItemModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public UnitOfWorkWriterDao<UUID> arWriter(ArTablesMetadata metadata, DBI dbi, Function<UnitOfWork, String> toStringFunction) {
-		return new JdbiUnitOfWorkAutoCommitWriterDao(dbi, metadata, toStringFunction);
+	public UnitOfWorkJournalDao<UUID> arWriter(ArTablesMetadata metadata, DBI dbi, Function<UnitOfWork, String> toStringFunction) {
+		return new JdbiUnitOfWorkAutoCommitJournalDao(dbi, metadata, toStringFunction);
 	}
 
 	@Provides

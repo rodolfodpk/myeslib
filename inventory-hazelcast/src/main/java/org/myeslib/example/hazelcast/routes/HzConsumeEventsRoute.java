@@ -2,22 +2,26 @@ package org.myeslib.example.hazelcast.routes;
 
 import java.util.List;
 import java.util.UUID;
-
 import java.util.Vector;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.IQueue;
 import lombok.AllArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
+
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+import com.hazelcast.core.IQueue;
 
 @Slf4j
 @AllArgsConstructor
@@ -37,7 +41,7 @@ public class HzConsumeEventsRoute extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
 
-      from("timer://eventsQueuePolling?fixedRate=true&period=1000")
+      from("timer://eventsQueuePolling?fixedRate=true&period=1s")
          .routeId("timer:eventsQueuePolling")
          .process(new EventsQueuePoolerProcessor())
          .split(body())
@@ -60,7 +64,8 @@ public class HzConsumeEventsRoute extends RouteBuilder {
       from("direct:reflect-last-snapshot")
          .routeId("direct:reflect-last-snapshot")
          .process(new Processor() {
-             @Override
+            @SuppressWarnings("unchecked")
+            @Override
              public void process(Exchange e) throws Exception {
                  lastSnapshotMap.set(header(ID).evaluate(e, UUID.class), body().evaluate(e, Snapshot.class));
              }
