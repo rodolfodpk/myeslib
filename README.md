@@ -64,11 +64,11 @@ There are 3 datasets. Each dataset will send just one type of command:
 * IncreaseCommand 
 * DecreaseCommand
 
+Datasets will be sent in correct order (create, increase and decrease). 
 
-So the idea is to send comands in correct order (create, increase and decrease), while having a delay between each dataset in order to avoid ConcurrentModificationExceptions. 
 #### Notes
 * Your IDE must support [Project Lombok](http://projectlombok.org/)
-* Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml to use [H2 database](http://www.h2database.com) instead.
+* If you want to use Oracle instead of [H2 database](http://www.h2database.com), you will need to remove the comments on ojdbc7 dependencies within poms.xml In this case, please remember your maven repository should contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html).
 
 #### Some references
 * [Building an Event Store based on a relational database](http://cqrs.wordpress.com/documents/building-event-storage/)
