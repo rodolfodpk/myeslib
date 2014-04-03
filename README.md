@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/rodolfodpk/myeslib.svg?branch=master)](https://travis-ci.org/rodolfodpk/myeslib)
+
 #### Context
 The idea is to explore a flavour of CQRS / ES introduced in [Don’t publish Domain Events, return them!](http://www.jayway.com/2013/06/20/dont-publish-domain-events-return-them/) Basically, instead of having the  [CommandHandler](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/CommandHandlers.cs) with void methods, each method will actually return a List<? extends Event>. These events and the original command will then form a <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork</a>. This UnitOfWork is persisted into a fairly effective (and simple) Event Store backed by a relational database. There is not any read model yet but I do plan to develop it just for sake of the example. The resulting UnitOfWork could also be returned to [Tasks based UIs](http://cqrs.wordpress.com/documents/task-based-ui), although UIs are out of the current scope. The communication between producer and consumer services is HTTP based but for now the endpoints are not really well polished REST services.
 #### Running the Inventory example
@@ -62,11 +64,11 @@ There are 3 datasets. Each dataset will send just one type of command:
 * IncreaseCommand 
 * DecreaseCommand
 
+Datasets will be sent in correct order (create, increase and decrease). 
 
-So the idea is to send comands in correct order (create, increase and decrease), while having a delay between each dataset in order to avoid ConcurrentModificationExceptions. 
 #### Notes
 * Your IDE must support [Project Lombok](http://projectlombok.org/)
-* Your maven repository must contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html) - or you can simply remove references to it in pom.xml to use [H2 database](http://www.h2database.com) instead.
+* If you want to use Oracle instead of [H2 database](http://www.h2database.com), you will need to remove the comments on ojdbc7 dependencies within poms.xml In this case, please remember your maven repository should contain [Oracle jdbc drivers](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html).
 
 #### Some references
 * [Building an Event Store based on a relational database](http://cqrs.wordpress.com/documents/building-event-storage/)
