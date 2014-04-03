@@ -19,7 +19,7 @@ public class UnitOfWorkTest {
 		List<Event> events = Arrays.asList((Event) new EventJustForTest(UUID.randomUUID(), 1));
 		CommandJustForTest command = new CommandJustForTest(UUID.randomUUID(), 0L);
 		UnitOfWork uow = UnitOfWork.create(command, events);
-		assertThat(uow.getCommandVersion(), is(0L));
+		assertThat(uow.getTargetVersion(), is(0L));
 		assertThat(uow.getVersion(), is(1L));
 	}
 

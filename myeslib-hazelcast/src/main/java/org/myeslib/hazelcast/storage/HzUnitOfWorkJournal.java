@@ -32,10 +32,10 @@ public class HzUnitOfWorkJournal<K> implements UnitOfWorkJournal<K> {
 		checkNotNull(id);
 		checkNotNull(uow);
 		final AggregateRootHistory history = getHistoryFor(id);
-		if (!history.getLastVersion().equals(uow.getCommandVersion())){
+		if (!history.getLastVersion().equals(uow.getTargetVersion())){
 			throw new ConcurrentModificationException(String.format("version %s does not match the expected %s ****", 
 																	history.getLastVersion().toString(), 
-																	uow.getCommandVersion().toString())
+																	uow.getTargetVersion().toString())
 													 );
 														
 		} 
