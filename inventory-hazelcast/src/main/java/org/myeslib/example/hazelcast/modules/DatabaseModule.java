@@ -1,18 +1,15 @@
 package org.myeslib.example.hazelcast.modules;
 
-import java.sql.SQLException;
-
-import javax.inject.Singleton;
-import javax.sql.DataSource;
-
-import lombok.AllArgsConstructor;
-
-import org.skife.jdbi.v2.DBI;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.AllArgsConstructor;
+import org.skife.jdbi.v2.DBI;
+
+import javax.inject.Singleton;
+import javax.sql.DataSource;
+import java.sql.SQLException;
 
 @AllArgsConstructor
 public class DatabaseModule extends AbstractModule {

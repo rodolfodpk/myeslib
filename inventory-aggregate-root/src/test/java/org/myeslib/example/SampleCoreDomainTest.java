@@ -1,8 +1,8 @@
 package org.myeslib.example;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,7 +35,7 @@ public class SampleCoreDomainTest {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
-		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), 0L, null);
+		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID());
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 		
@@ -52,7 +52,7 @@ public class SampleCoreDomainTest {
 		
 		aggregateRoot.setId(id);
 		
-		CreateInventoryItem command = new CreateInventoryItem(id, 0L, null);
+		CreateInventoryItem command = new CreateInventoryItem(id);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -86,7 +86,7 @@ public class SampleCoreDomainTest {
 		UUID id = UUID.randomUUID();
 		String desc = "item1";
 		
-		CreateInventoryItem command = new CreateInventoryItem(id, 0L, null);
+		CreateInventoryItem command = new CreateInventoryItem(id);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	

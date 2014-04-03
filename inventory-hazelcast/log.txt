@@ -1,0 +1,30 @@
+12:20:43,838 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.groovy]
+12:20:43,838 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.xml]
+12:20:43,838 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback.xml] at [jar:file:/Users/rpaula/github/lab/myeslib/inventory-hazelcast/target/inventory-hazelcast-0.0.1-SNAPSHOT.jar!/logback.xml]
+12:20:43,860 |-INFO in ch.qos.logback.core.joran.spi.ConfigurationWatchList@c38a936 - URL [jar:file:/Users/rpaula/github/lab/myeslib/inventory-hazelcast/target/inventory-hazelcast-0.0.1-SNAPSHOT.jar!/logback.xml] is not of type file
+12:20:43,920 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - debug attribute not set
+12:20:43,930 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - Setting ReconfigureOnChangeFilter scanning period to 30 seconds
+12:20:43,930 |-INFO in ReconfigureOnChangeFilter{invocationCounter=0} - Will scan for changes in [[]] every 30 seconds. 
+12:20:43,930 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - Adding ReconfigureOnChangeFilter as a turbo filter
+12:20:44,062 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+12:20:44,065 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
+12:20:44,089 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+12:20:44,165 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.FileAppender]
+12:20:44,167 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [FILE]
+12:20:44,179 |-WARN in ch.qos.logback.core.FileAppender[FILE] - This appender no longer admits a layout as a sub-component, set an encoder instead.
+12:20:44,179 |-WARN in ch.qos.logback.core.FileAppender[FILE] - To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.
+12:20:44,179 |-WARN in ch.qos.logback.core.FileAppender[FILE] - See also http://logback.qos.ch/codes.html#layoutInsteadOfEncoder for details
+12:20:44,179 |-INFO in ch.qos.logback.core.FileAppender[FILE] - File property is set to [target/inventory-hazelcast.log]
+12:20:44,181 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
+12:20:44,181 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [FILE] to Logger[ROOT]
+12:20:44,181 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+12:20:44,181 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+12:20:44,182 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@5bed1e7e - Registering current configuration as safe fallback point
+
+12:20:44.196 INFO  o.m.example.hazelcast.HzExample - starting...
+12:20:44.210 INFO  o.m.example.hazelcast.HzExample - jettyMinThreads = 10
+12:20:44.210 INFO  o.m.example.hazelcast.HzExample - jettyMaxThreads = 100
+12:20:44.210 INFO  o.m.example.hazelcast.HzExample - dbPoolMinConnections = 10
+12:20:44.210 INFO  o.m.example.hazelcast.HzExample - dbPoolMaxConnections = 100
+12:20:44.211 INFO  o.m.example.hazelcast.HzExample - eventsQueueConsumers = 50
+12:20:44.211 INFO  o.m.example.hazelcast.HzExample - writeDelaySeconds = 10 (write-behind)

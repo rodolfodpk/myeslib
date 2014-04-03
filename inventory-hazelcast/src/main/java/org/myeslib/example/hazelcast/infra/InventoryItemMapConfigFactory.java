@@ -25,7 +25,6 @@ public class InventoryItemMapConfigFactory {
 		mapConfig.setInMemoryFormat(MapConfig.DEFAULT_IN_MEMORY_FORMAT);
 		
 		MapStoreConfig mapStoreConfig = new MapStoreConfig();
-
 		mapStoreConfig.setImplementation(mapStore);
 		mapStoreConfig.setEnabled(true);
 		mapStoreConfig.setWriteDelaySeconds(writeDelaySeconds); 

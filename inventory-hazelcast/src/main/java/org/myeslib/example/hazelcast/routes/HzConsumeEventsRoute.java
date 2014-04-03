@@ -19,7 +19,6 @@ import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 
-import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
 
@@ -34,7 +33,6 @@ public class HzConsumeEventsRoute extends RouteBuilder {
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
     final IMap<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap;
     final IQueue<UUID> eventsQueue;
-    final HazelcastInstance hazelcastInstance;
 
     final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 

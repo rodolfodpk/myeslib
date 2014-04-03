@@ -1,9 +1,12 @@
 package org.myeslib.example.hazelcast.modules;
 
-import java.util.UUID;
-
-import javax.inject.Singleton;
-
+import com.google.common.base.Function;
+import com.google.gson.Gson;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.Snapshot;
@@ -24,16 +27,10 @@ import org.myeslib.util.MultiMethodCommandHandlerInvoker;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
 import org.myeslib.util.jdbi.*;
-import org.myeslib.util.jdbi.UnitOfWorkJournalDao;
 import org.skife.jdbi.v2.DBI;
 
-import com.google.common.base.Function;
-import com.google.gson.Gson;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.name.Named;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import javax.inject.Singleton;
+import java.util.UUID;
 
 public class InventoryItemModule extends AbstractModule {
 	

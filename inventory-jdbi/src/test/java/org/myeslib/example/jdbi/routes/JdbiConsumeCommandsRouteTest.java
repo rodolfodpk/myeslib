@@ -116,7 +116,7 @@ public class JdbiConsumeCommandsRouteTest extends CamelTestSupport {
 		when(service.generate(any(UUID.class))).thenReturn("an inventory item description from mock");
 		
 		UUID id = UUID.randomUUID();
-		CreateInventoryItem command1 = new CreateInventoryItem(id, 0L, null);
+		CreateInventoryItem command1 = new CreateInventoryItem(id);
 		command1.setService(service);;
 		template.sendBody(command1); 
 		

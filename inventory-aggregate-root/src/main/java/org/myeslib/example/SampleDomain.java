@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Delegate;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 import org.myeslib.core.AggregateRoot;
@@ -82,11 +83,11 @@ public class SampleDomain {
     // commands
 
     @Data
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class CreateInventoryItem implements Command {
         @NonNull
-        UUID id;
-        Long version = 0L;
+        final UUID id;
+        final Long version = 0L;
         transient ItemDescriptionGeneratorService service;
     }
 

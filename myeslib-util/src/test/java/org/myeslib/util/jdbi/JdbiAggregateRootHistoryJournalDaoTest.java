@@ -26,7 +26,7 @@ import com.google.gson.Gson;
 import com.googlecode.flyway.core.Flyway;
 
 
-public class JdbiAggregateRootHistoryWriterDaoTest {
+public class JdbiAggregateRootHistoryJournalDaoTest {
 
 	static JdbcConnectionPool pool ;
 	static DBI dbi ;
