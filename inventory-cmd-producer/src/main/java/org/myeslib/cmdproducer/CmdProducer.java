@@ -15,7 +15,7 @@ import org.apache.camel.main.Main;
 import org.myeslib.cmdproducer.datasets.CreateCommandDataSet;
 import org.myeslib.cmdproducer.datasets.DecreaseCommandDataSet;
 import org.myeslib.cmdproducer.datasets.IncreaseCommandDataSet;
-import org.myeslib.cmdproducer.routes.DataSetsRoute;
+import org.myeslib.cmdproducer.routes.CommandsDataSetsRoute;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -56,7 +56,7 @@ public class CmdProducer {
 	}
 	
 	@Inject
-	CmdProducer(DataSetsRoute datasetRoute) throws Exception  {
+	CmdProducer(CommandsDataSetsRoute datasetRoute) throws Exception  {
 		
 		main = new Main() ;
 		main.enableHangupSupport();

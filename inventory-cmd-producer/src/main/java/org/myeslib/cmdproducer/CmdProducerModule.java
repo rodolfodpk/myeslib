@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 
 import lombok.AllArgsConstructor;
 
-import org.myeslib.cmdproducer.routes.DataSetsRoute;
+import org.myeslib.cmdproducer.routes.CommandsDataSetsRoute;
 import org.myeslib.example.SampleDomainGsonFactory;
 
 import com.google.gson.Gson;
@@ -26,8 +26,8 @@ public class CmdProducerModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public DataSetsRoute dataSetsRouteRoute(Gson gson) {
-		return new DataSetsRoute(gson, "jetty://http://localhost:8080/inventory-item-command", dataSetSize, delayBetweenDataSets, initialDelay);
+	public CommandsDataSetsRoute dataSetsRouteRoute(Gson gson) {
+		return new CommandsDataSetsRoute(gson, "jetty://http://localhost:8080/inventory-item-command", dataSetSize, delayBetweenDataSets, initialDelay);
 	}
 
 	@Override
