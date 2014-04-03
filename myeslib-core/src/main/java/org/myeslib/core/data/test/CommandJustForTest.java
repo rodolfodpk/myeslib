@@ -10,5 +10,5 @@ import org.myeslib.core.Command;
 @Value
 public class CommandJustForTest implements Command{
 	UUID id;
-	Long version;
+	Long targetVersion;
 }

@@ -47,8 +47,8 @@ public class HzInventoryItemCmdProcessor  implements Processor {
 		Command command = e.getIn().getBody(Command.class);
 		
 		Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id); 
-		if (!command.getVersion().equals(snapshot.getVersion())) {
-			String msg = String.format("** (%s) cmd version (%s) does not match snapshot version (%s)", id, command.getVersion(), snapshot.getVersion());
+		if (!command.getTargetVersion().equals(snapshot.getVersion())) {
+			String msg = String.format("** (%s) cmd version (%s) does not match snapshot version (%s)", id, command.getTargetVersion(), snapshot.getVersion());
 			throw new ConcurrentModificationException(msg);
 		}
 		

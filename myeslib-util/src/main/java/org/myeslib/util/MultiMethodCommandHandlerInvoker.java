@@ -23,7 +23,7 @@ public class MultiMethodCommandHandlerInvoker<K, A extends AggregateRoot> implem
 		
 		checkNotNull(id);
 		checkNotNull(command);
-		checkNotNull(command.getVersion());
+		checkNotNull(command.getTargetVersion());
 		checkNotNull(commandHandler);
 		
 		UnitOfWork uow = null;

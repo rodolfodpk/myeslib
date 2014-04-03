@@ -55,9 +55,9 @@ public class InventoryItemCmdProcessor implements Processor {
         handle.setTransactionIsolation(TransactionIsolationLevel.READ_COMMITTED);
 
         Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id);
-        if (!command.getVersion().equals(snapshot.getVersion())) {
+        if (!command.getTargetVersion().equals(snapshot.getVersion())) {
             String msg = String.format("cmd version (%s) does not match snapshot version (%s)",
-                    command.getVersion(), snapshot.getVersion());
+                    command.getTargetVersion(), snapshot.getVersion());
             throw new ConcurrentModificationException(msg);
         }
 

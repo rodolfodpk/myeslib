@@ -46,7 +46,7 @@ public class AggregateRootHistoryTest {
     public void invalidVersion() {
         AggregateRootHistory transactions = new AggregateRootHistory();
         Command command = Mockito.mock(Command.class);
-        when(command.getVersion()).thenReturn(-1L);
+        when(command.getTargetVersion()).thenReturn(-1L);
         transactions.add(UnitOfWork.create(command, Arrays.asList(Mockito.mock(Event.class))));
     }
 

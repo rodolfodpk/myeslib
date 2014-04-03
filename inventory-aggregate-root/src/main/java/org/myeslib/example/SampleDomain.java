@@ -87,7 +87,7 @@ public class SampleDomain {
     public static class CreateInventoryItem implements Command {
         @NonNull
         final UUID id;
-        final Long version = 0L;
+        final Long targetVersion = 0L;
         transient ItemDescriptionGeneratorService service;
     }
 
@@ -97,7 +97,7 @@ public class SampleDomain {
         UUID id;
         @NonNull
         Integer howMany;
-        Long version;
+        Long targetVersion;
     }
 
     @Value
@@ -106,7 +106,7 @@ public class SampleDomain {
         UUID id;
         @NonNull
         Integer howMany;
-        Long version;
+        Long targetVersion;
     }
 
     // events
