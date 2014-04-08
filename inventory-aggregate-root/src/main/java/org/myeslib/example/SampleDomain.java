@@ -21,10 +21,6 @@ import org.myeslib.core.Event;
 
 import com.google.common.base.Function;
 
-/*
- * @see: <a href="https://github.com/remeniuk/java-lenses/blob/master/examples/src/main/java/PersonZipCodeExample.java"/>Lenses</a>  
- * If you prefer, you can use Lenses to have your AggregateRoot immutable.
- */
 @SuppressWarnings("serial")
 public class SampleDomain {
 
