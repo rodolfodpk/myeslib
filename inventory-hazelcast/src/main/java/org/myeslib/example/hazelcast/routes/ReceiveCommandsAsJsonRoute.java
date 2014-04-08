@@ -34,33 +34,33 @@ public class ReceiveCommandsAsJsonRoute  extends RouteBuilder{
 	public void configure() throws Exception {
 		
 	     from(startUri)
-     	 .streamCaching()
-     	 .routeId("receive-commands-as-json")
-      	 //.log("received = ${body}")
-      	 //.setHeader(COMMAND_TYPE, jsonpath("$.type"))
-      	 .process(new Processor() {
-             @Override
-             public void process(Exchange e) throws Exception {
-                 String body = e.getIn().getBody(String.class);
-                 e.getOut().setBody(body);
-                 String commandType = JsonPath.read(body, "$.type");
-                 e.getOut().setHeader(COMMAND_TYPE, commandType);
-             }
-         })
-      	 .choice()
-      	 	.when(header(COMMAND_TYPE).isEqualTo("CreateInventoryItem"))
-      	 		.process(new CommandUnmarshallerProcessor(gson, body(String.class), CreateInventoryItem.class))
-      	 		.to(DIRECT_SEND_TO_AGGREGATE_ROOT_PROCESSOR)
-      	 	.when(header(COMMAND_TYPE).isEqualTo("IncreaseInventory"))
-      	 		.process(new CommandUnmarshallerProcessor(gson, body(String.class), IncreaseInventory.class))
-      	 		.to(DIRECT_SEND_TO_AGGREGATE_ROOT_PROCESSOR)
-      	 	.when(header(COMMAND_TYPE).isEqualTo("DecreaseInventory"))
-      	 		.process(new CommandUnmarshallerProcessor(gson, body(String.class), DecreaseInventory.class))
-      	 		.to(DIRECT_SEND_TO_AGGREGATE_ROOT_PROCESSOR)
-      	 	.otherwise()
-      	 		.setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
-      	 .end()		
-      	 ;
+         	 .streamCaching()
+         	 .routeId("receive-commands-as-json")
+          	 //.log("received = ${body}")
+          	 //.setHeader(COMMAND_TYPE, jsonpath("$.type"))
+          	 .process(new Processor() {
+                 @Override
+                 public void process(Exchange e) throws Exception {
+                     String body = e.getIn().getBody(String.class);
+                     e.getOut().setBody(body);
+                     String commandType = JsonPath.read(body, "$.type");
+                     e.getOut().setHeader(COMMAND_TYPE, commandType);
+                 }
+             })
+          	 .choice()
+          	 	.when(header(COMMAND_TYPE).isEqualTo("CreateInventoryItem"))
+          	 		.process(new CommandUnmarshallerProcessor(gson, body(String.class), CreateInventoryItem.class))
+          	 		.to(DIRECT_SEND_TO_AGGREGATE_ROOT_PROCESSOR)
+          	 	.when(header(COMMAND_TYPE).isEqualTo("IncreaseInventory"))
+          	 		.process(new CommandUnmarshallerProcessor(gson, body(String.class), IncreaseInventory.class))
+          	 		.to(DIRECT_SEND_TO_AGGREGATE_ROOT_PROCESSOR)
+          	 	.when(header(COMMAND_TYPE).isEqualTo("DecreaseInventory"))
+          	 		.process(new CommandUnmarshallerProcessor(gson, body(String.class), DecreaseInventory.class))
+          	 		.to(DIRECT_SEND_TO_AGGREGATE_ROOT_PROCESSOR)
+          	 	.otherwise()
+          	 		.setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
+          	 .end()		
+          	 ;
 
 	   from(DIRECT_SEND_TO_AGGREGATE_ROOT_PROCESSOR)
   	      .log("received ${header.commandType} - id ${body.id} - version ${body.version}")

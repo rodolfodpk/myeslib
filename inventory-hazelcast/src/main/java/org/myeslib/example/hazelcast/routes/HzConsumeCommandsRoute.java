@@ -32,9 +32,6 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
 
-//		errorHandler(deadLetterChannel("direct:dead-letter-channel")
-//			    .maximumRedeliveries(3).redeliveryDelay(5000));
-		
          from(originUri)
 			 .routeId("handle-inventory-item-command")
 			 .setHeader("id", simple("${body.getId()}"))	    
@@ -55,10 +52,6 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
                 }
             })
             ;
-
-	     from("direct:dead-letter-channel")
-	      	.routeId("direct:dead-letter-channel")
-	         .log("error !!");
 
 	}
 	
