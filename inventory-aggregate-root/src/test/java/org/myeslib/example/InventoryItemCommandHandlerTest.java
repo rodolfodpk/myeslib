@@ -25,13 +25,13 @@ import org.myeslib.example.SampleDomain.InventoryItemCreated;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SampleCoreDomainTest {
+public class InventoryItemCommandHandlerTest {
 
 	@Mock
 	ItemDescriptionGeneratorService uuidGeneratorService ;
 
 	@Test(expected=NullPointerException.class)
-	public void commandHandlerCreateWithNullService() {
+	public void createWithNullService() {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
@@ -44,7 +44,7 @@ public class SampleCoreDomainTest {
 	
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void commandHandlerCreateOnAnExistingInstance() {
+	public void createOnAnExistingInstance() {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
@@ -62,7 +62,7 @@ public class SampleCoreDomainTest {
 	
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void commandHandlerIncreaseOnAnWrongInstance() {
+	public void increaseOnAnWrongInstance() {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
@@ -79,7 +79,7 @@ public class SampleCoreDomainTest {
 	}
 	
 	@Test
-	public void commandHandlerCreateWithValidService() {
+	public void createWithValidService() {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
@@ -106,7 +106,7 @@ public class SampleCoreDomainTest {
 	
 	
 	@Test
-	public void commandHandlerIncrease() {
+	public void increase() {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
@@ -130,7 +130,7 @@ public class SampleCoreDomainTest {
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void commandHandlerDecreaseNotAvaliable() {
+	public void decreaseNotAvaliable() {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
@@ -150,7 +150,7 @@ public class SampleCoreDomainTest {
 	}
 	
 	@Test
-	public void commandHandlerDecrease() {
+	public void decrease() {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
@@ -173,64 +173,4 @@ public class SampleCoreDomainTest {
 		
 	}
 	
-	
-	@Test
-	public void aggregateRootCreated() {
-		
-		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
-		
-		UUID id = UUID.randomUUID();
-		String desc = "item1";
-		
-		InventoryItemCreated event = new InventoryItemCreated(id, desc);
-		
-		aggregateRoot.on(event);
-		
-		assertThat(aggregateRoot.getId(), equalTo(id));
-		assertThat(aggregateRoot.getDescription(), equalTo(desc));
-		assertThat(aggregateRoot.getAvailable(), equalTo(0));
-		
-	}
-	
-	@Test
-	public void aggregateRootIncreased() {
-		
-		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
-		
-		UUID id = UUID.randomUUID();
-		String desc = "item1";
-		
-		aggregateRoot.setAvailable(0);
-		aggregateRoot.setDescription(desc);
-		aggregateRoot.setId(id);
-		
-		InventoryIncreased event = new InventoryIncreased(id, 2);
-		
-		aggregateRoot.on(event);
-		
-		assertThat(aggregateRoot.getAvailable(), equalTo(2));
-		
-	}
-	
-	@Test
-	public void aggregateRootDecreased() {
-		
-		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
-		
-		UUID id = UUID.randomUUID();
-		String desc = "item1";
-		
-		aggregateRoot.setAvailable(5);
-		aggregateRoot.setDescription(desc);
-		aggregateRoot.setId(id);
-		
-		InventoryDecreased event = new InventoryDecreased(id, 2);
-		
-		aggregateRoot.on(event);
-		
-		assertThat(aggregateRoot.getAvailable(), equalTo(3));
-		
-	}
-	
-
 }
