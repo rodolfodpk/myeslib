@@ -9,7 +9,7 @@ If you want 100% immutability, you may use [Lenses for Java](https://github.com/
 
 There are tests for both <a href="https://github.com/rodolfodpk/myeslib/tree/master/inventory-aggregate-root/src/test/java/org/myeslib/example/InventoryItemCommandHandlerTest.java">InventoryItemCommandHandlerTest</a> and <a href="https://github.com/rodolfodpk/myeslib/tree/master/inventory-aggregate-root/src/test/java/org/myeslib/example/InventoryItemAggregateRootTest.java">InventoryItemAggregateRootTest</a>. I'm using plain JUnit but it's worth to mention Event Sourcing helps a lot when writing BDD specifications.
 
-#### Running the Inventory example
+#### Running the Inventory example 
 First of all, build it:
 ```
 cd myeslib
@@ -52,7 +52,7 @@ The parameters are, respectively:
 
 This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 
 
-There is another implementation: **inventory-hazelcast**. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/AggregateRootHistory.java">AggregateRootHistory</a> instances. This map is configured as write-through. It also uses a Hazelcast queue to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork</a> instances. This Hazelcast implementation has an aditional parameter: 
+There is another implementation: **inventory-hazelcast**. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/AggregateRootHistory.java">AggregateRootHistory</a> instances. This map is configured as write-through. It also uses a Hazelcast queue to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork</a> instances. This Hazelcast implementation has an additional parameter: 
 
 * eventsQueueConsumers (default =50)
 
@@ -71,7 +71,7 @@ There are 3 datasets. Each dataset will send just one type of command:
 * IncreaseCommand 
 * DecreaseCommand
 
-Datasets will be sent in correct order (create, increase and decrease). 
+Datasets will be sent in the correct order (create, increase and decrease). 
 
 #### Notes
 * Your IDE must support [Project Lombok](http://projectlombok.org/)
