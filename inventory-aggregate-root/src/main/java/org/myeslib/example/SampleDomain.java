@@ -135,7 +135,7 @@ public class SampleDomain {
         Integer howMany;
     }
 
-    // a service just for sake of example
+    // a service just for the sake of the example
 
     public static interface ItemDescriptionGeneratorService {
         String generate(UUID id);
