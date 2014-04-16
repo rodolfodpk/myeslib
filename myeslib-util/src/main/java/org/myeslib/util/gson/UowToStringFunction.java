@@ -14,7 +14,7 @@ public class UowToStringFunction implements Function<UnitOfWork, String>{
 	}
 	@Override
 	public String apply(UnitOfWork input) {
-		return gson.toJson(input);
+		return gson.toJson(input, UnitOfWork.class);
 	}
 
 }

@@ -15,6 +15,6 @@ public class CommandToStringFunction implements Function<Command, String> {
     }
     @Override
     public String apply(Command command) {
-        return gson.toJson(command);
+        return gson.toJson(command, Command.class);
     }
 }
