@@ -44,6 +44,10 @@ public class SampleDomain {
         public void on(InventoryDecreased event) {
             this.available = this.available - event.howMany;
         }
+        
+        public boolean isAvailable(int howMany) {
+            return getAvailable() - howMany >= 0;
+        }
 
     }
 
@@ -72,9 +76,7 @@ public class SampleDomain {
         public List<? extends Event> handle(DecreaseInventory command) {
             checkArgument(getId() != null, "before decreasing you must create an item");
             checkArgument(getId().equals(command.getId()), "item id does not match");
-            if (getAvailable() - command.getHowMany() < 0) {
-                throw new IllegalArgumentException("there are not enough items available");
-            }
+            checkArgument(isAvailable(command.howMany), "there are not enough items available");
             InventoryDecreased event = new InventoryDecreased(command.getId(), command.getHowMany());
             return Arrays.asList(event);
         }
