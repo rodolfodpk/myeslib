@@ -37,7 +37,7 @@ public class HzUnitOfWorkJournalTest {
 	public void oneTransaction() {
 		
 		UUID id = UUID.randomUUID();
-		Command command = new IncreaseInventory(id, 1, 0L);
+		Command command = new IncreaseInventory(UUID.randomUUID(), id, 1, 0L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
 		UnitOfWork t = UnitOfWork.create(command, events);
@@ -71,7 +71,7 @@ public class HzUnitOfWorkJournalTest {
 	public void withoutConcurrencyException() {
 		
 		UUID id = UUID.randomUUID();
-		Command command = new IncreaseInventory(id, 1, 0L);
+		Command command = new IncreaseInventory(UUID.randomUUID(), id, 1, 0L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
 		UnitOfWork t = UnitOfWork.create(command, events);
@@ -81,7 +81,7 @@ public class HzUnitOfWorkJournalTest {
 		when(mapWithUuidKey.get(id)).thenReturn(toStore);
 		
 		HzUnitOfWorkJournal<UUID> store = new HzUnitOfWorkJournal<>(mapWithUuidKey);
-		Command command2 = new IncreaseInventory(id, 1, 1L);
+		Command command2 = new IncreaseInventory(UUID.randomUUID(), id, 1, 1L);
 		UnitOfWork t2 = UnitOfWork.create(command2, events);
 		store.append(id, t2);
 
@@ -116,7 +116,7 @@ public class HzUnitOfWorkJournalTest {
 	public void withConcurrencyException() {
 		
 		UUID id = UUID.randomUUID();
-		Command command = new IncreaseInventory(id, 1, 1L);
+		Command command = new IncreaseInventory(UUID.randomUUID(), id, 1, 1L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
 		UnitOfWork t = UnitOfWork.create(command, events);

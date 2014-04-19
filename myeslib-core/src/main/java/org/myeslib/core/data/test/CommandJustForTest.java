@@ -9,6 +9,7 @@ import org.myeslib.core.Command;
 @SuppressWarnings("serial")
 @Value
 public class CommandJustForTest implements Command{
+    UUID commandId;
 	UUID id;
 	Long targetVersion;
 }

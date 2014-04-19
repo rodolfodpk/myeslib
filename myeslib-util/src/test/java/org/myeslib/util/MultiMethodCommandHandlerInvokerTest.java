@@ -38,7 +38,7 @@ public class MultiMethodCommandHandlerInvokerTest {
 	public void sucess() throws Throwable {
 
 		UUID id = UUID.randomUUID();
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), id);
 		ItemDescriptionGeneratorService service = Mockito.mock(ItemDescriptionGeneratorService.class);
 		
 		when(service.generate(id)).then(new Answer<String>() {
@@ -72,7 +72,7 @@ public class MultiMethodCommandHandlerInvokerTest {
 	public void failSinceServiceIsNull() throws Throwable {
 
 		UUID id = UUID.randomUUID();
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), id);
 	
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(instance);
@@ -92,7 +92,7 @@ public class MultiMethodCommandHandlerInvokerTest {
 
 		UUID id = UUID.randomUUID();
 		Long version = 0L;
-		DecreaseInventory command = new DecreaseInventory(id, 5, version);
+		DecreaseInventory command = new DecreaseInventory(UUID.randomUUID(), id, 5, version);
 	
 		InventoryItemAggregateRoot  instance = new InventoryItemAggregateRoot();
 		instance.setId(id);

@@ -28,12 +28,12 @@ public class SampleDomainGsonFactoryTest {
 
 		UUID id = UUID.randomUUID();
 		
-		Command command1 = new IncreaseInventory(id, 2, 0L);
+		Command command1 = new IncreaseInventory(UUID.randomUUID(), id, 2, 0L);
 		Event event11 = new InventoryIncreased(id, 1);
 		Event event12 = new InventoryIncreased(id, 1);	
 		UnitOfWork uow1 = UnitOfWork.create(command1, Arrays.asList(event11, event12));
 
-		Command command2 = new IncreaseInventory(id, 10, 0L);
+		Command command2 = new IncreaseInventory(UUID.randomUUID(), id, 10, 0L);
 		Event event21 = new InventoryIncreased(id, 1);
 		Event event22 = new InventoryIncreased(id, 1);	
 		UnitOfWork uow2 = UnitOfWork.create(command2, Arrays.asList(event21, event22));

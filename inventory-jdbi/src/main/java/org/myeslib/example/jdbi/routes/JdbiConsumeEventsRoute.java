@@ -104,6 +104,7 @@ public class JdbiConsumeEventsRoute extends RouteBuilder {
          .process(new Processor() {
              @Override
              public void process(Exchange e) throws Exception {
+                @SuppressWarnings("unchecked")
                 Snapshot<InventoryItemAggregateRoot> snapshot = e.getIn().getBody(Snapshot.class);
                 lastSnapshotMap.put(header(INVENTORY_ITEM_ID).evaluate(e, UUID.class), snapshot);
              }

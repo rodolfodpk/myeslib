@@ -19,7 +19,7 @@ public class IncreaseCommandDataSet extends DataSetSupport {
 	@Override
 	protected Object createMessageBody(long messageIndex) {
 		UUID id = ids.get((int) messageIndex);
-		IncreaseInventory command = new IncreaseInventory(id, 2, 1L);
+		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), id, 2, 1L);
 		return command;
 	}
 	

@@ -35,7 +35,7 @@ public class InventoryItemCommandHandlerTest {
 		
 		InventoryItemAggregateRoot aggregateRoot = new InventoryItemAggregateRoot();
 		
-		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID());
+		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), UUID.randomUUID());
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 		
@@ -52,7 +52,7 @@ public class InventoryItemCommandHandlerTest {
 		
 		aggregateRoot.setId(id);
 		
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), id);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -70,7 +70,7 @@ public class InventoryItemCommandHandlerTest {
 		
 		aggregateRoot.setId(id);
 		
-		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), 1, 0L);
+		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), UUID.randomUUID(), 1, 0L);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -86,7 +86,7 @@ public class InventoryItemCommandHandlerTest {
 		UUID id = UUID.randomUUID();
 		String desc = "item1";
 		
-		CreateInventoryItem command = new CreateInventoryItem(id);
+		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), id);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -117,7 +117,7 @@ public class InventoryItemCommandHandlerTest {
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
-		IncreaseInventory command = new IncreaseInventory(id, 3, 0L);
+		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), id, 3, 0L);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -141,7 +141,7 @@ public class InventoryItemCommandHandlerTest {
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
-		DecreaseInventory command = new DecreaseInventory(id, 3, 0L);
+		DecreaseInventory command = new DecreaseInventory(UUID.randomUUID(), id, 3, 0L);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	
@@ -161,7 +161,7 @@ public class InventoryItemCommandHandlerTest {
 		aggregateRoot.setDescription(desc);
 		aggregateRoot.setId(id);
 		
-		DecreaseInventory command = new DecreaseInventory(id, 3, 0L);
+		DecreaseInventory command = new DecreaseInventory(UUID.randomUUID(), id, 3, 0L);
 		
 		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
 	

@@ -6,20 +6,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
+
+import lombok.Value;
 
 import org.myeslib.core.Command;
 import org.myeslib.core.Event;
-
-import lombok.Value;
 
 @SuppressWarnings("serial")
 @Value
 public class UnitOfWork implements Comparable<UnitOfWork>, Serializable {
 
+    final UUID id;
 	final Command command;
 	final List<? extends Event> events;
 	final long version;
-	final long timestamp;
 	
 	public UnitOfWork(Command command, Long version, List<? extends Event> events, long timestamp) {
 		checkNotNull(command, "command cannot be null");
@@ -29,10 +30,10 @@ public class UnitOfWork implements Comparable<UnitOfWork>, Serializable {
 		for (Event e: events){
 			checkNotNull(e, "event within events list cannot be null");
 		}
+		this.id = UUID.randomUUID();
 		this.command = command;
 		this.version = version;
 		this.events = events;
-		this.timestamp = timestamp;
 	}
 	
 	public static UnitOfWork create(Command command, List<? extends Event> newEvents) {

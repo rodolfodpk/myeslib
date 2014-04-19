@@ -81,12 +81,14 @@ public class SampleDomain {
             return Arrays.asList(event);
         }
     }
-
+    
     // commands
 
     @Data
     @RequiredArgsConstructor
     public static class CreateInventoryItem implements Command {
+        @NonNull
+        UUID commandId;
         @NonNull
         final UUID id;
         final Long targetVersion = 0L;
@@ -96,6 +98,8 @@ public class SampleDomain {
     @Value
     public static class IncreaseInventory implements Command {
         @NonNull
+        UUID commandId;
+        @NonNull
         UUID id;
         @NonNull
         Integer howMany;
@@ -104,6 +108,8 @@ public class SampleDomain {
 
     @Value
     public static class DecreaseInventory implements Command {
+        @NonNull
+        final UUID commandId;
         @NonNull
         UUID id;
         @NonNull

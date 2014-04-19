@@ -115,11 +115,11 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	public void test() {
 
         final UUID id = UUID.randomUUID();
-        CreateInventoryItem command1 = new CreateInventoryItem(id);
+        CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID(), id);
 		command1.setService(service);
 		template.sendBody(command1);
 		
-		IncreaseInventory command2 = new IncreaseInventory(command1.getId(), 2, 1L);
+		IncreaseInventory command2 = new IncreaseInventory(UUID.randomUUID(), command1.getId(), 2, 1L);
 		template.requestBody(command2, UnitOfWork.class);
 
         AggregateRootHistory fromDb = dao.get(id);

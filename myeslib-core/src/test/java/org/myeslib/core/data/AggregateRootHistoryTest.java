@@ -54,7 +54,7 @@ public class AggregateRootHistoryTest {
     public void firstTransaction() {
         UUID id = UUID.randomUUID();
         AggregateRootHistory transactions = new AggregateRootHistory();
-        Command command = new CommandJustForTest(id, 0L);
+        Command command = new CommandJustForTest(UUID.randomUUID(), id, 0L);
         Event event1 = new EventJustForTest(id, 1);
         transactions.add(UnitOfWork.create(command, Arrays.asList(event1)));
 
@@ -71,7 +71,7 @@ public class AggregateRootHistoryTest {
         AggregateRootHistory transactions = new AggregateRootHistory();
 
         UUID id = UUID.randomUUID();
-        Command command = new CommandJustForTest(id, 0l);
+        Command command = new CommandJustForTest(UUID.randomUUID(), id, 0l);
         Event event1 = new EventJustForTest(id, 1);
         Event event2 = new EventJustForTest(id, 1);
 
@@ -95,11 +95,11 @@ public class AggregateRootHistoryTest {
         UUID id = UUID.randomUUID();
         AggregateRootHistory transactions = new AggregateRootHistory();
 
-        Command command1 = new CommandJustForTest(id, 1L);
+        Command command1 = new CommandJustForTest(UUID.randomUUID(), id, 1L);
         Event event1 = new EventJustForTest(id, 1);
         UnitOfWork uow1 = UnitOfWork.create(command1, Arrays.asList(event1));
 
-        Command command2 = new CommandJustForTest(id, 2L);
+        Command command2 = new CommandJustForTest(UUID.randomUUID(), id, 2L);
         Event event2 = new EventJustForTest(id, 2);
         UnitOfWork uow2 = UnitOfWork.create(command2, Arrays.asList(event2));
 
@@ -116,7 +116,7 @@ public class AggregateRootHistoryTest {
 
         UUID id = UUID.randomUUID();
         AggregateRootHistory transactions = new AggregateRootHistory();
-        Command command = new CommandJustForTest(id, 1L);
+        Command command = new CommandJustForTest(UUID.randomUUID(), id, 1L);
         Event event1 = (Event) null;
         transactions.add(UnitOfWork.create(command, Arrays.asList(event1)));
 
@@ -127,7 +127,7 @@ public class AggregateRootHistoryTest {
 
         UUID id = UUID.randomUUID();
         AggregateRootHistory transactions = new AggregateRootHistory();
-        Command command = new CommandJustForTest(id, 0L);
+        Command command = new CommandJustForTest(UUID.randomUUID(), id, 0L);
         Event event1 = new EventJustForTest(id, 1);
         UnitOfWork uow = UnitOfWork.create(command, Arrays.asList(event1));
         transactions.add(uow);
@@ -146,12 +146,12 @@ public class AggregateRootHistoryTest {
         UUID id = UUID.randomUUID();
         AggregateRootHistory transactions = new AggregateRootHistory();
 
-        Command command1 = new CommandJustForTest(id, 1L);
+        Command command1 = new CommandJustForTest(UUID.randomUUID(), id, 1L);
         Event event1 = new EventJustForTest(id, 1);
         UnitOfWork uow1 = UnitOfWork.create(command1, Arrays.asList(event1));
         transactions.add(uow1);
 
-        Command command2 = new CommandJustForTest(id, 2L);
+        Command command2 = new CommandJustForTest(UUID.randomUUID(), id, 2L);
         Event event2 = new EventJustForTest(id, 2);
         UnitOfWork uow2 = UnitOfWork.create(command2, Arrays.asList(event2));
 
