@@ -1,17 +1,12 @@
 package org.myeslib.example.hazelcast.modules;
 
-import com.google.common.base.Function;
-import com.google.gson.Gson;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.name.Named;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.IQueue;
+import java.util.UUID;
+
+import javax.inject.Singleton;
+
 import org.myeslib.core.data.AggregateRootHistory;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
-import org.myeslib.core.function.CommandHandlerInvoker;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.InventoryItemInstanceFactory;
@@ -23,14 +18,23 @@ import org.myeslib.example.hazelcast.infra.InventoryItemSerializersConfigFactory
 import org.myeslib.example.hazelcast.routes.HzInventoryItemCmdProcessor;
 import org.myeslib.hazelcast.storage.HzSnapshotReader;
 import org.myeslib.hazelcast.storage.HzUnitOfWorkJournal;
-import org.myeslib.util.MultiMethodCommandHandlerInvoker;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
-import org.myeslib.util.jdbi.*;
+import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
+import org.myeslib.util.jdbi.ArTablesMetadata;
+import org.myeslib.util.jdbi.JdbiAggregateRootHistoryReaderDao;
+import org.myeslib.util.jdbi.JdbiUnitOfWorkAutoCommitJournalDao;
+import org.myeslib.util.jdbi.UnitOfWorkJournalDao;
 import org.skife.jdbi.v2.DBI;
 
-import javax.inject.Singleton;
-import java.util.UUID;
+import com.google.common.base.Function;
+import com.google.gson.Gson;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+import com.hazelcast.core.IQueue;
 
 public class InventoryItemModule extends AbstractModule {
 	
@@ -67,7 +71,7 @@ public class InventoryItemModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public UnitOfWorkJournalDao<UUID> arWriter(ArTablesMetadata metadata, DBI dbi, Function<UnitOfWork, String> toStringFunction) {
+	public UnitOfWorkJournalDao<UUID> uowJournal(ArTablesMetadata metadata, DBI dbi, Function<UnitOfWork, String> toStringFunction) {
 		return new JdbiUnitOfWorkAutoCommitJournalDao(dbi, metadata, toStringFunction);
 	}
 
@@ -93,12 +97,6 @@ public class InventoryItemModule extends AbstractModule {
 	@Singleton
 	public HzUnitOfWorkJournal<UUID> hzUnitOfWorkWriter(IMap<UUID, AggregateRootHistory> inventoryItemMap) {
 		return new HzUnitOfWorkJournal<>(inventoryItemMap);
-	}
-	
-	@Provides
-	@Singleton
-	public CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdInvoker() {
-		return new MultiMethodCommandHandlerInvoker<UUID, InventoryItemAggregateRoot>();
 	}
 	
 	@Provides

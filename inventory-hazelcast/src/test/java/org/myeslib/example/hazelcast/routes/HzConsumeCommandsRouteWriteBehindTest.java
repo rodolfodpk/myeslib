@@ -114,7 +114,6 @@ public class HzConsumeCommandsRouteWriteBehindTest extends CamelTestSupport {
 
         final UUID id = UUID.randomUUID();
         CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID(), id);
-        command1.setService(service);
         template.sendBody(command1);
 
        // sleep(10000);

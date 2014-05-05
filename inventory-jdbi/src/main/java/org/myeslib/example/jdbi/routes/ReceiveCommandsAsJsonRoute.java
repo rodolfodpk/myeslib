@@ -63,7 +63,7 @@ public class ReceiveCommandsAsJsonRoute  extends RouteBuilder{
       	 ;
 
 	   from(DIRECT_SEND_TO_AGGREGATE_ROOT_PROCESSOR)
-  	      .log("received ${header.commandType} - id ${body.id} - version ${body.version}")
+  	      .log("received ${header.commandType} - id ${body.id} - targetVersion ${body.targetVersion}")
 	      .to(endUri)
 	      .process(new Processor() {
 			@Override

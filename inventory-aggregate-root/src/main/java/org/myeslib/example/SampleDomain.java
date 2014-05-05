@@ -11,13 +11,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Delegate;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 import org.myeslib.core.AggregateRoot;
 import org.myeslib.core.Command;
-import org.myeslib.core.CommandHandler;
 import org.myeslib.core.Event;
+import org.myeslib.core.CommandHandler;
 
 import com.google.common.base.Function;
 
@@ -50,21 +49,30 @@ public class SampleDomain {
         }
 
     }
+    
+    // command handlers
 
     @AllArgsConstructor
-    public static class InventoryItemCommandHandler implements
-            CommandHandler<InventoryItemAggregateRoot> {
+    public static class CreateCommandHandler implements CommandHandler<CreateInventoryItem> {
 
         @Delegate
         final InventoryItemAggregateRoot aggregateRoot;
+        final ItemDescriptionGeneratorService service;
 
         public List<? extends Event> handle(CreateInventoryItem command) {
             checkArgument(getId() == null, "item already exists");
-            checkNotNull(command.getService());
-            String description = command.getService().generate(command.getId());
+            checkNotNull(service);
+            String description = service.generate(command.getId());
             InventoryItemCreated event = new InventoryItemCreated(command.getId(), description);
             return Arrays.asList(event);
         }
+    }
+    
+    @AllArgsConstructor
+    public static class IncreaseCommandHandler implements CommandHandler<IncreaseInventory> {
+
+        @Delegate
+        final InventoryItemAggregateRoot aggregateRoot;
 
         public List<? extends Event> handle(IncreaseInventory command) {
             checkArgument(getId() != null, "before increasing you must create an item");
@@ -72,6 +80,13 @@ public class SampleDomain {
             InventoryIncreased event = new InventoryIncreased(command.getId(), command.getHowMany());
             return Arrays.asList(event);
         }
+    }
+    
+    @AllArgsConstructor
+    public static class DecreaseCommandHandler implements CommandHandler<DecreaseInventory> {
+
+        @Delegate
+        final InventoryItemAggregateRoot aggregateRoot;
 
         public List<? extends Event> handle(DecreaseInventory command) {
             checkArgument(getId() != null, "before decreasing you must create an item");
@@ -84,15 +99,13 @@ public class SampleDomain {
     
     // commands
 
-    @Data
-    @RequiredArgsConstructor
+    @Value
     public static class CreateInventoryItem implements Command {
         @NonNull
         UUID commandId;
         @NonNull
         final UUID id;
         final Long targetVersion = 0L;
-        transient ItemDescriptionGeneratorService service;
     }
 
     @Value
@@ -148,6 +161,8 @@ public class SampleDomain {
     public static interface ItemDescriptionGeneratorService {
         String generate(UUID id);
     }
+    
+    // a factory for the aggregate root
 
     public static class InventoryItemInstanceFactory implements
             Function<Void, InventoryItemAggregateRoot> {

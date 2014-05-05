@@ -14,13 +14,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.myeslib.core.Event;
+import org.myeslib.example.SampleDomain.CreateCommandHandler;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
+import org.myeslib.example.SampleDomain.DecreaseCommandHandler;
 import org.myeslib.example.SampleDomain.DecreaseInventory;
+import org.myeslib.example.SampleDomain.IncreaseCommandHandler;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryDecreased;
 import org.myeslib.example.SampleDomain.InventoryIncreased;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
-import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
 import org.myeslib.example.SampleDomain.InventoryItemCreated;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 
@@ -37,7 +39,7 @@ public class InventoryItemCommandHandlerTest {
 		
 		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), UUID.randomUUID());
 		
-		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
+		CreateCommandHandler commandHandler = new CreateCommandHandler(aggregateRoot, null);
 		
 		commandHandler.handle(command);
 	}
@@ -54,7 +56,7 @@ public class InventoryItemCommandHandlerTest {
 		
 		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), id);
 		
-		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
+		CreateCommandHandler commandHandler = new CreateCommandHandler(aggregateRoot, uuidGeneratorService);
 	
 		commandHandler.handle(command);
 	
@@ -72,7 +74,7 @@ public class InventoryItemCommandHandlerTest {
 		
 		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), UUID.randomUUID(), 1, 0L);
 		
-		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
+		IncreaseCommandHandler commandHandler = new IncreaseCommandHandler(aggregateRoot);
 	
 		commandHandler.handle(command);
 	
@@ -88,11 +90,9 @@ public class InventoryItemCommandHandlerTest {
 		
 		CreateInventoryItem command = new CreateInventoryItem(UUID.randomUUID(), id);
 		
-		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
+		CreateCommandHandler commandHandler = new CreateCommandHandler(aggregateRoot, uuidGeneratorService);
 	
 		when(uuidGeneratorService.generate(id)).thenReturn(desc);
-		
-		command.setService(uuidGeneratorService);
 		
 		List<? extends Event> events = commandHandler.handle(command);
 	
@@ -119,7 +119,7 @@ public class InventoryItemCommandHandlerTest {
 		
 		IncreaseInventory command = new IncreaseInventory(UUID.randomUUID(), id, 3, 0L);
 		
-		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
+		IncreaseCommandHandler commandHandler = new IncreaseCommandHandler(aggregateRoot);
 	
 		List<? extends Event> events = commandHandler.handle(command);
 	
@@ -143,7 +143,7 @@ public class InventoryItemCommandHandlerTest {
 		
 		DecreaseInventory command = new DecreaseInventory(UUID.randomUUID(), id, 3, 0L);
 		
-		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
+		DecreaseCommandHandler commandHandler = new DecreaseCommandHandler(aggregateRoot);
 	
 		commandHandler.handle(command);
 		
@@ -163,7 +163,7 @@ public class InventoryItemCommandHandlerTest {
 		
 		DecreaseInventory command = new DecreaseInventory(UUID.randomUUID(), id, 3, 0L);
 		
-		InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(aggregateRoot);
+		DecreaseCommandHandler commandHandler = new DecreaseCommandHandler(aggregateRoot);
 	
 		List<? extends Event> events = commandHandler.handle(command);
 	

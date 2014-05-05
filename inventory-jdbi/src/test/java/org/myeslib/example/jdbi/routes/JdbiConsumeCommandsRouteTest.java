@@ -117,7 +117,6 @@ public class JdbiConsumeCommandsRouteTest extends CamelTestSupport {
 		
 		UUID id = UUID.randomUUID();
 		CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID(), id);
-		command1.setService(service);;
 		template.sendBody(command1); 
 		
 		IncreaseInventory command2 = new IncreaseInventory(UUID.randomUUID(), id, 2, 1L);

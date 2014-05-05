@@ -1,6 +1,10 @@
 package org.myeslib.example.jdbi.routes;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.List;
 import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
@@ -8,15 +12,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.myeslib.core.Command;
+import org.myeslib.core.Event;
 import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.data.UnitOfWork;
-import org.myeslib.core.function.CommandHandlerInvoker;
 import org.myeslib.core.storage.SnapshotReader;
+import org.myeslib.example.SampleDomain.CreateCommandHandler;
 import org.myeslib.example.SampleDomain.CreateInventoryItem;
+import org.myeslib.example.SampleDomain.DecreaseCommandHandler;
+import org.myeslib.example.SampleDomain.DecreaseInventory;
+import org.myeslib.example.SampleDomain.IncreaseCommandHandler;
+import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
-import org.myeslib.example.SampleDomain.InventoryItemCommandHandler;
+import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.jdbi.modules.InventoryItemModule.AggregateRootHistoryWriterDaoFactory;
-import org.myeslib.example.jdbi.modules.InventoryItemModule.ServiceJustForTest;
 import org.myeslib.jdbi.storage.JdbiUnitOfWorkJournal;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -26,54 +34,69 @@ import com.google.inject.Inject;
 
 @Slf4j
 public class InventoryItemCmdProcessor implements Processor {
-
+    
+    final static String ID = "id";
+    
     @Inject
     public InventoryItemCmdProcessor(
             SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
-            CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker, DBI dbi,
-            AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory) {
+            DBI dbi,
+            AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory,
+            ItemDescriptionGeneratorService service) {
         this.snapshotReader = snapshotReader;
-        this.cmdHandlerInvoker = cmdHandlerInvoker;
         this.dbi = dbi;
         this.aggregateRootHistoryWriterDaoFactory = aggregateRootHistoryWriterDaoFactory;
+        this.service = service;
     }
 
     final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
-    final CommandHandlerInvoker<UUID, InventoryItemAggregateRoot> cmdHandlerInvoker;
     final DBI dbi;
     final AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory;
-
+    final ItemDescriptionGeneratorService service;
+    
     @Override
     public void process(Exchange e) throws Exception {
 
-        UUID id = e.getIn().getHeader("id", UUID.class);
+        final UUID id = e.getIn().getHeader(ID, UUID.class);
         final Command command = e.getIn().getBody(Command.class);
-
+        final Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id);
+        
         final Handle handle = dbi.open();
         handle.getConnection().setAutoCommit(false);
         handle.begin();
         handle.setTransactionIsolation(TransactionIsolationLevel.READ_COMMITTED);
 
-        Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id);
         if (!command.getTargetVersion().equals(snapshot.getVersion())) {
-            String msg = String.format("cmd version (%s) does not match snapshot version (%s)",
-                    command.getTargetVersion(), snapshot.getVersion());
+            String msg = String.format("cmd version (%s) does not match snapshot version (%s)", command.getTargetVersion(), snapshot.getVersion());
             throw new ConcurrentModificationException(msg);
         }
 
-        InventoryItemCommandHandler commandHandler = new InventoryItemCommandHandler(snapshot.getAggregateInstance());
-
-        if (command instanceof CreateInventoryItem) {
-            ((CreateInventoryItem) command).setService(new ServiceJustForTest());
-        }
+        checkNotNull(id);
+        checkNotNull(command);
+        checkNotNull(command.getTargetVersion());
 
         try {
 
-            UnitOfWork uow = cmdHandlerInvoker.invoke(id, command, commandHandler);
-            JdbiUnitOfWorkJournal<UUID> uowWriter = new JdbiUnitOfWorkJournal<>(
-                    aggregateRootHistoryWriterDaoFactory.create(handle));
-            uowWriter.append(id, uow);
-            e.getOut().setHeader("id", id);
+            final List<? extends Event> events;
+
+            if (command instanceof CreateInventoryItem){
+                CreateCommandHandler commandHandler = new CreateCommandHandler(snapshot.getAggregateInstance(), service);
+                events = commandHandler.handle(((CreateInventoryItem)command));
+            } else if (command instanceof IncreaseInventory) {
+                IncreaseCommandHandler commandHandler = new IncreaseCommandHandler(snapshot.getAggregateInstance());
+                events = commandHandler.handle(((IncreaseInventory)command));
+            } else if (command instanceof DecreaseInventory) {
+                DecreaseCommandHandler commandHandler = new DecreaseCommandHandler(snapshot.getAggregateInstance());
+                events = commandHandler.handle(((DecreaseInventory)command));
+            } else {
+                events = new ArrayList<>();
+            }
+
+            final JdbiUnitOfWorkJournal<UUID> uowJournal = new JdbiUnitOfWorkJournal<>(aggregateRootHistoryWriterDaoFactory.create(handle));
+            final UnitOfWork uow = UnitOfWork.create(command, events);
+            
+            uowJournal.append(id, uow);
+            e.getOut().setHeader(ID, id);
             e.getOut().setBody(uow);
             handle.commit();
             log.debug("commited transaction {} {}", id, Thread.currentThread());

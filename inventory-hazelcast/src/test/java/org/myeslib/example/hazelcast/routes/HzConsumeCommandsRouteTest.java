@@ -5,9 +5,6 @@ import java.util.UUID;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 
-import com.hazelcast.core.IMap;
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -26,19 +23,12 @@ import org.myeslib.example.SampleDomain.CreateInventoryItem;
 import org.myeslib.example.SampleDomain.IncreaseInventory;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
-import org.myeslib.example.hazelcast.infra.HazelcastData;
 import org.myeslib.example.hazelcast.modules.CamelModule;
 import org.myeslib.example.hazelcast.modules.DatabaseModule;
 import org.myeslib.example.hazelcast.modules.HazelcastModule;
 import org.myeslib.example.hazelcast.modules.InventoryItemModule;
-import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
-import org.myeslib.util.jdbi.ArTablesMetadata;
-import org.myeslib.util.jdbi.ClobToStringMapper;
 import org.myeslib.util.jdbi.JdbiAggregateRootHistoryReaderDao;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.tweak.HandleCallback;
 
 import com.google.inject.Binder;
 import com.google.inject.Guice;
@@ -49,8 +39,8 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 import com.googlecode.flyway.core.Flyway;
+import com.hazelcast.core.IMap;
 
-@Slf4j
 public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 
 	private static Injector injector ;
@@ -71,7 +61,7 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
 
     @Inject
-    AggregateRootHistoryReaderDao dao;
+    AggregateRootHistoryReaderDao<UUID> dao;
 
     @Inject
     IMap<UUID, AggregateRootHistory> inventoryItemMap;
@@ -116,7 +106,6 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 
         final UUID id = UUID.randomUUID();
         CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID(), id);
-		command1.setService(service);
 		template.sendBody(command1);
 		
 		IncreaseInventory command2 = new IncreaseInventory(UUID.randomUUID(), command1.getId(), 2, 1L);
