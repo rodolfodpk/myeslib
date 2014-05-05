@@ -5,7 +5,7 @@ The idea is to explore a flavour of CQRS / ES introduced in [Don’t publish Dom
 
 #### What really matters
 Here is the <a href="inventory-aggregate-root/src/main/java/org/myeslib/example/SampleDomain.java">SampleDomain</a>. Except for InventoryItemAggregateRoot, all commands and events are immutable. If you are wondering where are the final modifiers, take a look at [@Value annotation](http://projectlombok.org/features/Value.html) from  [Project Lombok](http://projectlombok.org/).
-If you want 100% immutability, you may use [Lenses for Java](https://github.com/remeniuk/java-lenses/blob/master/examples/src/main/java/PersonZipCodeExample.java) when changing the state of the AggregateRoot. CreateInventory command is another exception since it has a non final property "service". It's also transient because it's just a service and won't be persisted. It probably should be annotated with @Inject but I digress.
+If you want 100% immutability, you may use [Lenses for Java](https://github.com/remeniuk/java-lenses/blob/master/examples/src/main/java/PersonZipCodeExample.java) when changing the state of the AggregateRoot. 
 
 There are tests for both <a href="https://github.com/rodolfodpk/myeslib/tree/master/inventory-aggregate-root/src/test/java/org/myeslib/example/InventoryItemCommandHandlerTest.java">InventoryItemCommandHandlerTest</a> and <a href="https://github.com/rodolfodpk/myeslib/tree/master/inventory-aggregate-root/src/test/java/org/myeslib/example/InventoryItemAggregateRootTest.java">InventoryItemAggregateRootTest</a>. I'm using plain JUnit but it's worth to mention Event Sourcing helps a lot when writing BDD specifications.
 
