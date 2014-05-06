@@ -22,24 +22,25 @@ public class UnitOfWork implements Comparable<UnitOfWork>, Serializable {
 	final List<? extends Event> events;
 	final long version;
 	
-	public UnitOfWork(Command command, Long version, List<? extends Event> events, long timestamp) {
-		checkNotNull(command, "command cannot be null");
+	public UnitOfWork(UUID id, Command command, Long version, List<? extends Event> events) {
+	    checkNotNull(id, "id cannot be null");
+	    checkNotNull(command, "command cannot be null");
 		checkArgument(command.getTargetVersion()>=0, "target version must be >= 0");
 		checkArgument(version>0, "invalid version");
 		checkNotNull(events, "events cannot be null");
 		for (Event e: events){
 			checkNotNull(e, "event within events list cannot be null");
 		}
-		this.id = UUID.randomUUID();
+		this.id = id;
 		this.command = command;
 		this.version = version;
 		this.events = events;
 	}
 	
-	public static UnitOfWork create(Command command, List<? extends Event> newEvents) {
+	public static UnitOfWork create(UUID id, Command command, List<? extends Event> newEvents) {
 		checkNotNull(command.getTargetVersion(), "target version cannot be null");
 		checkArgument(command.getTargetVersion()>=0, "target version must be >= 0");
-		return new UnitOfWork(command, command.getTargetVersion()+1, newEvents, System.currentTimeMillis());
+		return new UnitOfWork(id, command, command.getTargetVersion()+1, newEvents);
 	}
 	
 	public List<Event> getEvents(){

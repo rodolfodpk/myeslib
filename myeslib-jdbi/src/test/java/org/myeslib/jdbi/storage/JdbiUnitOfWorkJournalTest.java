@@ -32,7 +32,7 @@ public class JdbiUnitOfWorkJournalTest {
 		Command command1 = new IncreaseInventory(UUID.randomUUID(), id, 2, 0l);
 		Event event11 = new InventoryIncreased(id, 1);
 		Event event12 = new InventoryIncreased(id, 1);	
-		UnitOfWork uow1 = UnitOfWork.create(command1, Arrays.asList(event11, event12));
+		UnitOfWork uow1 = UnitOfWork.create(UUID.randomUUID(), command1, Arrays.asList(event11, event12));
 
 		writer.append(id, uow1);
 		

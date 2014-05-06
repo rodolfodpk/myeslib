@@ -27,16 +27,18 @@ public class SampleDomainGsonFactoryTest {
 	public void aggregateRootHistory() {
 
 		UUID id = UUID.randomUUID();
+		UUID uowId1 = UUID.randomUUID();
+		UUID uowId2 = UUID.randomUUID();
 		
 		Command command1 = new IncreaseInventory(UUID.randomUUID(), id, 2, 0L);
 		Event event11 = new InventoryIncreased(id, 1);
 		Event event12 = new InventoryIncreased(id, 1);	
-		UnitOfWork uow1 = UnitOfWork.create(command1, Arrays.asList(event11, event12));
+		UnitOfWork uow1 = UnitOfWork.create(uowId1, command1, Arrays.asList(event11, event12));
 
 		Command command2 = new IncreaseInventory(UUID.randomUUID(), id, 10, 0L);
 		Event event21 = new InventoryIncreased(id, 1);
 		Event event22 = new InventoryIncreased(id, 1);	
-		UnitOfWork uow2 = UnitOfWork.create(command2, Arrays.asList(event21, event22));
+		UnitOfWork uow2 = UnitOfWork.create(uowId2, command2, Arrays.asList(event21, event22));
 
 		AggregateRootHistory arh = new AggregateRootHistory();
 		

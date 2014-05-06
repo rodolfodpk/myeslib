@@ -33,7 +33,6 @@ import org.myeslib.example.jdbi.modules.CamelModule;
 import org.myeslib.example.jdbi.modules.DatabaseModule;
 import org.myeslib.example.jdbi.modules.HazelcastModule;
 import org.myeslib.example.jdbi.modules.InventoryItemModule;
-import org.myeslib.example.jdbi.routes.JdbiConsumeCommandsRoute;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
 import org.myeslib.util.jdbi.ArTablesMetadata;
 import org.skife.jdbi.v2.DBI;

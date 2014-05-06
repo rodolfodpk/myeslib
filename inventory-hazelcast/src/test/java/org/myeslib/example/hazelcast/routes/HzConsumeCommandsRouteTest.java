@@ -104,15 +104,18 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 	@Test
 	public void test() {
 
-        final UUID id = UUID.randomUUID();
-        CreateInventoryItem command1 = new CreateInventoryItem(UUID.randomUUID(), id);
+        final UUID commandId1 = UUID.randomUUID();
+        final UUID commandId2 = UUID.randomUUID();
+        final UUID aggregateId = UUID.randomUUID();
+
+        CreateInventoryItem command1 = new CreateInventoryItem(commandId1, aggregateId);
 		template.sendBody(command1);
 		
-		IncreaseInventory command2 = new IncreaseInventory(UUID.randomUUID(), command1.getId(), 2, 1L);
+		IncreaseInventory command2 = new IncreaseInventory(commandId2, aggregateId, 2, 1L);
 		template.requestBody(command2, UnitOfWork.class);
 
-        AggregateRootHistory fromDb = dao.get(id);
-        AggregateRootHistory fromMap = inventoryItemMap.get(id);
+        AggregateRootHistory fromDb = dao.get(aggregateId);
+        AggregateRootHistory fromMap = inventoryItemMap.get(aggregateId);
 
         assertEquals(fromMap, fromDb);
 		

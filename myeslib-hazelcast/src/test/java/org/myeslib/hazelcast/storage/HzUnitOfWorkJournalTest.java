@@ -40,7 +40,7 @@ public class HzUnitOfWorkJournalTest {
 		Command command = new IncreaseInventory(UUID.randomUUID(), id, 1, 0L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
-		UnitOfWork t = UnitOfWork.create(command, events);
+		UnitOfWork t = UnitOfWork.create(UUID.randomUUID(), command, events);
 		AggregateRootHistory toStore = new AggregateRootHistory();
 		toStore.add(t);
 		
@@ -74,7 +74,7 @@ public class HzUnitOfWorkJournalTest {
 		Command command = new IncreaseInventory(UUID.randomUUID(), id, 1, 0L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
-		UnitOfWork t = UnitOfWork.create(command, events);
+		UnitOfWork t = UnitOfWork.create(UUID.randomUUID(), command, events);
 		AggregateRootHistory toStore = new AggregateRootHistory();
 		toStore.add(t);
 		
@@ -82,7 +82,7 @@ public class HzUnitOfWorkJournalTest {
 		
 		HzUnitOfWorkJournal<UUID> store = new HzUnitOfWorkJournal<>(mapWithUuidKey);
 		Command command2 = new IncreaseInventory(UUID.randomUUID(), id, 1, 1L);
-		UnitOfWork t2 = UnitOfWork.create(command2, events);
+		UnitOfWork t2 = UnitOfWork.create(UUID.randomUUID(), command2, events);
 		store.append(id, t2);
 
 		ArgumentCaptor<UUID> argumentKey = ArgumentCaptor.forClass(UUID.class);
@@ -119,14 +119,14 @@ public class HzUnitOfWorkJournalTest {
 		Command command = new IncreaseInventory(UUID.randomUUID(), id, 1, 1L);
 		Event event1 = new InventoryIncreased(id, 1);
 		List<Event> events = Arrays.asList(event1);
-		UnitOfWork t = UnitOfWork.create(command, events);
+		UnitOfWork t = UnitOfWork.create(UUID.randomUUID(), command, events);
 		AggregateRootHistory toStore = new AggregateRootHistory();
 		toStore.add(t);
 		
 		when(mapWithUuidKey.get(id)).thenReturn(toStore);
 
 		HzUnitOfWorkJournal<UUID> store = new HzUnitOfWorkJournal<>(mapWithUuidKey);
-		UnitOfWork t2 = UnitOfWork.create(command, events);
+		UnitOfWork t2 = UnitOfWork.create(UUID.randomUUID(), command, events);
 		store.append(id, t2);
 
 	}

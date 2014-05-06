@@ -56,7 +56,7 @@ public class JdbiAggregateRootHistoryJournalDaoTest {
 		UUID id = UUID.randomUUID();
 
 		AggregateRootHistory toSave = new AggregateRootHistory();
-		UnitOfWork newUow = UnitOfWork.create(new IncreaseInventory(UUID.randomUUID(), id, 1, 0L), Arrays.asList(new InventoryIncreased(id, 1)));
+		UnitOfWork newUow = UnitOfWork.create(UUID.randomUUID(), new IncreaseInventory(UUID.randomUUID(), id, 1, 0L), Arrays.asList(new InventoryIncreased(id, 1)));
 		toSave.add(newUow);
 		
 		Handle h = dbi.open();
@@ -79,7 +79,7 @@ public class JdbiAggregateRootHistoryJournalDaoTest {
 		UUID id = UUID.randomUUID();
 
 		AggregateRootHistory toSave = new AggregateRootHistory();
-		UnitOfWork newUow = UnitOfWork.create(new IncreaseInventory(UUID.randomUUID(), id, 1, 0L), Arrays.asList(new InventoryIncreased(id, 1)));
+		UnitOfWork newUow = UnitOfWork.create(UUID.randomUUID(), new IncreaseInventory(UUID.randomUUID(), id, 1, 0L), Arrays.asList(new InventoryIncreased(id, 1)));
 		toSave.add(newUow);
 		
 		Handle h = dbi.open();
@@ -106,11 +106,11 @@ public class JdbiAggregateRootHistoryJournalDaoTest {
 		
 		UUID id = UUID.randomUUID();
 
-		UnitOfWork existingUow = UnitOfWork.create(new IncreaseInventory(UUID.randomUUID(), id, 1, 0L), Arrays.asList(new InventoryIncreased(id, 1)));
+		UnitOfWork existingUow = UnitOfWork.create(UUID.randomUUID(), new IncreaseInventory(UUID.randomUUID(), id, 1, 0L), Arrays.asList(new InventoryIncreased(id, 1)));
 		AggregateRootHistory existing = new AggregateRootHistory();
 		existing.add(existingUow);
 		
-		UnitOfWork newUow = UnitOfWork.create(new DecreaseInventory(UUID.randomUUID(), id, 1, 1L), Arrays.asList(new InventoryDecreased(id, 1)));
+		UnitOfWork newUow = UnitOfWork.create(UUID.randomUUID(), new DecreaseInventory(UUID.randomUUID(), id, 1, 1L), Arrays.asList(new InventoryDecreased(id, 1)));
 		
 		Handle h = dbi.open();
 		
@@ -132,7 +132,7 @@ public class JdbiAggregateRootHistoryJournalDaoTest {
 		
 		UUID id = UUID.randomUUID();
 
-		UnitOfWork existingUow = UnitOfWork.create(new IncreaseInventory(UUID.randomUUID(), id, 1, 0L),  Arrays.asList(new InventoryIncreased(id, 1)));
+		UnitOfWork existingUow = UnitOfWork.create(UUID.randomUUID(), new IncreaseInventory(UUID.randomUUID(), id, 1, 0L),  Arrays.asList(new InventoryIncreased(id, 1)));
 
 		AggregateRootHistory existing = new AggregateRootHistory();
 
@@ -144,7 +144,7 @@ public class JdbiAggregateRootHistoryJournalDaoTest {
 
 		store.append(id, existingUow);
 		
-		UnitOfWork newUow = UnitOfWork.create(new DecreaseInventory(UUID.randomUUID(), id, 1, 0L), Arrays.asList(new InventoryDecreased(id, 1)));
+		UnitOfWork newUow = UnitOfWork.create(UUID.randomUUID(), new DecreaseInventory(UUID.randomUUID(), id, 1, 0L), Arrays.asList(new InventoryDecreased(id, 1)));
 		
 		store.append(id, newUow);
 		

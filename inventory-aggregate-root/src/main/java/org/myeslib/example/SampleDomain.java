@@ -104,8 +104,8 @@ public class SampleDomain {
         @NonNull
         UUID commandId;
         @NonNull
-        final UUID id;
-        final Long targetVersion = 0L;
+        UUID id;
+        Long targetVersion = 0L;
     }
 
     @Value
@@ -122,7 +122,7 @@ public class SampleDomain {
     @Value
     public static class DecreaseInventory implements Command {
         @NonNull
-        final UUID commandId;
+        UUID commandId;
         @NonNull
         UUID id;
         @NonNull

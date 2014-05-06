@@ -18,6 +18,8 @@ import org.myeslib.example.hazelcast.infra.InventoryItemSerializersConfigFactory
 import org.myeslib.example.hazelcast.routes.HzInventoryItemCmdProcessor;
 import org.myeslib.hazelcast.storage.HzSnapshotReader;
 import org.myeslib.hazelcast.storage.HzUnitOfWorkJournal;
+import org.myeslib.util.DefaultUUIDGenerator;
+import org.myeslib.util.UUIDGenerator;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
@@ -120,7 +122,8 @@ public class InventoryItemModule extends AbstractModule {
 		bind(ArTablesMetadata.class).asEagerSingleton();
 		bind(InventoryItemMapConfigFactory.class).asEagerSingleton();;
 		bind(InventoryItemSerializersConfigFactory.class).asEagerSingleton();;
-		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class).asEagerSingleton();;
+		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class).asEagerSingleton();
+		bind(UUIDGenerator.class).to(DefaultUUIDGenerator.class).asEagerSingleton();
 		
 	}
 	

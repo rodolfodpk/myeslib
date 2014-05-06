@@ -15,6 +15,8 @@ import org.myeslib.example.SampleDomainGsonFactory;
 import org.myeslib.example.jdbi.infra.HazelcastData;
 import org.myeslib.example.jdbi.routes.InventoryItemCmdProcessor;
 import org.myeslib.jdbi.storage.JdbiSnapshotReader;
+import org.myeslib.util.DefaultUUIDGenerator;
+import org.myeslib.util.UUIDGenerator;
 import org.myeslib.util.gson.UowFromStringFunction;
 import org.myeslib.util.gson.UowToStringFunction;
 import org.myeslib.util.jdbi.AggregateRootHistoryReaderDao;
@@ -107,6 +109,7 @@ public class InventoryItemModule extends AbstractModule {
         .build(AggregateRootHistoryWriterDaoFactory.class)) ;
 
 		bind(ItemDescriptionGeneratorService.class).to(ServiceJustForTest.class).asEagerSingleton();
+	    bind(UUIDGenerator.class).to(DefaultUUIDGenerator.class).asEagerSingleton();
 
 	}
 	

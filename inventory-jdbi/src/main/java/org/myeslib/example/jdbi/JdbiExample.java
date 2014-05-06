@@ -14,11 +14,10 @@ import org.myeslib.example.jdbi.modules.HazelcastModule;
 import org.myeslib.example.jdbi.modules.InventoryItemModule;
 import org.myeslib.example.jdbi.routes.JdbiConsumeCommandsRoute;
 import org.myeslib.example.jdbi.routes.JdbiConsumeEventsRoute;
-
+import org.myeslib.example.jdbi.routes.ReceiveCommandsAsJsonRoute;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.myeslib.example.jdbi.routes.ReceiveCommandsAsJsonRoute;
 
 @Slf4j
 public class JdbiExample {

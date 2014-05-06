@@ -26,6 +26,7 @@ import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.SampleDomain.ItemDescriptionGeneratorService;
 import org.myeslib.example.jdbi.modules.InventoryItemModule.AggregateRootHistoryWriterDaoFactory;
 import org.myeslib.jdbi.storage.JdbiUnitOfWorkJournal;
+import org.myeslib.util.UUIDGenerator;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
@@ -42,40 +43,44 @@ public class InventoryItemCmdProcessor implements Processor {
             SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
             DBI dbi,
             AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory,
-            ItemDescriptionGeneratorService service) {
+            ItemDescriptionGeneratorService service,
+            UUIDGenerator uuidGenerator) {
         this.snapshotReader = snapshotReader;
         this.dbi = dbi;
         this.aggregateRootHistoryWriterDaoFactory = aggregateRootHistoryWriterDaoFactory;
         this.service = service;
+        this.uuidGenerator = uuidGenerator;
     }
 
     final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
     final DBI dbi;
     final AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory;
     final ItemDescriptionGeneratorService service;
+    final UUIDGenerator uuidGenerator;
     
     @Override
     public void process(Exchange e) throws Exception {
 
-        final UUID id = e.getIn().getHeader(ID, UUID.class);
-        final Command command = e.getIn().getBody(Command.class);
-        final Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id);
-        
-        final Handle handle = dbi.open();
-        handle.getConnection().setAutoCommit(false);
-        handle.begin();
-        handle.setTransactionIsolation(TransactionIsolationLevel.READ_COMMITTED);
-
-        if (!command.getTargetVersion().equals(snapshot.getVersion())) {
-            String msg = String.format("cmd version (%s) does not match snapshot version (%s)", command.getTargetVersion(), snapshot.getVersion());
-            throw new ConcurrentModificationException(msg);
-        }
-
-        checkNotNull(id);
-        checkNotNull(command);
-        checkNotNull(command.getTargetVersion());
+         final Handle handle = dbi.open();
 
         try {
+            
+            handle.getConnection().setAutoCommit(false);
+            handle.begin();
+            handle.setTransactionIsolation(TransactionIsolationLevel.READ_COMMITTED);
+
+            final UUID id = e.getIn().getHeader(ID, UUID.class);
+            final Command command = e.getIn().getBody(Command.class);
+            final Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id);
+            
+            if (!command.getTargetVersion().equals(snapshot.getVersion())) {
+                String msg = String.format("cmd version (%s) does not match snapshot version (%s)", command.getTargetVersion(), snapshot.getVersion());
+                throw new ConcurrentModificationException(msg);
+            }
+
+            checkNotNull(id);
+            checkNotNull(command);
+            checkNotNull(command.getTargetVersion());
 
             final List<? extends Event> events;
 
@@ -93,7 +98,7 @@ public class InventoryItemCmdProcessor implements Processor {
             }
 
             final JdbiUnitOfWorkJournal<UUID> uowJournal = new JdbiUnitOfWorkJournal<>(aggregateRootHistoryWriterDaoFactory.create(handle));
-            final UnitOfWork uow = UnitOfWork.create(command, events);
+            final UnitOfWork uow = UnitOfWork.create(uuidGenerator.generate(), command, events);
             
             uowJournal.append(id, uow);
             e.getOut().setHeader(ID, id);
