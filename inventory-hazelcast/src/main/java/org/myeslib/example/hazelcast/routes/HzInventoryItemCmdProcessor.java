@@ -82,9 +82,8 @@ public class HzInventoryItemCmdProcessor implements Processor {
         e.getOut().setHeader(ID, id);
         e.getOut().setBody(uow);
 
-        // log.debug("since this map is configured to be write through and there is a db trigger to control optimistic locking and concurrency, this is a commited transaction {} {}",
-        // id, Thread.currentThread());
-        // 201405071104491792
+        // since the hazelcast map is configured to be write through and there is a db trigger to control optimistic locking and concurrency, 
+        // this is a commited transaction
 
     }
 }

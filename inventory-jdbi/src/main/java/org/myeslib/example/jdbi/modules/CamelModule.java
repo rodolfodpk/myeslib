@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 
 import org.myeslib.example.jdbi.routes.JdbiConsumeEventsRoute;
 import org.myeslib.example.jdbi.routes.ReceiveCommandsAsJsonRoute;
+import org.myeslib.util.gson.CommandFromStringFunction;
 import org.myeslib.util.hazelcast.HzJobLocker;
 
-import com.google.gson.Gson;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
@@ -29,9 +29,9 @@ public class CamelModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public ReceiveCommandsAsJsonRoute receiveCommandsRoute(@Named("originUri") String originUri, Gson gson) {
+	public ReceiveCommandsAsJsonRoute receiveCommandsRoute(@Named("originUri") String originUri, CommandFromStringFunction commandFromStringFunction) {
 		String url = String.format("jetty:http://localhost:8080/inventory-item-command?minThreads=%d&maxThreads=%d", jettyMinThreads, jettyMaxThreads);
-		return new ReceiveCommandsAsJsonRoute(url, originUri, gson);
+		return new ReceiveCommandsAsJsonRoute(url, originUri, commandFromStringFunction);
 	}
 	
 	@Provides
@@ -43,6 +43,7 @@ public class CamelModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(JdbiConsumeEventsRoute.class);
+		bind(CommandFromStringFunction.class);
 	}
 	
 }
