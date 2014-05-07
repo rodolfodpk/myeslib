@@ -11,32 +11,32 @@ import com.google.inject.Inject;
 public class ReceiveCommandsAsJsonRoute  extends RouteBuilder{
 
     @Inject
-    public ReceiveCommandsAsJsonRoute(String startUri, String endUri,
+    public ReceiveCommandsAsJsonRoute(String sourceUri, String targetUri,
             CommandFromStringFunction commandFromStringFunction) {
-        this.startUri = startUri;
-        this.endUri = endUri;
+        this.sourceUri = sourceUri;
+        this.targetUri = targetUri;
         this.commandFromStringFunction = commandFromStringFunction;
     }
 
-    final String startUri;
-    final String endUri;
+    final String sourceUri;
+    final String targetUri;
     final CommandFromStringFunction commandFromStringFunction;
 
     @Override
     public void configure() throws Exception {
 
-        from(startUri)
-                .streamCaching()
-                .routeId("receive-commands-as-json")
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange e) throws Exception {
-                        String body = e.getIn().getBody(String.class);
-                        e.getOut().setBody(commandFromStringFunction.apply(body), Command.class);
-                    }
-                })
-                .log("received ${header.commandType} - id ${body.id} - targetVersion ${body.targetVersion}")
-                .to(endUri);
+        from(sourceUri)
+            .streamCaching()
+            .routeId("receive-commands-as-json")
+            .process(new Processor() {
+                @Override
+                public void process(Exchange e) throws Exception {
+                    String body = e.getIn().getBody(String.class);
+                    e.getOut().setBody(commandFromStringFunction.apply(body), Command.class);
+                }
+            })
+            .log("received ${header.commandType} - id ${body.id} - targetVersion ${body.targetVersion}")
+            .to(targetUri);
 
 	}
 

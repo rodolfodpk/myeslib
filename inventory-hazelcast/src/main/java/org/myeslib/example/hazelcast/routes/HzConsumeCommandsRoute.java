@@ -14,17 +14,17 @@ import com.hazelcast.core.IQueue;
 
 public class HzConsumeCommandsRoute extends RouteBuilder {
 
-	final String originUri;
+	final String commandsDestinationUri;
 	final HzInventoryItemCmdProcessor inventoryItemCmdProcessor;
     final IQueue<UUID> eventsQueue;
 
 	@Inject
 	public HzConsumeCommandsRoute(
-			@Named("originUri") String originUri,
+			@Named("commandsDestinationUri") String commandsDestinationUri,
 			HzInventoryItemCmdProcessor inventoryItemCmdProcessor,
             IQueue<UUID> eventsQueue) {
 
-		this.originUri = originUri;
+		this.commandsDestinationUri = commandsDestinationUri;
 		this.inventoryItemCmdProcessor = inventoryItemCmdProcessor;
         this.eventsQueue = eventsQueue;
 	}
@@ -32,7 +32,7 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
 
-         from(originUri)
+         from(commandsDestinationUri)
 			 .routeId("handle-inventory-item-command")
 			 .setHeader("id", simple("${body.getId()}"))	    
 	         .process(inventoryItemCmdProcessor) 

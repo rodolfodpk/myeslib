@@ -8,31 +8,31 @@ import com.google.inject.name.Named;
 
 public class JdbiConsumeCommandsRoute extends RouteBuilder {
 
-	final String originUri;
-	final InventoryItemCmdProcessor inventoryItemCmdProcessor;
-	
-	@Inject
-	public JdbiConsumeCommandsRoute(@Named("originUri") String originUri, InventoryItemCmdProcessor inventoryItemCmdProcessor) {
-		this.originUri = originUri;
-		this.inventoryItemCmdProcessor = inventoryItemCmdProcessor;
-	}
-	
-	@Override
-	public void configure() throws Exception {
+    final String commandsDestinationUri;
+    final InventoryItemCmdProcessor inventoryItemCmdProcessor;
 
-//		errorHandler(deadLetterChannel("direct:dead-letter-channel")
-//			    .maximumRedeliveries(3).redeliveryDelay(5000));
+    @Inject
+    public JdbiConsumeCommandsRoute(@Named("commandsDestinationUri") String commandsDestinationUri,
+            InventoryItemCmdProcessor inventoryItemCmdProcessor) {
+        this.commandsDestinationUri = commandsDestinationUri;
+        this.inventoryItemCmdProcessor = inventoryItemCmdProcessor;
+    }
 
-		from(originUri) 	
-		     .routeId("handle-inventory-item-command")
-		     .setHeader("id", simple("${body.getId()}"))	    
-	         .process(inventoryItemCmdProcessor) 
-	      	  ;
-       
-	     from("direct:dead-letter-channel")
-	      	.routeId("direct:dead-letter-channel")
-	         .log("error !!");
+    @Override
+    public void configure() throws Exception {
 
-	}
+        // errorHandler(deadLetterChannel("direct:dead-letter-channel")
+        // .maximumRedeliveries(3).redeliveryDelay(5000));
+
+        from(commandsDestinationUri)
+            .routeId("handle-inventory-item-command")
+            .setHeader("id", simple("${body.getId()}"))
+            .process(inventoryItemCmdProcessor);
+
+        from("direct:dead-letter-channel")
+            .routeId("direct:dead-letter-channel")
+            .log("error !!");
+
+    }
 
 }

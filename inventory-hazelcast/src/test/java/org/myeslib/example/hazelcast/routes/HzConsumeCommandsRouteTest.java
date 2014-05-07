@@ -82,7 +82,7 @@ public class HzConsumeCommandsRouteTest extends CamelTestSupport {
 		}
 		@Override
 		public void configure(Binder binder) {
-			binder.bindConstant().annotatedWith(Names.named("originUri")).to("direct:handle-inventory-item-command");
+			binder.bindConstant().annotatedWith(Names.named("commandsDestinationUri")).to("direct:handle-inventory-item-command");
             binder.bind(AggregateRootHistoryReaderDao.class).to(JdbiAggregateRootHistoryReaderDao.class).asEagerSingleton();
 		}
 	}

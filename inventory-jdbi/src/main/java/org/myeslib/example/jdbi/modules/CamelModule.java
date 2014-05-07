@@ -22,16 +22,16 @@ public class CamelModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	@Named("originUri")
-	public String originUri() {
+	@Named("commandsDestinationUri")
+	public String commandsDestinationUri() {
 		return "direct:processCommand";
 	}
 
 	@Provides
 	@Singleton
-	public ReceiveCommandsAsJsonRoute receiveCommandsRoute(@Named("originUri") String originUri, CommandFromStringFunction commandFromStringFunction) {
-		String url = String.format("jetty:http://localhost:8080/inventory-item-command?minThreads=%d&maxThreads=%d", jettyMinThreads, jettyMaxThreads);
-		return new ReceiveCommandsAsJsonRoute(url, originUri, commandFromStringFunction);
+	public ReceiveCommandsAsJsonRoute receiveCommandsRoute(@Named("commandsDestinationUri") String commandsDestinationUri, CommandFromStringFunction commandFromStringFunction) {
+		String sourceUri = String.format("jetty:http://localhost:8080/inventory-item-command?minThreads=%d&maxThreads=%d", jettyMinThreads, jettyMaxThreads);
+		return new ReceiveCommandsAsJsonRoute(sourceUri, commandsDestinationUri, commandFromStringFunction);
 	}
 	
 	@Provides

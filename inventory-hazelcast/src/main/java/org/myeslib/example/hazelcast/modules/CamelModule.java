@@ -22,43 +22,46 @@ import com.hazelcast.core.IQueue;
 
 @AllArgsConstructor
 public class CamelModule extends AbstractModule {
-	
-	int jettyMinThreads;
-	int jettyMaxThreads;
-	int eventsQueueConsumers;
-	
-	@Provides
-	@Singleton
-	@Named("originUri")
-	public String originUri() {
-		return "direct:processCommand";
-	}
 
-	@Provides
-	@Singleton
-	@Named("eventsDestinationUri")
-	public String destinationUri() {
-		return String.format("hz:seda:%s", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name());
-	}
+    int jettyMinThreads;
+    int jettyMaxThreads;
+    int eventsQueueConsumers;
 
     @Provides
     @Singleton
-    public ReceiveCommandsAsJsonRoute receiveCommandsRoute(@Named("originUri") String originUri, CommandFromStringFunction commandFromStringFunction) {
-        String url = String.format("jetty:http://localhost:8080/inventory-item-command?minThreads=%d&maxThreads=%d", jettyMinThreads, jettyMaxThreads);
-        return new ReceiveCommandsAsJsonRoute(url, originUri, commandFromStringFunction);
+    @Named("commandsDestinationUri")
+    public String commandsDestinationUri() {
+        return "direct:processCommand";
     }
-	   
+
     @Provides
-	@Singleton
-	public HzConsumeEventsRoute hzConsumeEventsRoute(SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
-                                                     IMap<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap,
-                                                     IQueue<UUID> eventsQueue) {
-		return new HzConsumeEventsRoute(eventsQueueConsumers, snapshotReader, lastSnapshotMap, eventsQueue);
-	}
-	
-	@Override
-	protected void configure() {
-	}
+    @Singleton
+    @Named("eventsDestinationUri")
+    public String destinationUri() {
+        return String.format("hz:seda:%s", HazelcastData.INVENTORY_ITEM_EVENTS_QUEUE.name());
+    }
+
+    @Provides
+    @Singleton
+    public ReceiveCommandsAsJsonRoute receiveCommandsRoute(
+            @Named("commandsDestinationUri") String commandsDestinationUri,
+            CommandFromStringFunction commandFromStringFunction) {
+        String sourceUri = String.format(
+                "jetty:http://localhost:8080/inventory-item-command?minThreads=%d&maxThreads=%d",
+                jettyMinThreads, jettyMaxThreads);
+        return new ReceiveCommandsAsJsonRoute(sourceUri, commandsDestinationUri, commandFromStringFunction);
+    }
+
+    @Provides
+    @Singleton
+    public HzConsumeEventsRoute hzConsumeEventsRoute(
+            SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
+            IMap<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap,
+            IQueue<UUID> eventsQueue) {
+        return new HzConsumeEventsRoute(eventsQueueConsumers, snapshotReader, lastSnapshotMap, eventsQueue);
+    }
+
+    @Override
+    protected void configure() {
+    }
 }
-
-
