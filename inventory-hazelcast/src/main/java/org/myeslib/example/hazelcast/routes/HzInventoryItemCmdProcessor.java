@@ -1,9 +1,8 @@
 package org.myeslib.example.hazelcast.routes;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.myeslib.util.ValidationHelper.ensureSameVersion;
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,19 +33,19 @@ public class HzInventoryItemCmdProcessor implements Processor {
     @Inject
     public HzInventoryItemCmdProcessor(
             SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
-            HzUnitOfWorkJournal<UUID> uowJournal, ItemDescriptionGeneratorService service,
+            HzUnitOfWorkJournal<UUID> uowJournal, ItemDescriptionGeneratorService domainService,
             UUIDGenerator uuidGenerator) {
         this.snapshotReader = snapshotReader;
         this.uowJournal = uowJournal;
-        this.service = service;
+        this.domainService = domainService;
         this.uuidGenerator = uuidGenerator;
     }
 
     final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
     final HzUnitOfWorkJournal<UUID> uowJournal;
-    final ItemDescriptionGeneratorService service;
+    final ItemDescriptionGeneratorService domainService;
     final UUIDGenerator uuidGenerator;
-    
+
     @Override
     public void process(Exchange e) throws Exception {
 
@@ -58,29 +57,22 @@ public class HzInventoryItemCmdProcessor implements Processor {
         checkNotNull(command);
         checkNotNull(command.getTargetVersion());
 
-        if (!command.getTargetVersion().equals(snapshot.getVersion())) {
-            String msg = String.format(
-                    "** (%s) cmd version (%s) does not match snapshot version (%s)", id,
-                    command.getTargetVersion(), snapshot.getVersion());
-            throw new ConcurrentModificationException(msg);
-        }
-
         final List<? extends Event> events;
+        final InventoryItemAggregateRoot instance = snapshot.getAggregateInstance();
 
         if (command instanceof CreateInventoryItem) {
-            CreateCommandHandler commandHandler = new CreateCommandHandler(
-                    snapshot.getAggregateInstance(), service);
+            CreateCommandHandler commandHandler = new CreateCommandHandler(instance, domainService);
             events = commandHandler.handle(((CreateInventoryItem) command));
         } else if (command instanceof IncreaseInventory) {
-            IncreaseCommandHandler commandHandler = new IncreaseCommandHandler(
-                    snapshot.getAggregateInstance());
+            ensureSameVersion(id.toString(), command.getTargetVersion(), snapshot.getVersion());
+            IncreaseCommandHandler commandHandler = new IncreaseCommandHandler(instance);
             events = commandHandler.handle(((IncreaseInventory) command));
         } else if (command instanceof DecreaseInventory) {
-            DecreaseCommandHandler commandHandler = new DecreaseCommandHandler(
-                    snapshot.getAggregateInstance());
+            ensureSameVersion(id.toString(), command.getTargetVersion(), snapshot.getVersion());
+            DecreaseCommandHandler commandHandler = new DecreaseCommandHandler(instance);
             events = commandHandler.handle(((DecreaseInventory) command));
         } else {
-            events = new ArrayList<>();
+            throw new IllegalArgumentException("Unknown command");
         }
 
         final UnitOfWork uow = UnitOfWork.create(uuidGenerator.generate(), command, events);
@@ -92,6 +84,7 @@ public class HzInventoryItemCmdProcessor implements Processor {
 
         // log.debug("since this map is configured to be write through and there is a db trigger to control optimistic locking and concurrency, this is a commited transaction {} {}",
         // id, Thread.currentThread());
+        // 201405071104491792
 
     }
 }

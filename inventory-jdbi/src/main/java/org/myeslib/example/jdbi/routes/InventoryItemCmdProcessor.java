@@ -1,9 +1,8 @@
 package org.myeslib.example.jdbi.routes;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.myeslib.util.ValidationHelper.ensureSameVersion;
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,25 +42,25 @@ public class InventoryItemCmdProcessor implements Processor {
             SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
             DBI dbi,
             AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory,
-            ItemDescriptionGeneratorService service,
+            ItemDescriptionGeneratorService domainService,
             UUIDGenerator uuidGenerator) {
         this.snapshotReader = snapshotReader;
         this.dbi = dbi;
         this.aggregateRootHistoryWriterDaoFactory = aggregateRootHistoryWriterDaoFactory;
-        this.service = service;
+        this.domainService = domainService;
         this.uuidGenerator = uuidGenerator;
     }
 
     final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
     final DBI dbi;
     final AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory;
-    final ItemDescriptionGeneratorService service;
+    final ItemDescriptionGeneratorService domainService;
     final UUIDGenerator uuidGenerator;
     
     @Override
     public void process(Exchange e) throws Exception {
 
-         final Handle handle = dbi.open();
+        final Handle handle = dbi.open();
 
         try {
             
@@ -73,37 +72,38 @@ public class InventoryItemCmdProcessor implements Processor {
             final Command command = e.getIn().getBody(Command.class);
             final Snapshot<InventoryItemAggregateRoot> snapshot = snapshotReader.get(id);
             
-            if (!command.getTargetVersion().equals(snapshot.getVersion())) {
-                String msg = String.format("cmd version (%s) does not match snapshot version (%s)", command.getTargetVersion(), snapshot.getVersion());
-                throw new ConcurrentModificationException(msg);
-            }
-
             checkNotNull(id);
             checkNotNull(command);
             checkNotNull(command.getTargetVersion());
 
             final List<? extends Event> events;
+            final InventoryItemAggregateRoot instance = snapshot.getAggregateInstance();
 
-            if (command instanceof CreateInventoryItem){
-                CreateCommandHandler commandHandler = new CreateCommandHandler(snapshot.getAggregateInstance(), service);
-                events = commandHandler.handle(((CreateInventoryItem)command));
+            if (command instanceof CreateInventoryItem) {
+                CreateCommandHandler commandHandler = new CreateCommandHandler(instance, domainService);
+                events = commandHandler.handle(((CreateInventoryItem) command));
             } else if (command instanceof IncreaseInventory) {
-                IncreaseCommandHandler commandHandler = new IncreaseCommandHandler(snapshot.getAggregateInstance());
-                events = commandHandler.handle(((IncreaseInventory)command));
+                ensureSameVersion(id.toString(), command.getTargetVersion(), snapshot.getVersion());
+                IncreaseCommandHandler commandHandler = new IncreaseCommandHandler(instance);
+                events = commandHandler.handle(((IncreaseInventory) command));
             } else if (command instanceof DecreaseInventory) {
-                DecreaseCommandHandler commandHandler = new DecreaseCommandHandler(snapshot.getAggregateInstance());
-                events = commandHandler.handle(((DecreaseInventory)command));
+                ensureSameVersion(id.toString(), command.getTargetVersion(), snapshot.getVersion());
+                DecreaseCommandHandler commandHandler = new DecreaseCommandHandler(instance);
+                events = commandHandler.handle(((DecreaseInventory) command));
             } else {
-                events = new ArrayList<>();
+                throw new IllegalArgumentException("Unknown command");
             }
 
             final JdbiUnitOfWorkJournal<UUID> uowJournal = new JdbiUnitOfWorkJournal<>(aggregateRootHistoryWriterDaoFactory.create(handle));
             final UnitOfWork uow = UnitOfWork.create(uuidGenerator.generate(), command, events);
             
             uowJournal.append(id, uow);
+            
+            handle.commit();
+
             e.getOut().setHeader(ID, id);
             e.getOut().setBody(uow);
-            handle.commit();
+            
             log.debug("commited transaction {} {}", id, Thread.currentThread());
 
         } catch (Throwable ex) {

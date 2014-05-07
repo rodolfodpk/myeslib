@@ -38,7 +38,8 @@ public class HzConsumeCommandsRoute extends RouteBuilder {
 	         .process(inventoryItemCmdProcessor) 
 	      	 .wireTap("direct:enqueueId")
 	      			.newExchangeBody(header("id"))
-	      	 .end()		
+	      	 .end()
+	      	 .setBody(constant(null)) 
 	         ;
 
          from("direct:enqueueId")
