@@ -17,7 +17,9 @@ There are two examples implemented:
 
 Both have the <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/ReceiveCommandsAsJsonRoute.java">ReceiveCommandsAsJsonRoute</a>. This route receives commands as JSON, deserialize it an then routes the command instance to the next endpoint. 
 
-In the Hazelcast example, <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzConsumeCommandsRoute.java">HzConsumeCommandsRoute</a> will then consume the command from the endpoint and use the <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzInventoryItemCmdProcessor.java">HzInventoryItemCmdProcessor</a> to process the command and save the resulting events into the eventstore. After this, the HzConsumeCommandsRoute will enqueue the AggregateRoot's id into a queue being consumed by <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzConsumeEventsRoute.java">xxConsumeEventsRoute</a> in order to reflect the events into the query model.
+In the Hazelcast implementation, <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzConsumeCommandsRoute.java">HzConsumeCommandsRoute</a> will then consume the command from the endpoint and use the <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzInventoryItemCmdProcessor.java">HzInventoryItemCmdProcessor</a> to process the command and save the resulting events into the eventstore. After this, the HzConsumeCommandsRoute will enqueue the AggregateRoot's id into a queue being consumed by <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzConsumeEventsRoute.java">xxConsumeEventsRoute</a> in order to reflect the events into the query model.
+
+You can find an overview of all the modules on the wiki.
 
 
 #### Running the Inventory example 
