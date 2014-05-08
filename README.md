@@ -8,18 +8,18 @@ Here is the <a href="inventory-aggregate-root/src/main/java/org/myeslib/example/
 
 There are tests for both <a href="inventory-aggregate-root/src/test/java/org/myeslib/example/InventoryItemCommandHandlerTest.java">InventoryItemCommandHandlerTest</a> and <a href="inventory-aggregate-root/src/test/java/org/myeslib/example/InventoryItemAggregateRootTest.java">InventoryItemAggregateRootTest</a>. I'm using plain JUnit but it's worth to mention Event Sourcing helps a lot when writing BDD specifications.
 
-#### The example
+#### The examples
 
 There are two examples implemented:
 
 * inventory-jdbi
 * inventory-hazelcast
 
-Both have the <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/ReceiveCommandsAsJsonRoute.java">ReceiveCommandsAsJsonRoute</a>. This route receives commands as JSON, deserialize it an then routes the command instance to the next endpoint. 
+Both have in common the <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/ReceiveCommandsAsJsonRoute.java">ReceiveCommandsAsJsonRoute</a>. This route receives commands as JSON, deserialize it an then routes the command instance to the next endpoint. 
 
 In the Hazelcast implementation, <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzConsumeCommandsRoute.java">HzConsumeCommandsRoute</a> will then consume the command from the endpoint and use the <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzInventoryItemCmdProcessor.java">HzInventoryItemCmdProcessor</a> to process the command and save the resulting events into the eventstore. After this, the HzConsumeCommandsRoute will enqueue the AggregateRoot's id into a queue being consumed by <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzConsumeEventsRoute.java">xxConsumeEventsRoute</a> in order to reflect the events into the query model.
 
-You can find an overview of all the modules on the wiki.
+You can find an overview of all the modules on the <a href="https://github.com/rodolfodpk/myeslib/wiki/Modules-overview">wiki</a>
 
 
 #### Running the Inventory example 
@@ -62,10 +62,7 @@ The parameters are, respectively:
 * dbPoolMinConnections 
 * dbPoolMaxConnections
 
-
-This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache. 
-
-There is another implementation: **inventory-hazelcast**. It is more tied to Hazelcast since beside caching for snapshots, it uses a distributed map backed by a MapStore implementation to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/AggregateRootHistory.java">AggregateRootHistory</a> instances. This map is configured as write-through. It also uses a Hazelcast queue to store <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork</a> instances. This Hazelcast implementation has an additional parameter: 
+This service will receive commands as JSON on http://localhost:8080/inventory-item-command. It uses Hazelcast just as a cache of snapshots. The Hazelcast implementation has an additional parameter: 
 
 * eventsQueueConsumers (default =50)
 
