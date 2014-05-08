@@ -2,21 +2,15 @@ package org.myeslib.example.jdbi.routes;
 
 import javax.inject.Inject;
 
+import lombok.RequiredArgsConstructor;
+
 import org.apache.camel.builder.RouteBuilder;
 
-import com.google.inject.name.Named;
-
+@RequiredArgsConstructor(onConstructor=@_(@Inject))
 public class JdbiConsumeCommandsRoute extends RouteBuilder {
 
     final String commandsDestinationUri;
     final InventoryItemCmdProcessor inventoryItemCmdProcessor;
-
-    @Inject
-    public JdbiConsumeCommandsRoute(@Named("commandsDestinationUri") String commandsDestinationUri,
-            InventoryItemCmdProcessor inventoryItemCmdProcessor) {
-        this.commandsDestinationUri = commandsDestinationUri;
-        this.inventoryItemCmdProcessor = inventoryItemCmdProcessor;
-    }
 
     @Override
     public void configure() throws Exception {

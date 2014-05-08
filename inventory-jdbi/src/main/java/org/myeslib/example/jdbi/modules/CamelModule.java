@@ -4,6 +4,8 @@ import javax.inject.Singleton;
 
 import lombok.AllArgsConstructor;
 
+import org.myeslib.example.jdbi.routes.InventoryItemCmdProcessor;
+import org.myeslib.example.jdbi.routes.JdbiConsumeCommandsRoute;
 import org.myeslib.example.jdbi.routes.JdbiConsumeEventsRoute;
 import org.myeslib.example.jdbi.routes.ReceiveCommandsAsJsonRoute;
 import org.myeslib.util.gson.CommandFromStringFunction;
@@ -32,6 +34,12 @@ public class CamelModule extends AbstractModule {
 	public ReceiveCommandsAsJsonRoute receiveCommandsRoute(@Named("commandsDestinationUri") String commandsDestinationUri, CommandFromStringFunction commandFromStringFunction) {
 		String sourceUri = String.format("jetty:http://localhost:8080/inventory-item-command?minThreads=%d&maxThreads=%d", jettyMinThreads, jettyMaxThreads);
 		return new ReceiveCommandsAsJsonRoute(sourceUri, commandsDestinationUri, commandFromStringFunction);
+	}
+	
+    @Provides
+    @Singleton
+	public JdbiConsumeCommandsRoute jdbiConsumeCommandsRoute(@Named("commandsDestinationUri") String commandsDestinationUri, InventoryItemCmdProcessor inventoryItemCmdProcessor) {
+	    return new JdbiConsumeCommandsRoute(commandsDestinationUri, inventoryItemCmdProcessor);
 	}
 	
 	@Provides

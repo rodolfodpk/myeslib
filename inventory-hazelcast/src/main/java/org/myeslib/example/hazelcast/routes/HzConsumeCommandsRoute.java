@@ -5,29 +5,20 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import lombok.RequiredArgsConstructor;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
-import com.google.inject.name.Named;
 import com.hazelcast.core.IQueue;
 
+@RequiredArgsConstructor(onConstructor=@__(@Inject))
 public class HzConsumeCommandsRoute extends RouteBuilder {
 
 	final String commandsDestinationUri;
 	final HzInventoryItemCmdProcessor inventoryItemCmdProcessor;
     final IQueue<UUID> eventsQueue;
-
-	@Inject
-	public HzConsumeCommandsRoute(
-			@Named("commandsDestinationUri") String commandsDestinationUri,
-			HzInventoryItemCmdProcessor inventoryItemCmdProcessor,
-            IQueue<UUID> eventsQueue) {
-
-		this.commandsDestinationUri = commandsDestinationUri;
-		this.inventoryItemCmdProcessor = inventoryItemCmdProcessor;
-        this.eventsQueue = eventsQueue;
-	}
 	
 	@Override
 	public void configure() throws Exception {

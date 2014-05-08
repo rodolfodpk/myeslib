@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import lombok.RequiredArgsConstructor;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,6 +26,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor=@__(@Inject))
 public class JdbiConsumeEventsRoute extends RouteBuilder {
 
 	final static String INVENTORY_ITEM_ID = "inventoryItemId";
@@ -36,17 +39,6 @@ public class JdbiConsumeEventsRoute extends RouteBuilder {
 	final ArTablesMetadata tablesMetadata;
 	final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
     final Map<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap;
-
-	@Inject
-	public JdbiConsumeEventsRoute(HzJobLocker jobLocker, DBI dbi, ArTablesMetadata tablesMetadata, 
-								  SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
-                                  Map<UUID, Snapshot<InventoryItemAggregateRoot>> lastSnapshotMap) {
-		this.jobLocker = jobLocker;
-		this.dbi = dbi;
-		this.tablesMetadata = tablesMetadata;
-		this.snapshotReader = snapshotReader;
-        this.lastSnapshotMap = lastSnapshotMap;
-	}
 
 	@Override
 	public void configure() throws Exception {

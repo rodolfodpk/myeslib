@@ -6,6 +6,7 @@ import static org.myeslib.util.ValidationHelper.ensureSameVersion;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.camel.Exchange;
@@ -33,24 +34,11 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import com.google.inject.Inject;
 
 @Slf4j
+@RequiredArgsConstructor(onConstructor=@__(@Inject))
 public class InventoryItemCmdProcessor implements Processor {
     
     final static String ID = "id";
     
-    @Inject
-    public InventoryItemCmdProcessor(
-            SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
-            DBI dbi,
-            AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory,
-            ItemDescriptionGeneratorService domainService,
-            UUIDGenerator uuidGenerator) {
-        this.snapshotReader = snapshotReader;
-        this.dbi = dbi;
-        this.aggregateRootHistoryWriterDaoFactory = aggregateRootHistoryWriterDaoFactory;
-        this.domainService = domainService;
-        this.uuidGenerator = uuidGenerator;
-    }
-
     final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
     final DBI dbi;
     final AggregateRootHistoryWriterDaoFactory aggregateRootHistoryWriterDaoFactory;

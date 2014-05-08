@@ -10,7 +10,9 @@ import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 import org.myeslib.example.hazelcast.infra.HazelcastData;
+import org.myeslib.example.hazelcast.routes.HzConsumeCommandsRoute;
 import org.myeslib.example.hazelcast.routes.HzConsumeEventsRoute;
+import org.myeslib.example.hazelcast.routes.HzInventoryItemCmdProcessor;
 import org.myeslib.example.hazelcast.routes.ReceiveCommandsAsJsonRoute;
 import org.myeslib.util.gson.CommandFromStringFunction;
 
@@ -52,6 +54,16 @@ public class CamelModule extends AbstractModule {
         return new ReceiveCommandsAsJsonRoute(sourceUri, commandsDestinationUri, commandFromStringFunction);
     }
 
+    @Provides
+    @Singleton
+    public HzConsumeCommandsRoute hzConsumeCommandsRoute(
+            @Named("commandsDestinationUri") String commandsDestinationUri,
+            HzInventoryItemCmdProcessor inventoryItemCmdProcessor,
+            IQueue<UUID> eventsQueue) {
+        return new HzConsumeCommandsRoute(commandsDestinationUri, inventoryItemCmdProcessor, eventsQueue);
+        
+    }
+    
     @Provides
     @Singleton
     public HzConsumeEventsRoute hzConsumeEventsRoute(

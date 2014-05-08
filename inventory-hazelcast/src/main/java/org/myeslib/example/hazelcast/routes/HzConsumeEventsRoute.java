@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.camel.Exchange;
@@ -19,11 +19,12 @@ import org.myeslib.core.data.Snapshot;
 import org.myeslib.core.storage.SnapshotReader;
 import org.myeslib.example.SampleDomain.InventoryItemAggregateRoot;
 
+import com.google.inject.Inject;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor(onConstructor=@__(@Inject))
 public class HzConsumeEventsRoute extends RouteBuilder {
 
     static final String ID = "ID";

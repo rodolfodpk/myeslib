@@ -15,8 +15,8 @@ import lombok.Value;
 
 import org.myeslib.core.AggregateRoot;
 import org.myeslib.core.Command;
-import org.myeslib.core.Event;
 import org.myeslib.core.CommandHandler;
+import org.myeslib.core.Event;
 
 import com.google.common.base.Function;
 
@@ -55,8 +55,9 @@ public class SampleDomain {
     @AllArgsConstructor
     public static class CreateCommandHandler implements CommandHandler<CreateInventoryItem> {
 
-        @Delegate
+        @Delegate @NonNull
         final InventoryItemAggregateRoot aggregateRoot;
+        @NonNull
         final ItemDescriptionGeneratorService service;
 
         public List<? extends Event> handle(CreateInventoryItem command) {
@@ -71,7 +72,7 @@ public class SampleDomain {
     @AllArgsConstructor
     public static class IncreaseCommandHandler implements CommandHandler<IncreaseInventory> {
 
-        @Delegate
+        @Delegate @NonNull
         final InventoryItemAggregateRoot aggregateRoot;
 
         public List<? extends Event> handle(IncreaseInventory command) {
@@ -85,7 +86,7 @@ public class SampleDomain {
     @AllArgsConstructor
     public static class DecreaseCommandHandler implements CommandHandler<DecreaseInventory> {
 
-        @Delegate
+        @Delegate @NonNull
         final InventoryItemAggregateRoot aggregateRoot;
 
         public List<? extends Event> handle(DecreaseInventory command) {

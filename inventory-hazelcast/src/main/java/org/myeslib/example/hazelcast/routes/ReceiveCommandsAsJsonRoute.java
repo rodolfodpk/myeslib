@@ -1,5 +1,7 @@
 package org.myeslib.example.hazelcast.routes;
 
+import lombok.RequiredArgsConstructor;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -8,15 +10,8 @@ import org.myeslib.util.gson.CommandFromStringFunction;
 
 import com.google.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor=@__(@Inject))
 public class ReceiveCommandsAsJsonRoute extends RouteBuilder {
-
-    @Inject
-    public ReceiveCommandsAsJsonRoute(String sourceUri, String targetUri,
-            CommandFromStringFunction commandFromStringFunction) {
-        this.sourceUri = sourceUri;
-        this.targetUri = targetUri;
-        this.commandFromStringFunction = commandFromStringFunction;
-    }
 
     final String sourceUri;
     final String targetUri;
@@ -37,5 +32,6 @@ public class ReceiveCommandsAsJsonRoute extends RouteBuilder {
             })
             .log("received id ${body.id} - targetVersion ${body.targetVersion}")
             .to(targetUri);
+
     }
 }

@@ -6,6 +6,8 @@ import static org.myeslib.util.ValidationHelper.ensureSameVersion;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.RequiredArgsConstructor;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.myeslib.core.Command;
@@ -26,20 +28,10 @@ import org.myeslib.util.UUIDGenerator;
 
 import com.google.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor=@__(@Inject))
 public class HzInventoryItemCmdProcessor implements Processor {
 
     final static String ID = "id";
-
-    @Inject
-    public HzInventoryItemCmdProcessor(
-            SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader,
-            HzUnitOfWorkJournal<UUID> uowJournal, ItemDescriptionGeneratorService domainService,
-            UUIDGenerator uuidGenerator) {
-        this.snapshotReader = snapshotReader;
-        this.uowJournal = uowJournal;
-        this.domainService = domainService;
-        this.uuidGenerator = uuidGenerator;
-    }
 
     final SnapshotReader<UUID, InventoryItemAggregateRoot> snapshotReader;
     final HzUnitOfWorkJournal<UUID> uowJournal;
