@@ -35,7 +35,7 @@ public class ReceiveCommandsAsJsonRoute extends RouteBuilder {
                     e.getOut().setBody(commandFromStringFunction.apply(body), Command.class);
                 }
             })
-            .log("received ${header.commandType} - id ${body.id} - targetVersion ${body.targetVersion}")
+            .log("received id ${body.id} - targetVersion ${body.targetVersion}")
             .to(targetUri);
     }
 }
