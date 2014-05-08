@@ -23,6 +23,8 @@ public class JdbiConsumeCommandsRoute extends RouteBuilder {
 
         // errorHandler(deadLetterChannel("direct:dead-letter-channel")
         // .maximumRedeliveries(3).redeliveryDelay(5000));
+        
+        // TODO idempotent repo for commands
 
         from(commandsDestinationUri)
             .routeId("handle-inventory-item-command")
