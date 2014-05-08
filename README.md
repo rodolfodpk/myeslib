@@ -19,4 +19,4 @@ Both have in common the <a href="inventory-hazelcast/src/main/java/org/myeslib/e
 
 In the Hazelcast implementation, <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzConsumeCommandsRoute.java">HzConsumeCommandsRoute</a> will then consume the command from the endpoint and use the <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzInventoryItemCmdProcessor.java">HzInventoryItemCmdProcessor</a> to process the command and save the resulting events into the eventstore. After this, the HzConsumeCommandsRoute will enqueue the AggregateRoot's id into a queue being consumed by <a href="inventory-hazelcast/src/main/java/org/myeslib/example/hazelcast/routes/HzConsumeEventsRoute.java">HzConsumeEventsRoute</a> in order to reflect the events into the query model.
 
-You can find an overview of all the modules on the <a href="https://github.com/rodolfodpk/myeslib/wiki/Modules-overview">wiki</a>
+You can find more info on the <a href="https://github.com/rodolfodpk/myeslib/wiki/Home">wiki</a>
