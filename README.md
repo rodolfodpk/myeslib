@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/rodolfodpk/myeslib.svg?branch=master)](https://travis-ci.org/rodolfodpk/myeslib)
 
+## This project will no longer be maintained. Please see https://github.com/rodolfodpk/myeslib2
+
 #### Context
 The idea is to explore a design introduced in [Don’t publish Domain Events, return them!](http://www.jayway.com/2013/06/20/dont-publish-domain-events-return-them/) Basically, instead of having the  [CommandHandler](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/CommandHandlers.cs) with void method, the method will return a ```List<? extends Event>```. These events and the original command will then form a <a href="myeslib-core/src/main/java/org/myeslib/core/data/UnitOfWork.java">UnitOfWork</a>. This UnitOfWork is then persisted into a fairly effective (and simple) Event Store backed by a relational database. There is not any read model yet but I do plan to develop it just for the sake of the example. [Tasks based UIs](http://cqrs.wordpress.com/documents/task-based-ui) are out of the current scope. The communication between producer and consumer services is HTTP based but for now the endpoints are not really well polished REST services.
 
